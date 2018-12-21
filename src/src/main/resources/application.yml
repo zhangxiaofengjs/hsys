@@ -1,0 +1,78 @@
+
+# Tomcat
+server:
+    tomcat:
+        uri-encoding: UTF-8
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 80
+    connection-timeout: 5000
+    servlet:
+        context-path: /hsys
+        
+spring:
+    #profiles: # 环境 dev
+    #    active: dev
+    #aop:
+    #  auto: true
+    jackson: # jackson时间格式化
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+    servlet:
+        multipart:
+            max-file-size: 100MB
+            max-request-size: 100MB
+            enabled: true
+    resources: # 指定静态资源的路径
+        static-locations: classpath:/static/,file:///c:/hsys/upload/ #最后一个是上传文件的路径，参照hsys.upload.location
+    mvc: 
+        static-path-pattern: /**
+    datasource: # 数据库配置
+        url: jdbc:mysql://localhost:3306/hsys?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+        username: root
+        password: root
+        driverClassName: com.mysql.jdbc.Driver
+    thymeleaf: #thymeleaf
+        prefix: classpath:/templates/
+        suffix: .html
+        mode: HTML
+        encoding: UTF-8
+        cache: false #turn off when in developing or cant refresh immdiately
+        servlet:
+            content-type: text/html
+
+#log配置
+logging: 
+  level:
+    org.springframework.web: WARN
+    com.zworks.hsys.mappers.NoticeMapper.queryList: WARN #定时通知太多，所以暂时不显示DEBUG信息
+    com.zworks.hsys: DEBUG
+  file: c:/hsys/log/hsys.log
+     
+# Mybatis配置
+mybatis:
+    mapperLocations: classpath:mappers/*.xml
+    type-aliases-package: com.zworks.hsys.models,com.zworks.hsys.business.beans,com.zworks.hsys.mappers
+    configuration:
+        map-underscore-to-camel-case: true
+
+#hsys其余设定
+hsys:
+    admin:
+        username: admin
+        password: $2a$10$qhZeMeQNJRuZ6bPCRvUOxecqqSMQ81Zs91n/fmyxCiCI6yalyMI2m #pdsys123 $2a$10$qbN23rlzj2.OoQv0F7kPfePrOVm7ehvdTzYMTZ54nKxXpYagbhqD.
+    upload: 
+        location: c:/hsys/upload/ #上传文件路径
+        temp-folder: temp/ #临时文件夹
+        image-folder: image/ #图形文件夹
+        order-attachment-folder: order/attachment/ #导入的附件文件夹
+    backup: #备份设定
+        database:
+            enable: true
+            location: D:\dev\hsys\env\mysql-5.7.21-winx64\bin\ #mysql安装bin路径
+            backupDir: c:/hsys/dbbackup
+            host: localhost
+            name: hsys
+            username: root
+            password: root
+  

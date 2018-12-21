@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+	<meta th:include="common/header::header">
+	<style type="text/css">  
+       *{  
+           margin: 0;  
+           padding: 0;  
+       }
+       html {
+       }
+       html,body{  
+           height: 100%;  
+           width: 100%;  
+       }
+       .mainDiv{  
+           height: 100%;  
+           width: 100%;  
+           color:#fff;
+       }  
+   </style>
+</head>
+<body>
+	<script src="js/index.js"></script>
+	<div  id="main_div">
+		<div class="page-header" id='headerdiv' style="color:#fff;background-color:#3c8dbc;margin:0px;padding-bottom:0px;'">
+			<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
+					[<a href="javascript:void(0);" id="changePwd" style="color:#fff;"><b sec:authentication="name"></b></a>] 登录中
+					<input type="hidden" id="userid" name="userid" th:value="${loginUser != null ? loginUser.user.id :_}">
+					<a th:href="@{/logout}" style="text-decoration:underline;color:#fff;">退出</a>
+		  	</div>
+			<div>
+				<h1 style="margin-top:0px;margin-bottom:0px;">
+					<img alt="" height=100px src="icons/logo.png">
+				</h1>
+			</div>
+		</div>
+		<div style="background-color:#ddd;float:left;height:100%;width:250px;">  
+			<ul id="main-nav" class="nav nav-tabs nav-stacked">  
+		    	<li>  
+					<a href="#pdmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">  
+					     <i class="glyphicon glyphicon-th"></i>
+					     <span style="margin-left:5px;" class="text-info"><b>常用功能</b></span>
+					     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+					</a>  
+					<ul id="pdmgr" class="nav nav-list collapse secondmenu" style="height: 0px;">  
+					    <li>
+					    	<a href="#" th:refURL="'order/list'" th:displayText="'常用功能/基本信息'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+					    		<span style="margin-left:5px;"><b>基本信息</b></span>
+					    	</a>
+					    </li>
+					    <li>
+					    	<a href="#" th:refURL="'order/list'" th:displayText="'常用功能/加班记录'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+					    		<span style="margin-left:5px;"><b>加班记录</b></span>
+					    	</a>
+					    </li>
+					    <li>
+					    	<a href="#" th:refURL="'orderPn/list'" th:displayText="'常用功能/请假记录'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+					    		<span style="margin-left:5px;"><b>请假记录</b></span>
+					    	</a>
+					    </li>
+					</ul> 
+		         </li>  
+		         <li>  
+	                 <a href="#warehousemgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+	                 	 <i class="glyphicon glyphicon-home"></i>
+					     <span style="margin-left:5px;"><b>管理</b></span> 
+	                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+	                 </a>  
+	                 <ul id="warehousemgr" class="nav nav-list collapse secondmenu" style="height: 0px;">  
+		                <li>
+		                	<a href="#" th:refURL="'warehouse/list/main'" th:displayText="'aaa/cc'">
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-th-list"></i>
+		                		<span style="margin-left:5px;"><b>aaa</b></span>
+		                	</a>
+		                </li>  
+		                <li>
+		                	<a href="#" th:refURL="'warehouse/entry/main'" th:displayText="'aaa/dd'">
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-log-in"></i>
+		                		<span style="margin-left:5px;"><b>aaa</b></span>
+		                	</a>
+		                </li>  
+		                <li>
+		                	<a href="#" th:refURL="'warehouse/delivery/main'" th:displayText="'aaa/ff'">
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-shopping-cart"></i>
+		                		<span style="margin-left:5px;"><b>ccc</b></span>
+		                	</a>
+		                </li>  
+		                <li>
+		                	<a href="#" th:refURL="'warehouse/history/main'" th:displayText="'aaa/ww'">
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-retweet"></i>
+		                		<span style="margin-left:5px;"><b>ddd</b></span>
+		                	</a>
+		                </li>  
+	            	</ul>  
+	       		</li>
+	       		<li sec:authorize="${hasAnyAuthority(T(com.zworks.hsys.common.enumClass.ROLE).ADMIN, 
+	       											 T(com.zworks.hsys.common.enumClass.ROLE).EDIT_USER, 
+	       											 T(com.zworks.hsys.common.enumClass.ROLE).EDIT_MASTER)}">
+	                 <a href="#sysmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+	                 	 <i class="glyphicon glyphicon-cog"></i>
+					     <span style="margin-left:5px;">
+					     	<b>系统维护</b>
+					     </span> 
+	                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+	                 </a>  
+	                 <ul id="sysmgr" class="nav nav-list collapse secondmenu" style="height: 0px;">  
+		                <li>
+		                	<a href="#" th:refURL="'user/list'" th:displayText="'系统维护  > 用户维护'">
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-user"></i>
+		                		<span style="margin-left:5px;"><b>用户维护</b></span>
+		                	</a>
+		                </li>  
+		                <li>
+		                	<a href="#" th:refURL="'sys/master/main'" th:displayText="'系统维护  > 定义维护'">
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-tags"></i>
+		                		<span style="margin-left:5px;"><b>定义维护</b></span>
+		                	</a>
+		                </li>  
+	            	</ul>  
+	       		</li> 
+		    </ul>  
+		</div>
+		  
+	  	<div style="height:100%;margin-left:250px;">
+		    <div id="frame_title" style="height:30px;padding:5px;background-color:#eee;">
+		    	<span class="glyphicon glyphicon-home" style=""></span>
+		    	<span id="nav_title" style="font-size:9pt;color:#867E7E">主页</span>
+		    </div>
+		    <!-- Main content -->
+		     	<iframe id="frame_content" onload="Javascript:SetWinHeight(this);" scrolling="no" frameborder="0" style="padding:10px;width:100%;heifht:100%;min-height:200px;overflow-x:hidden;background:#fff;" src="basic"></iframe>
+		</div>
+		<div id="msg_div"></div>
+		<div id="chg_pwd_dlg_div"></div>
+	</div>
+</body>
+</html>
