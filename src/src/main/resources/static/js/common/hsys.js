@@ -63,33 +63,13 @@ hsys.refresh = function(url) {
 	}
 }
 
-hsys.alert = function(msg) {
-	var dlg = new CommonDlg();
-	dlg.showMsgDlg({
-		"target":"msg_div",
-		"type":"ok",
-		"msg": msg});
-}
-
-hsys.success = function(option) {
-	var dlg = new CommonDlg();
-	dlg.showMsgDlg({
-		"target":"msg_div",
-		"type":"ok",
-		"msg":"操作成功。",
-		"ok": function() {
-			if(option.ok) {
-				(option.ok)();
-			}
-		}});
+hsys.success = function(bRefresh) {
+	hdlg.showOK("操作成功",
+			bRefresh?function(){hsys.refresh();}:null);
 }
 
 hsys.sysError = function() {
-	var dlg = new CommonDlg();
-	dlg.showMsgDlg({
-		"target":"msg_div",
-		"type":"ok",
-		"msg":"发生系统错误,请联系管理员。"});
+	hdlg.showOK("发生系统错误,请联系管理员。");
 }
 
 hsys.download = function(option) {

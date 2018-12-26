@@ -2,60 +2,63 @@ $(document).ready(function(){
 	$("#addUser").click(function(){
 		var self = $(this);
 
-		var fields = [
-			{
-				"name":"no",
-				"label":"工号",
-				"type":"text",
-				"required":"required",
-			},
-			{
-				"name":"name",
-				"label":"姓名",
-				"type":"text",
-				"required":"required",
-			},
-			{
-				"name":"password",
-				"label":"初始密码",
-				"type":"label",
-				"value":"123",
-			},
-			{
-				"name":"phone",
-				"label":"手机",
-				"type":"text",
-			},
-			{
-				"name":"address",
-				"label":"地址",
-				"type":"text",
-			},
-		];
-		
-		var dlg = new CommonDlg();
-		dlg.showFormDlg({
-			"target":"dlg_div",
-			"caption":"添加用户",
-			"fields":fields,
-			"url":"/user/add",
-			"success": function(data) {
-				dlg.hide();
-				PdSys.success({
-					"ok" : function() {
-						PdSys.refresh();
-					}
-				});
+		hdlg.showForm({
+			"title":"添加用户",
+			"fields":[
+				{
+					"id":"no",
+					"label":"工号",
+					"type":"text",
+					"required":"required",
+				},
+				{
+					"id":"name",
+					"label":"姓名",
+					"type":"text",
+					"required":"required",
+				},
+				{
+					"id":"mail",
+					"label":"邮件地址",
+					"type":"text",
+				},
+				{
+					"id":"sex",
+					"label":"性别",
+					"type":"radiogroup",
+					"options": [
+						{
+							"text":'<img alt="男" src="{0}" width=16px>男'.format(hsys.url('/icons/male.png')),
+							"value":0
+						},
+						{
+							"text":'<img alt="女" src="{0}" width=16px>女'.format(hsys.url('/icons/female.png')),
+							"value":1
+						}
+					],
+					"value": 0
+				},
+				{
+					"id":"password",
+					"label":"初始密码",
+					"type":"html",
+					"value":"123",
+				},
+			],
+			"url":"/user/json/add",
+			"success": function(data, dlg) {
+				hsys.success(true);
 			},
 			"error": function(data) {
-				PdSys.alert(data.msg);
+				hdlg.showOK(data.msg);
 			}
 		});
 	});
 
 	$("#editUser").click(function(){
 		var self = $(this);
-		var selIds = getSelectedRowId({"checkOne":true, "showMsg":true});
+		
+		var selIds = htbl.getSelectedRowId("userTable");
 		if(selIds.length != 1) {
 			return;
 		}
@@ -63,12 +66,12 @@ $(document).ready(function(){
 		var id = selIds[0];
 		var fields = [
 			{
-				"name":"id",
+				"id":"id",
 				"type":"hidden",
 				"value":selIds[0]
 			},
 			{
-				"name":"no",
+				"id":"no",
 				"label":"工号",
 				"type":"label",
 				"value": "",
@@ -77,7 +80,7 @@ $(document).ready(function(){
 				"depend": true
 			},
 			{
-				"name":"name",
+				"id":"id",
 				"label":"姓名",
 				"type":"text",
 				"value":"",
@@ -85,13 +88,13 @@ $(document).ready(function(){
 				"depend": true
 			},
 			{
-				"name":"phone",
+				"id":"phone",
 				"label":"手机",
 				"value":"",
 				"depend": true
 			},
 			{
-				"name":"address",
+				"id":"address",
 				"label":"地址",
 				"value":"",
 				"depend": true
@@ -110,7 +113,7 @@ $(document).ready(function(){
 				},
 				"convertAjaxData":function(data) {
 					dlg.rebuildFieldWithValue("no", data.user.no);
-					dlg.rebuildFieldWithValue("name", data.user.name);
+					dlg.rebuildFieldWithValue("id", data.user.name);
 					dlg.rebuildFieldWithValue("phone", data.user.phone);
 					dlg.rebuildFieldWithValue("address", data.user.address);
 				}
@@ -187,12 +190,12 @@ $(document).ready(function(){
 		
 		var fields = [
 			{
-				"name":"id",
+				"id":"id",
 				"type":"hidden",
 				"value":id
 			},
 			{
-				"name":"auth",
+				"id":"auth",
 				"label":"权限设定",
 				"type":"label",
 				"ajax":true,

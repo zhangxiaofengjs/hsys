@@ -8,7 +8,7 @@ hdlg.CACHE = {};
 hdlg.showOK = function(text, okFunc) {
 	var dlg = new hdlg()
 	dlg.showMsgDlg({
-		"text": text,
+		"html": '<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;' + text,
 		"buttons": [{
 			"id":"ok",
 			"text":"OK",
@@ -22,7 +22,7 @@ hdlg.showOK = function(text, okFunc) {
 hdlg.showYesNo = function(text, acceptFunc, rejectFunc) {
 	var dlg = new hdlg()
 	dlg.showMsgDlg({
-		"text": text,
+		"html": '<span class="glyphicon glyphicon-question-sign"></span>&nbsp;' + text,
 		"buttons": [{
 			"id":"yes",
 			"text":"是",
@@ -226,11 +226,11 @@ hdlg.prototype.showMsgDlg = function(opt) {
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
 						<h4 class="modal-title" id="myModalLabel">提示</h4>\
 					</div>\
-					<div class="modal-body"><div style="word-break:break-all;"><span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;{1}</div></div>\
+					<div class="modal-body"><div style="word-break:break-all;">{1}</div></div>\
 					<div class="modal-footer">{2}</div>\
 				</div>\
 			</div>\
-		</div>'.format(dlgId, self.option.text, strBtnHtml);
+		</div>'.format(dlgId, self.option.html, strBtnHtml);
 
 	var targetDiv;
 	var bIsCreated= false;
@@ -254,8 +254,10 @@ hdlg.prototype.showMsgDlg = function(opt) {
 				//对话框显示后默认focus
 				elem.focus();
 			}
-			elem.click( function() { 
-				(btn.click)();
+			elem.click( function() {
+				if(btn.click) {
+					(btn.click)();
+				}
 				
 				if(btn.closeOnClick) {
 					self.hide();
@@ -340,7 +342,7 @@ hdlg.prototype.showFormDlg = function(opt) {
 	};
 	
 	var strHtml = 
-		'<div id="{0}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">\
+		'<div id="{0}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">\
 		  <div class="modal-dialog modal-md" role="document">\
 		    <div class="modal-content">\
 				<div class="modal-header">\
@@ -485,6 +487,16 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 	} else if(field.type == "html") {
 		strFormHtml += '<div id={0} name={0} style="padding-top:7px;">{1}</div>'.
 			format(field.id, field.value || '');
+	} else if(field.type == "radiogroup") {
+		var strRadioGroup = "";
+		field.options.forEach(function(opt, idx) {
+			strRadioGroup += (idx!=0?"&nbsp;":"") + '<input type="radio" id="{0}" name="{0}" value="{1}" {2}>{3}'.
+					format(field.id,
+						    opt.value,
+						    opt.value == field.value ?"checked":"",
+						    opt.text);
+		});
+		strFormHtml += '<div style="padding-top:7px;">{0}</div>'.format(strRadioGroup);
 	} else {
 		var strAttrHtml = "";
 		strAttrHtml += ' type="{0}"'.format(field.type);
@@ -821,11 +833,14 @@ hdlg.ajaxSubmitForm = function(dlgId) {
         cache: false,
         data: formData,
         success : function(data) {
+        	if(typeof option.closeOnSuccess == "undefined" || option.closeOnSuccess) {
+        		dlg.hide();
+        	}
         	if(data.success) {
-        		option.success(data);
+        		option.success(data, dlg);
         	}
         	else {
-        		option.error(data);
+        		option.error(data, dlg);
         	}
         },
         error: function(data) {

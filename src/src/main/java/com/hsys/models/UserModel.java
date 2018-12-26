@@ -10,7 +10,9 @@ import org.apache.ibatis.type.Alias;
 public class UserModel extends BaseModel {
 	private String no;
 	private String name;
-	private String phone;
+	private int sex;
+	private String mail;
+	private String phoneNumber;
 	private String address;
 	private String password;
 
@@ -30,14 +32,6 @@ public class UserModel extends BaseModel {
 		this.no = no;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -52,5 +46,29 @@ public class UserModel extends BaseModel {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public int getSex() {
+		return sex;
+	}
+
+	public void setSex(int sex) {
+		this.sex = sex;
+	}
+
+	public String getMail() {
+		return mail;
+	}
+
+	public void setMail(String mail) {
+		this.mail = mail;
 	}
 }

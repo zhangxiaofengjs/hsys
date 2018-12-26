@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.UserBusiness;
 import com.hsys.controllers.beans.JsonResponse;
+import com.hsys.exception.HsysException;
 import com.hsys.models.UserModel;
 
 /**
@@ -48,6 +49,17 @@ public class UserController extends BaseController {
 			return JsonResponse.success().put("user", u);
 		}
 		return JsonResponse.error("sss");
+	}
+	
+	@RequestMapping("/json/add")
+	@ResponseBody
+	public JsonResponse add(@RequestBody UserModel user) {
+		try {
+			userBusiness.add(user);
+		} catch(HsysException e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
 	}
 	
 	@RequestMapping("/update")

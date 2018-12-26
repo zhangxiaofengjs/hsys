@@ -6,7 +6,7 @@
         <id column="u_id" property="id"/>  
         <result column="u_no" property="no"/>  
         <result column="u_name" property="name"/>  
-        <result column="u_phone" property="phone"/>  
+        <result column="u_phone_number" property="phoneNumber"/>  
         <result column="u_addr" property="address"/>
         <result column="u_pwd" property="password"/>
         <!-- <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" />-->  
@@ -16,7 +16,7 @@
 		select u.c_id as u_id,
 			   u.c_no as u_no,
 			   u.c_name as u_name,
-			   u.c_phone as u_phone,
+			   u.c_phone_number as u_phone_number,
 			   u.c_address as u_addr,
 			   u.c_password as u_pwd
 		from user_tbl as u
@@ -40,26 +40,26 @@
 		</where>
 		order by u.c_no
 	</select>
-	<!-- 
+	 
 	<insert id="add" parameterType="userModel">
     	insert into user_tbl (
     		c_no,
     		c_name,
     		c_password,
-    		c_phone,
-    		c_address)
+    		c_sex,
+    		c_mail)
     	values (
     		#{no},
     		#{name},
     		#{password},
-    		#{phone},
-    		#{address}
+    		#{sex},
+    		#{mail}
     	)
       	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       		select LAST_INSERT_ID() as id
       	</selectKey>
     </insert>
-    
+    <!--
 	<update id="update">
     	update user_tbl
 		set	c_name = #{name},
