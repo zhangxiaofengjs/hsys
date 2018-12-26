@@ -1,7 +1,5 @@
 package com.hsys.models;
 
-import java.util.List;
-
 import org.apache.ibatis.type.Alias;
 
 /**

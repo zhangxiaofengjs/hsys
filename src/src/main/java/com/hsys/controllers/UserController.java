@@ -5,16 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.UserBusiness;
 import com.hsys.controllers.beans.JsonResponse;
-import com.hsys.mappers.UserMapper;
 import com.hsys.models.UserModel;
-import com.hsys.services.UserService;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -59,10 +57,11 @@ public class UserController extends BaseController {
 		//return JsonResponse.error("sss");
 	}
 	
-	@RequestMapping("/test")
-	@ResponseBody
-	public JsonResponse test(UserModel user) {
+	@RequestMapping("/html/list")
+	public String htmlList(UserModel user, Model model) {
 		List<UserModel> list = userBusiness.getAllUser();
-		return JsonResponse.success().put("users", list);
+		model.addAttribute("users", list);
+		
+		return "user/list";
 	}
 }
