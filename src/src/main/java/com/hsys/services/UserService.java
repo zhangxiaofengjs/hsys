@@ -39,6 +39,17 @@ public class UserService {
 		return null;
 	}
 	
+	public UserModel queryByNo(String no) {
+		UserModel u = new UserModel();
+		u.setNo(no);
+		List<UserModel> us = queryList(u);
+		
+		if(us.size() == 1) {
+			return us.get(0);
+		}
+		return null;
+	}
+	
 	public UserModel queryOne(UserModel user) {
 		List<UserModel> us = queryList(user);
 		

@@ -17,6 +17,7 @@ public class BaseModel {
 	private Date createTime;
 	private Date updateTime;
 	private HashMap<String, Object> cond = new HashMap<String, Object>();
+	private HashMap<String, Object> update = new HashMap<String, Object>();
 	
 	public Date getUpdateTime() {
 		return updateTime;
@@ -58,11 +59,19 @@ public class BaseModel {
 		this.cond.put(key, value);
 	}
 
+	public void setUpdate(String fieldKey) {
+		this.update.put(fieldKey, true);
+	}
+	
 	public UserModel getRegistUser() {
 		return registUser;
 	}
 
 	public void setRegistUser(UserModel registUser) {
 		this.registUser = registUser;
+	}
+
+	public HashMap<String, Object> getUpdate() {
+		return update;
 	}
 }

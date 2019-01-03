@@ -26,7 +26,7 @@
 			</if>
 			<if test="no != null">
 				<choose>
-	                <when test="filterCond.fuzzyNoSearch != null and filterCond.fuzzyNoSearch">
+	                <when test="cond.fuzzyNo != null">
 	                   	and u.c_no like '%${no}%'
 	                </when>
 	                <otherwise>
@@ -46,34 +46,30 @@
     		c_no,
     		c_name,
     		c_password,
-    		c_sex,
-    		c_mail)
+    		c_sex)
     	values (
     		#{no},
     		#{name},
     		#{password},
-    		#{sex},
-    		#{mail}
+    		#{sex}
     	)
       	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       		select LAST_INSERT_ID() as id
       	</selectKey>
     </insert>
-    <!--
+ 
 	<update id="update">
     	update user_tbl
-		set	c_name = #{name},
-			c_phone = #{phone},
-			c_address = #{address}
+		<set>
+    		<if test="update.password != null">
+				c_password = #{password},
+			</if>
+    		<if test="update.name != null">
+				c_name = #{name},
+			</if>
+		</set>
     	<where>
 			c_id = #{id}
 		</where>
     </update>
-	<update id="changePassword">
-    	update user_tbl
-		set	c_password = #{password}
-    	<where>
-			c_id = #{id}
-		</where>
-    </update> -->
 </mapper>

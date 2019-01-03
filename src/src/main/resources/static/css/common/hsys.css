@@ -19,6 +19,11 @@
 	color:#fff;
 }
 
+.hsys-alert-font {
+	font-style: italic;
+	font-size: 12px;
+}
+
 .hsys-red-font {
 	color:#FF0000;
 }

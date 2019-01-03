@@ -1,6 +1,5 @@
 package com.hsys.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.UserBusiness;
+import com.hsys.business.Forms.UserForm;
+import com.hsys.business.Forms.UserUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
-import com.hsys.exception.HsysException;
 import com.hsys.models.UserModel;
 
 /**
@@ -25,55 +25,54 @@ public class UserController extends BaseController {
 	@Autowired
     private UserBusiness userBusiness;
 
-	@RequestMapping("/json/get")
-	@ResponseBody
-	public JsonResponse jsonById1(@RequestBody UserModel user) {
-		if(user.getNo().equals("1")) {
-			UserModel u = new UserModel();
-			u.setNo("XXX");
-			u.setName("yyy");
-			UserModel u1 = new UserModel();
-			u1.setNo("XXX1");
-			u1.setName("yyy1");
-			
-			List<UserModel> list = new ArrayList<UserModel>();
-			list.add(u1);
-			list.add(u);
-			
-			return JsonResponse.success().put("users", list);
-		}
-		if(user.getNo().equals("2")) {
-			UserModel u = new UserModel();
-			u.setNo("XXX");
-			u.setName("yyy");
-			return JsonResponse.success().put("user", u);
-		}
-		return JsonResponse.error("sss");
-	}
-	
 	@RequestMapping("/json/add")
 	@ResponseBody
 	public JsonResponse add(@RequestBody UserModel user) {
 		try {
 			userBusiness.add(user);
-		} catch(HsysException e) {
+		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}
 		return JsonResponse.success();
 	}
 	
-	@RequestMapping("/update")
+	@RequestMapping("/json/initpwd")
 	@ResponseBody
-	public JsonResponse update(@RequestBody UserModel user) {
-		return JsonResponse.success("success");
-		//return JsonResponse.error("sss");
+	public JsonResponse initPwd(@RequestBody UserModel user) {
+		try {
+			userBusiness.initPwd(user);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/update")
+	@ResponseBody
+	public JsonResponse update(@RequestBody UserUpdateForm userUpdateForm) {
+		try {
+			userBusiness.update(userUpdateForm);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
 	}
 	
 	@RequestMapping("/html/list")
-	public String htmlList(UserModel user, Model model) {
-		List<UserModel> list = userBusiness.getAllUser();
+	public String htmlList(UserForm userForm, Model model) {
+		List<UserModel> list = userBusiness.getUsers(userForm);
+		model.addAttribute("userForm", userForm);
 		model.addAttribute("users", list);
 		
 		return "user/list";
+	}
+	
+	@RequestMapping("/html/detail")
+	public String detail(String no, Model model) {
+		UserModel user = userBusiness.getDetail(no);
+		model.addAttribute("user", user);
+		model.addAttribute("no", user.getNo());
+		
+		return "user/detail";
 	}
 }

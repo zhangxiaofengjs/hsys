@@ -9,6 +9,13 @@ String.prototype.format = function() {
     return str;
 };
 
+//"abc".left(2)=>"ab"
+String.prototype.left = function(n) {
+    var str = String(this);
+    
+    return str.substr(0, n);
+};
+
 // Jquery中带点中括号的选择器替换 a.b =>  a\.b a[0]=a\[0\]
 String.prototype.safeJqueryId = function() {
     var str = String(this);

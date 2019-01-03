@@ -64,7 +64,12 @@ hsys.refresh = function(url) {
 }
 
 hsys.success = function(bRefresh) {
-	hdlg.showOK("操作成功",
+	hdlg.showOK("操作成功。",
+			bRefresh?function(){hsys.refresh();}:null);
+}
+
+hsys.error = function(msg, bRefresh) {
+	hdlg.showOK("操作失败。<br><span class='text-danger hsys-alert-font'>{0}</span>".format(msg),
 			bRefresh?function(){hsys.refresh();}:null);
 }
 

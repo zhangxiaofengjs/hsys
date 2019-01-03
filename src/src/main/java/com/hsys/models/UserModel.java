@@ -8,6 +8,11 @@ import org.apache.ibatis.type.Alias;
  */
 @Alias("userModel")
 public class UserModel extends BaseModel {
+	public static final String FIELD_PASSWORD = "password";
+	public static final String FIELD_NAME = "name";
+	
+	public static final String COND_FUZZY_NO = "fuzzyNo";
+
 	private String no;
 	private String name;
 	private int sex;
@@ -15,7 +20,8 @@ public class UserModel extends BaseModel {
 	private String phoneNumber;
 	private String address;
 	private String password;
-
+	private GroupModel group;
+	
 	public String getName() {
 		return name;
 	}
@@ -70,5 +76,13 @@ public class UserModel extends BaseModel {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public GroupModel getGroup() {
+		return group;
+	}
+
+	public void setGroup(GroupModel group) {
+		this.group = group;
 	}
 }

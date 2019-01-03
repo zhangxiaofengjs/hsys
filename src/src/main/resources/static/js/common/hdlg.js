@@ -497,6 +497,16 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 						    opt.text);
 		});
 		strFormHtml += '<div style="padding-top:7px;">{0}</div>'.format(strRadioGroup);
+	} else if(field.type == "checkboxgroup") {
+		var strChBoxGroup = "";
+		field.options.forEach(function(opt, idx) {
+			strChBoxGroup += (idx!=0?"&nbsp;":"") + '<input type="checkbox" id="{0}" name="{0}" value="{1}" {2}>{3}'.
+					format(field.id,
+						    opt.value,
+						    opt.value == field.value ?"checked":"",
+						    opt.text);
+		});
+		strFormHtml += '<div style="padding-top:7px;">{0}</div>'.format(strChBoxGroup);
 	} else {
 		var strAttrHtml = "";
 		strAttrHtml += ' type="{0}"'.format(field.type);
@@ -833,10 +843,10 @@ hdlg.ajaxSubmitForm = function(dlgId) {
         cache: false,
         data: formData,
         success : function(data) {
-        	if(typeof option.closeOnSuccess == "undefined" || option.closeOnSuccess) {
-        		dlg.hide();
-        	}
         	if(data.success) {
+        		if(typeof option.closeOnSuccess == "undefined" || option.closeOnSuccess) {
+        			dlg.hide();
+        		}
         		option.success(data, dlg);
         	}
         	else {

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="common/header::header">
+</head>
+<body>
+	<script th:src="@{/js/user/detail.js}"></script> 
+	<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
+		<div class="container-fluid">
+	  		<div class="navbar-header">
+	  			<a th:href="@{/user/html/list}"><span class="navbar-brand glyphicon glyphicon-list" aria-hidden="true"></span></a>
+	  		</div>
+	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/detail}" method="post">
+	 			<div class="form-group">
+				   <input type="text" class="form-control" id="no" name="no" th:value="${no!=null?no:_}" placeholder="输入工号">
+	 			</div>
+	 			<button type="submit" class="btn btn-sm btn-info">查询</button>
+			</form>
+		</div>
+	</nav>
+
+	<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" >
+		<thead>
+			<tr>
+				<th style="width:120px;">工号姓名 </th>
+				<th colspan=2>
+					<span th:switch="${user.sex}">
+	    				<span th:case="0"><img th:src='@{/icons/male.png}' width=16px /></span>
+			  			<span th:case="1"><img src='icons/female.png' width=16px /></span>
+		  			</span>
+		  			<span th:text="${user.no}"></span>&nbsp;
+					<div id="e_name_disp_div" style="display:inline-block;">
+						<span th:text="${user.name}" th:value="${user.name}"></span>&nbsp;
+						<a id="e_name" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+					</div>
+		  			<input type="hidden" name="e_user_id" th:value="${user.id}">
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!-- 基本信息 -->
+			<tr>
+				<td rowspan=5>基本信息</td>
+			</tr>
+			<tr>
+				<td style="width:120px;">所属</td>
+				<td>
+					<div id="e_group_disp_div" th:with="group=${user.group}">
+						<span th:text="${group!=null?group.name:_}" th:value="${group!=null?group.id:_}"></span>&nbsp;
+						<a id="e_group" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>QM</td>
+				<td th:text="${user.mail}"></td>
+			</tr>
+			<tr>
+				<td>工作地点</td>
+				<td th:text="${user.address}"></td>
+			</tr>
+			<tr>
+				<td>邮件地址</td>
+				<td th:text="${user.mail}"></td>
+			</tr>
+			<!-- 其他信息 -->
+			<tr>
+				<td rowspan=2>其他信息</td>
+			</tr>
+			<tr>
+				<td>联系地址</td>
+				<td th:text="${user.address}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div th:replace="common/footer::copyright"></div>
+</body>
+</html>
