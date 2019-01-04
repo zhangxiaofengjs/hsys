@@ -2,5 +2,7 @@ eclipse.preferences.version=1
 encoding//src/main/resources/templates/common/footer.html=UTF-8
 encoding//src/main/resources/templates/index.html=UTF-8
 encoding//src/main/resources/templates/login.html=UTF-8
+encoding//src/main/resources/templates/reimburse/items.html=UTF-8
+encoding//src/main/resources/templates/reimburse/main.html=UTF-8
 encoding//src/main/resources/templates/user/detail.html=UTF-8
 encoding//src/main/resources/templates/user/list.html=UTF-8

@@ -1,5 +1,9 @@
 @charset "UTF-8";
 
+.hsys-table-checkbox-column {
+	width:15px;
+}
+
 .hsys-number {
 	text-align: right;
 	font-style: italic;

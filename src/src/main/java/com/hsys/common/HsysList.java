@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.apache.poi.ss.formula.functions.T;
 
+/**
+ * @author: zhangxiaofengjs@163.com
+ * @version: 2019/01/04
+ */
 public class HsysList {
 	public static <T> List<T> New() {
 		return new ArrayList<T>();

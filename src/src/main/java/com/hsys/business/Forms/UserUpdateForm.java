@@ -1,5 +1,9 @@
 package com.hsys.business.Forms;
 
+/**
+ * @author: zhangxiaofengjs@163.com
+ * @version: 2019/01/03
+ */
 public class UserUpdateForm {
 	private int id;
 	private String field;
