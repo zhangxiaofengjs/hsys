@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hsys.mappers.ExpenseItemMapper">
+	<resultMap id="userResultMap" type="userModel" >  
+        <id column="u_id" property="id"/>
+        <result column="u_name" property="name"/>       
+        <result column="u_no" property="no"/>       
+    </resultMap>
+	<resultMap id="expenseItemResultMap" type="expenseItemModel" >
+	 	<id column="e_id" property="id"/>
+		<result column="e_date" property="date"/> 
+		<result column="e_type" property="type"/> 
+		<result column="e_user_id" property="userId"/> 
+		<result column="e_payee_id" property="payeeId"/> 
+		<result column="e_num" property="num"/> 
+		<result column="e_comment" property="comment"/> 
+		<result column="e_receipt_id" property="receiptId"/> 
+		<association property="user" resultMap="userResultMap"/>
+	</resultMap> 
+	<select id="queryList" resultMap="expenseItemResultMap">
+		select 	
+				e.c_id as e_id,
+				e.c_date as e_date,
+				e.c_type as e_type,
+				e.c_user_id as e_user_id,
+				e.c_payee_id as e_payee_id,
+				e.c_num as e_num,
+				e.c_comment as e_comment,
+				e.c_receipt_id as e_receipt_id,
+				u.c_no as u_no,
+				u.c_name as u_name			   
+		from expense_item_tbl as e 
+		left join user_tbl as u on e.c_payee_id=u.c_no
+	</select>
+ 
+	
+</mapper>

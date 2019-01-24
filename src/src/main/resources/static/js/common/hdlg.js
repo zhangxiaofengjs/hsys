@@ -212,7 +212,7 @@ hdlg.prototype.showMsgDlg = function(opt) {
 	var strBtnHtml = "";
 	if(this.option.buttons != undefined) {
 		this.option.buttons.forEach(function(btn, idx) {
-			strBtnHtml += '<button type="button" class="btn btn-info btn-sm" id="{0}" name="{0}">{1}</button>'.
+			strBtnHtml += '<button type="button" class="btn btn-primary btn-sm" id="{0}" name="{0}">{1}</button>'.
 			format(btn.id, btn.text);
 		});
 	}
@@ -353,7 +353,7 @@ hdlg.prototype.showFormDlg = function(opt) {
 				</div>\
 				<div class="modal-footer">\
 	    			<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>\
-	    			<button type="button" class="btn btn-info btn-sm" id="{0}_btn_ok" name="{0}_btn_ok" onclick="hdlg.ajaxSubmitForm(\'{0}\');">OK</button>\
+	    			<button type="button" class="btn btn-primary btn-sm" id="{0}_btn_ok" name="{0}_btn_ok" onclick="hdlg.ajaxSubmitForm(\'{0}\');">OK</button>\
 				</div>\
 		    </div>\
 		  </div>\
@@ -414,7 +414,7 @@ hdlg.prototype.hide = function() {
 	$("#" + this.id()).modal('hide');
 };
 
-hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax ) {
+hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax, bDepend ) {
 	var self = this;
 	
 	var field = fieldOrId;
@@ -426,12 +426,16 @@ hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax ) {
 		return;
 	}
 	
-	if(val) {
+	if(val != undefined) {
 		field.value = val;
 	}
 	
-	if(!bSkipAjax) {
+	if(bSkipAjax == undefined) {
 		bSkipAjax = true;
+	}
+	
+	if(bDepend != undefined) {
+		field.depend = bDepend;
 	}
 	
 	if(!bSkipAjax && field.ajax) {

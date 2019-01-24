@@ -7,6 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+/**
+ * @author: zhangxiaofengjs@163.com
+ * @version: 2019/01/03
+ */
 @SpringBootApplication
 @EnableTransactionManagement
 public class HsysApplication {

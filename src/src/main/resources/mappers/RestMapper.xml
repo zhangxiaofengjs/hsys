@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hsys.mappers.RestMapper">
+    <resultMap id="userResultMap" type="userModel" >  
+        <id column="u_id" property="id"/>
+        <result column="u_name" property="name"/>    
+    </resultMap>
+    
+	<resultMap id="restResultMap" type="RestModel" >  
+        <id column="r_id" property="id"/>  
+        <result column="r_start" property="dateStart"/>  
+        <result column="r_end" property="dateEnd"/>  
+        <result column="r_len" property="len"/>  
+        <result column="r_type" property="type"/>
+        <result column="r_summary" property="summary"/>
+        <result column="r_status" property="status"/>
+        <result column="r_approvalDate" property="approvalDate"/>
+        <association property="user" resultMap="userResultMap"/>
+        <association property="approvalUser" resultMap="userResultMap" columnPrefix="app"/>  
+    </resultMap>
+    
+    <select id="queryList" resultMap="restResultMap">
+	select r.c_id as r_id,
+	r.c_date_start as r_start,
+	r.c_date_end as r_end,
+	r.c_len as r_len,
+	r.c_type as r_type,
+	r.c_summary as r_summary,
+	r.c_status as r_status,
+	r.c_approval_time as r_approvalDate,
+	appu.c_id as appu_id,
+	appu.c_name as appu_name,
+	u.c_id as u_id,
+	u.c_name as u_name
+	from rest_tbl as r
+	left join user_tbl as u on u.c_id=r.c_user_id
+	left join user_tbl as appu on appu.c_id=r.c_approval_user_id
+	<where>
+		<if test="cond.userNo != null and cond.date != null">
+			and u.c_no=#{user.no}
+			and r.c_date_start &lt;= #{date}
+			and r.c_date_end &gt;= #{date}
+		</if>
+		<if test="cond.userNo != null and cond.date == null">
+			and u.c_no=#{user.no}
+		</if>
+		<if test="cond.userNo == null and cond.date != null">
+			and r.c_date_start &lt;= #{date}
+			and r.c_date_end &gt;= #{date}
+		</if>
+	</where>
+		order by r.c_user_id
+	</select>
+
+	<insert id="add" parameterType="restModel">
+    	insert into rest_tbl (
+    		c_len,
+    		c_date_start,
+    		c_date_end,
+    		c_type,
+    		c_summary,
+    		c_user_id)
+    	values (
+    		#{len},
+    		#{dateStart},
+    		#{dateEnd},
+    		#{type},
+    		#{summary},
+    		#{user.id}
+    	)
+      	
+    </insert>
+
+</mapper>

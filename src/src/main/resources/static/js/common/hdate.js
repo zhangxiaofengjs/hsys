@@ -2,7 +2,6 @@ function hdate() {
 };
 
 hdate.format = function(date, strFormat) {
-
 	var dateObj = date || new Date();
 	var strDate = strFormat || "yyyyMMdd";
 	
@@ -35,4 +34,8 @@ hdate.format = function(date, strFormat) {
 
 hdate.yyyyMMdd = function(date) {
 	return hdate.format(date, "yyyyMMdd");
+};
+
+hdate.yyyy_MM_dd = function(date) {
+	return hdate.format(date, "yyyy-MM-dd");
 };

@@ -21,7 +21,7 @@ public class UserModel extends BaseModel {
 	private String address;
 	private String password;
 	private GroupModel group;
-	
+
 	public String getName() {
 		return name;
 	}

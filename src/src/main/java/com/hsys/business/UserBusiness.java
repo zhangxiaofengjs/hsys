@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.hsys.business.Forms.UserForm;
-import com.hsys.business.Forms.UserUpdateForm;
+import com.hsys.business.forms.UserHtmlListForm;
+import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.common.HsysList;
 import com.hsys.exception.HsysException;
 import com.hsys.models.GroupModel;
@@ -25,7 +25,7 @@ public class UserBusiness {
 	@Autowired
 	private GroupService groupService;
 	
-	public List<UserModel> getUsers(UserForm userForm) {
+	public List<UserModel> getUsers(UserHtmlListForm userForm) {
 		UserModel user = new UserModel();
 		user.setNo(userForm.getNo());
 		user.setCond(UserModel.COND_FUZZY_NO, true);
@@ -82,7 +82,7 @@ public class UserBusiness {
 		return userRet;
 	}
 
-	public void update(UserUpdateForm userUpdateForm) {
+	public void update(UserJsonUpdateForm userUpdateForm) {
 		UserModel user = userService.queryById(userUpdateForm.getId());
 		if(user == null) {
 			throw new HsysException("该工号不存在。id=" + userUpdateForm.getId()); 

@@ -58,6 +58,8 @@ mybatis:
 
 #hsys其余设定
 hsys:
+    version:
+        number: v.HSYS2019.0
     admin:
         username: admin
         password: $2a$10$qhZeMeQNJRuZ6bPCRvUOxecqqSMQ81Zs91n/fmyxCiCI6yalyMI2m #pdsys123 $2a$10$qbN23rlzj2.OoQv0F7kPfePrOVm7ehvdTzYMTZ54nKxXpYagbhqD.

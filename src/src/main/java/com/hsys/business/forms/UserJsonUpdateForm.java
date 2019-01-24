@@ -1,10 +1,10 @@
-package com.hsys.business.Forms;
+package com.hsys.business.forms;
 
 /**
  * @author: zhangxiaofengjs@163.com
  * @version: 2019/01/03
  */
-public class UserUpdateForm {
+public class UserJsonUpdateForm {
 	private int id;
 	private String field;
 	private String value;

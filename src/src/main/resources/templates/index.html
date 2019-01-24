@@ -24,16 +24,28 @@
 <body>
 	<script src="js/index.js"></script>
 	<div  id="main_div">
-		<div class="page-header" id='headerdiv' style="color:#fff;background-color:#3c8dbc;margin:0px;padding-bottom:0px;'">
-			<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
-					[<a href="javascript:void(0);" id="changePwd" style="color:#fff;"><b sec:authentication="name"></b>5555</a>] 登录中
-					<input type="hidden" id="userid" name="userid" th:value="${loginUser != null ? loginUser.user.id :_}">
-					<a th:href="@{/logout}" style="text-decoration:underline;color:#fff;">退出</a>
-		  	</div>
+		<div class="page-header" id='headerdiv' style="color:#fff;background-color:#436781;margin:0px;padding-bottom:0px;'">
 			<div>
-				<h1 style="margin-top:0px;margin-bottom:0px;">
+				<div style="position:absolute;z-index:0;width:100%;height:100px;padding-left:250px;;padding-right:190px;">
+					<!-- 
+					<marquee behavior=scroll scrolldelay=10>
+						<h3>JUST DO I.T.</h3>
+					</marquee>
+					 -->
+				</div> 
+				<h1 style="display:inline-block;padding-left:10px;padding-bottom:1px;margin-top:0px;margin-bottom:0px;">
 					<img alt="" height=100px src="icons/logo.png">
 				</h1>
+				<div style="display:inline-block;vertical-align:bottom;padding-bottom:1px;">
+					<span style="vertical-align:bottom;padding-bottom:1px;" th:text="${version != null?version.number:_}"></span>
+				</div>
+				<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
+					[<a href="javascript:void(0);" id="changePwd" style="color:#fff;">
+						<b sec:authentication="name"></b>
+						</a>] 登录中
+					<input type="hidden" id="userid" name="userid" th:value="${user != null ? user.id :_}">
+					<a th:href="@{/logout}" style="text-decoration:underline;color:#fff;">退出</a>
+		  		</div>
 			</div>
 		</div>
 		<div style="background-color:#ddd;float:left;height:100%;width:250px;">  
@@ -53,19 +65,19 @@
 					    </li>
 					    <li>
 					    	<a href="#" th:refURL="'order/list'" th:displayText="'常用功能/加班记录'">
-					    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-copy"></i>
 					    		<span style="margin-left:5px;"><b>加班记录</b></span>
 					    	</a>
 					    </li>
 					    <li>
-					    	<a href="#" th:refURL="'orderPn/list'" th:displayText="'常用功能/请假记录'">
-					    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+					    	<a href="#" th:refURL="'rest/html/list'" th:displayText="'常用功能/请假记录'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-tent"></i>
 					    		<span style="margin-left:5px;"><b>请假记录</b></span>
 					    	</a>
 					    </li>
 					    <li>
-					    	<a href="#" th:refURL="'reimburse/html/main'" th:displayText="'常用功能/报销记录'">
-					    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+					    	<a href="#" th:refURL="'expense/html/main'" th:displayText="'常用功能/报销记录'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-transfer"></i>
 					    		<span style="margin-left:5px;"><b>报销记录</b></span>
 					    	</a>
 					    </li>
@@ -123,13 +135,13 @@
 		                </li>  
 		                <li>
 		                	<a href="#" th:refURL="'group/html/list'" th:displayText="'系统维护  > 组织维护'">
-		                		<i style="padding-left:20px;" class="glyphicon glyphicon-tags"></i>
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-leaf"></i>
 		                		<span style="margin-left:5px;"><b>组织维护</b></span>
 		                	</a>
 		                </li>  
 		                <li>
 		                	<a href="#" th:refURL="'device/html/list'" th:displayText="'系统维护  > 设备维护'">
-		                		<i style="padding-left:20px;" class="glyphicon glyphicon-tags"></i>
+		                		<i style="padding-left:20px;" class="glyphicon glyphicon-tower"></i>
 		                		<span style="margin-left:5px;"><b>设备维护</b></span>
 		                	</a>
 		                </li>  

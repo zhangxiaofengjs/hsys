@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.UserBusiness;
-import com.hsys.business.Forms.UserForm;
-import com.hsys.business.Forms.UserUpdateForm;
+import com.hsys.business.forms.UserHtmlListForm;
+import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.UserModel;
 
@@ -49,7 +49,7 @@ public class UserController extends BaseController {
 	
 	@RequestMapping("/json/update")
 	@ResponseBody
-	public JsonResponse update(@RequestBody UserUpdateForm userUpdateForm) {
+	public JsonResponse update(@RequestBody UserJsonUpdateForm userUpdateForm) {
 		try {
 			userBusiness.update(userUpdateForm);
 			return JsonResponse.success();
@@ -59,7 +59,7 @@ public class UserController extends BaseController {
 	}
 	
 	@RequestMapping("/html/list")
-	public String htmlList(UserForm userForm, Model model) {
+	public String htmlList(UserHtmlListForm userForm, Model model) {
 		List<UserModel> list = userBusiness.getUsers(userForm);
 		model.addAttribute("userForm", userForm);
 		model.addAttribute("users", list);
@@ -74,5 +74,16 @@ public class UserController extends BaseController {
 		model.addAttribute("no", user.getNo());
 		
 		return "user/detail";
+	}
+	
+	@RequestMapping("/json/list")
+	@ResponseBody
+	public JsonResponse getUser(UserHtmlListForm userForm) {
+		try {
+			List<UserModel> list = userBusiness.getUsers(userForm);
+			return JsonResponse.success().put("users", list);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
 	}
 }

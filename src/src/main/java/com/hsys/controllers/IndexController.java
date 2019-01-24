@@ -4,9 +4,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.hsys.config.HsysConfig;
+import com.hsys.models.UserModel;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -14,9 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class IndexController extends BaseController {
-
+	@Autowired
+	HsysConfig config;
+	
 	@RequestMapping(value= {"/", "/index"})
     public String index(Model model) {
+		UserModel user = new UserModel();
+		user.setName("海老太郎");
+		model.addAttribute("version", config.getVersion());
+		model.addAttribute("user", user);
         return "index";
     }
 	
