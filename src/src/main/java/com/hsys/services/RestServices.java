@@ -20,4 +20,28 @@ public class RestServices {
 	public void add(RestModel rest) {
 		restMapper.add(rest);
 	}
+	
+	public RestModel queryById(int id) {
+		RestModel rest = new RestModel();
+		if (id != 0) {
+			rest.setId(id);
+			rest.setCond(RestModel.COND_ID, true);
+			List<RestModel> list =queryList(rest);
+			if(list.size() != 0) {
+				return list.get(0);
+			}
+		}
+		return null;
+	}
+	
+	public void update(RestModel rest) {
+		restMapper.update(rest);
+	}
+	
+	public void deleteById(int id) {
+		RestModel rest = new RestModel();
+		rest.setId(id);
+		rest.setCond(RestModel.COND_ID, true);
+		restMapper.delete(rest);
+	}
 }

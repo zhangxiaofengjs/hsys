@@ -31,6 +31,10 @@ public class HsysException extends RuntimeException {
 		this.code = code;
 	}
 
+	public HsysException(Exception e) {
+		super("hsys error:", e);
+	}
+
 	public int getCode() {
 		return code;
 	}

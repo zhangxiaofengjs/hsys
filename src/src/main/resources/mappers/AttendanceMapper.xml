@@ -4,6 +4,8 @@
 <mapper namespace="com.hsys.mappers.AttendanceMapper">
 	<resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>  
+        <result column="u_name" property="name"/>
+        <result column="u_no" property="no"/>    
     </resultMap>
  
 	<resultMap id="attendanceResultMap" type="attendanceModel" >  
@@ -21,7 +23,9 @@
 			   a.c_end as a_end,
 			   a.c_date as a_date,
 			   a.c_comment as a_comment,
-			   u.c_id as u_id
+			   u.c_id as u_id,
+			   u.c_name as u_name,
+			   u.c_no as u_no
 		from attendance_tbl as a
 		left join user_tbl as u on u.c_id=a.c_user_id
 		<where>
@@ -30,6 +34,9 @@
 			</if>
 			<if test="cond.date != null">
 				and a.c_date = #{date}
+			</if>
+			<if test="cond.userNo != null">
+				and u.c_no = #{user.no}
 			</if>
 		</where>
 		order by a.c_user_id, a.c_date

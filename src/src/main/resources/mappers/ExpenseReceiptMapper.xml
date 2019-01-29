@@ -16,6 +16,7 @@
 		<result column="e_payee_id" property="payeeId"/> 
 		<result column="e_comment" property="comment"/> 
 		<result column="e_status" property="status"/> 
+		<result column="e_project_id" property="projectId"/> 
 		<association property="user" resultMap="userResultMap"/>
 	</resultMap> 
 	<select id="queryList" resultMap="expenseReceiptResultMap">
@@ -28,11 +29,72 @@
 				e.c_payee_id as e_payee_id,
 				e.c_status as e_status,
 				e.c_comment as e_comment,
+				e.c_project_id as e_project_id,
 				u.c_no as u_no,
 				u.c_name as u_name			   
 		from expense_receipt_tbl as e 
-		left join user_tbl as u on e.c_payee_id=u.c_no
+		left join user_tbl as u on e.c_payee_id=u.c_id
+		<where>
+			<if test="cond.id != null">
+				and e.c_id = #{id}
+			</if>
+			<if test="cond.no != null">
+				and e.c_no = #{no}
+			</if>
+		</where>
 	</select>
+	<insert id="add" parameterType="deviceModel">
+    	insert into expense_receipt_tbl (
+    		c_no,
+    		c_comment,
+    		c_type,
+    		c_status,
+    		c_pay_date,
+			c_submit_date,
+			c_payee_id
+			 )
+    	values (
+    		#{no},
+    		#{comment},
+    		#{type},
+    		0,
+    		null,
+    		null,
+    		0
+    	)
+    </insert>
+    <update id="update">
+    	update expense_receipt_tbl
+		<set>
+    		<if test="update.no != null">
+				c_no = #{no},
+			</if>
+    		<if test="update.comment != null">
+				c_comment = #{comment},
+			</if>
+    		<if test="update.type != null">
+				c_type = #{type},
+			</if>
+    		<if test="update.payeeId != null">
+				c_payee_id = #{payeeId},
+			</if>
+			<if test="cond.status != null">
+				 c_status = #{status}
+			</if>
+			
+		</set>
+    	<where>
+			c_id = #{id}
+		</where>
+    </update>
+    <delete id="delete">
+    	delete from expense_receipt_tbl
+    	<where>
+			<if test="cond.id != null">
+				and c_id = #{id}
+			</if>
+		</where>
+    </delete>
  
 	
 </mapper>

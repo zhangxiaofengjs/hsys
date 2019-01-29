@@ -1,5 +1,9 @@
 package com.hsys.mappers;
 
+/**
+ * @author: hancaipeng
+ * @version: 2019/01/22
+ */
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
@@ -13,4 +17,7 @@ public interface RestMapper {
 	
 	void add(RestModel rest);
 
+	void update(RestModel rest);
+	
+	void delete(RestModel rest);
 }

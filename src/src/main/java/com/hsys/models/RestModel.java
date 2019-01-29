@@ -10,8 +10,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class RestModel extends BaseModel {
 	public static final String COND_USER_NO = "userNo";
 	public static final String COND_DATE = "date";
+	public static final String COND_ID = "id";
 	
-	private  int id;
+	public static final String FIELD_DATE_START = "dateStart";
+	public static final String FIELD_DATE_END = "dateEnd";
+	public static final String FIELD_TYPE = "type";
+	public static final String FIELD_SUMMARY = "summary";
+	public static final String FIELD_LEN = "len";
+	
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern="yyyy-MM-dd")
 	private Date dateStart;
@@ -49,12 +55,6 @@ public class RestModel extends BaseModel {
 	}
 	public void setLen(int len) {
 		this.len = len;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
 	}
 	public int getType() {
 		return type;

@@ -9,15 +9,41 @@ $(document).ready(function(){
 		var pEditDiv = $("#{0}_edit_div".format(id));
 
 		if(pEditDiv.length == 0) {
-			var pTd = pDispDiv.parent();
 			var editor = "";
-			if(id == "e_group") {
-				editor = '<select class="form-control" style="display:inline;width:200px;" name="{0}_value" id="{0}_value"></select>'.
-				format(id);
+			if(id == "e_group" ||
+				id == "e_sex" ||
+				id == "e_degree") {
+				editor = '<select class="form-control" style="display:inline;width:200px;" name="{0}_value" id="{0}_value"></select>'.format(id);
+			} else if( id == "e_graduateDate" ||
+					id == "e_enterDate" ||
+					id == "e_exitDate" ) {
+				editor = '<input type="date" name="{0}_value" id="{0}_value" value="" class="form-control" style="display:inline;width:200px;">'.format(id);
 			} else {
-				editor = '<input name="{0}_value" id="{0}_value" value="" class="form-control" style="display:inline;width:200px;">'.format(id);
+				editor = '<input list="{0}_list" name="{0}_value" id="{0}_value" value="" class="form-control" style="display:inline;width:200px;">'.format(id);
+				if( id == "e_major" ) {
+					editor += '<datalist id="{0}_list" style="font-family:Microsoft Yahei">\
+					        <option value="计算机科学与技术">计算机科学与技术</option>\
+					        <option value="软件工程">软件工程</option>\
+					        <option value="通信工程">通信工程</option>\
+					        <option value="机械自动化">机械自动化</option>\
+					        <option value="数学">数学</option>\
+							<option value="物理">物理</option>\
+				        </datalist>'.format(id);
+				} else if( id == "e_school" ) {
+					editor += '<datalist id="{0}_list">\
+					        <option value="南京大学">南京大学</option>\
+							<option value="东南大学">东南大学</option>\
+							<option value="同济大学">同济大学</option>\
+							<option value="上海大学">上海大学</option>\
+							<option value="南通大学">南通大学</option>\
+							<option value="南京林业大学">南京林业大学</option>\
+							<option value="南京信息工程大学">南京信息工程大学</option>\
+							<option value="江苏科技大学">江苏科技大学</option>\
+							<option value="盐城工学院">盐城工学院</option>\
+					        </datalist>'.format(id);
+				}
 			}
-			pTd.append('<div id="{0}_edit_div" style="display:inline-block;">\
+			pDispDiv.after('<div id="{0}_edit_div" style="display:inline-block;">\
 							{3}\
 							<a id="{0}_update" class="hsys-a-pointer" href="javascript:void(0)" onclick="doUpdate(this)">\
 								<img src="{1}" />\
@@ -35,13 +61,47 @@ $(document).ready(function(){
 		}
 		  
 		var val = $("#{0}_disp_div span".format(id)).attr("value");
-		var url = null;
-		if(id == "e_group") {
-			url = "/group/json/list";
-		}
-		if(url == null) {
+		if(id == "e_name" ||
+			id == "e_place" ||
+			id == "e_phoneNumber" ||
+			id == "e_mail" ||
+			id == "e_address" ||
+			id == "e_idNumber" ||
+			id == "e_major" ||
+			id == "e_school" ||
+			id == "e_graduateDate" ||
+			id == "e_enterDate" ||
+			id == "e_exitDate" ) {
 			$("input[name='{0}_value']".format(id)).val(val); 
+		} else if(id == "e_sex") {
+			var pSelect = $("#{0}_value".format(id));
+			pSelect.children().remove();
+			pSelect.append('<option value=0 {0}>男</option><option value=1 {1}>女</option>'.
+					format(val=="0"?"selected":"", val=="1"?"selected":""));
+		} else if(id == "e_degree") {
+			var pSelect = $("#{0}_value".format(id));
+			pSelect.children().remove();
+			pSelect.append('<option value=0 {0}>大专</option>\
+							<option value=1 {1}>本科3</option>\
+							<option value=2 {2}>本科2</option>\
+							<option value=3 {3}>本科1</option>\
+							<option value=4 {4}>硕士</option>\
+							<option value=5 {5}>博士</option>'.format(
+							val=="0"?"selected":"",
+							val=="1"?"selected":"",
+							val=="2"?"selected":"",
+							val=="3"?"selected":"",
+							val=="4"?"selected":"",
+							val=="5"?"selected":""));
 		} else {
+			var url = null;
+			if(id == "e_group") {
+				url = "/group/json/list";
+			}
+			else {
+				return;
+			}
+		
 			hsys.ajax({
 				"url": url,
 				"data": {},

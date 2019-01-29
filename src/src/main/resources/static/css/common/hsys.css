@@ -4,9 +4,12 @@
 	width:15px;
 }
 
-.hsys-number {
+.hsys-text-right {
 	text-align: right;
-	font-style: italic;
+}
+
+.hsys-text-center {
+	text-align: center;
 }
 
 .hsys-no-boder-form-control {

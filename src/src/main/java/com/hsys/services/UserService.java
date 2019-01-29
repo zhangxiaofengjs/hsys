@@ -31,6 +31,7 @@ public class UserService {
 	public UserModel queryById(int id) {
 		UserModel u = new UserModel();
 		u.setId(id);
+		u.setCond(UserModel.COND_ID, true);
 		List<UserModel> us = queryList(u);
 		
 		if(us.size() == 1) {
@@ -42,6 +43,7 @@ public class UserService {
 	public UserModel queryByNo(String no) {
 		UserModel u = new UserModel();
 		u.setNo(no);
+		u.setCond(UserModel.COND_NO, true);
 		List<UserModel> us = queryList(u);
 		
 		if(us.size() == 1) {
@@ -50,10 +52,14 @@ public class UserService {
 		return null;
 	}
 	
-	public UserModel queryOne(UserModel user) {
-		List<UserModel> us = queryList(user);
+	public UserModel queryByNoWithPassword(String no) {
+		UserModel u = new UserModel();
+		u.setNo(no);
+		u.setCond(UserModel.COND_NO, true);
+		u.setCond(UserModel.FIELD_PASSWORD, true);
+		List<UserModel> us = queryList(u);
 		
-		if(us.size() ==1) {
+		if(us.size() == 1) {
 			return us.get(0);
 		}
 		return null;

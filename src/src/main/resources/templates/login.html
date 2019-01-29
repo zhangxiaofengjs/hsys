@@ -22,12 +22,12 @@
 <body>
 	<div class="container mainDiv">
 		<div style="width:50%;height:50%;float:left;margin-left:0px;margin-top:10%;padding-left:0px;">
-			<img class="pull-right" style="padding-right:50px;padding-top:50px;" src="icons/logo.png">
+			<img class="pull-right" width="341px" style="padding-right:50px;padding-top:0px;" src="icons/logo.png">
 		</div>
 		<div style="width:50%;margin-top:10%;margin-left:50%;">
 			<div class="row">
 				<div class="col-xs-6 col-sm-6 col-md-6">
-				    <h2>欢迎登录HSYS！</h2>
+				    <h2>欢迎登录HSYS!</h2>
 	                <div th:if="${param.error}" class="alert alert-danger">不合法的用户名或者密码</div>
 	                <div th:if="${param.logout}" class="alert alert-info">已退出登录</div>
 				    <form role="form" class="form-horizontal" name="form" th:action="@{/login}" method="post">

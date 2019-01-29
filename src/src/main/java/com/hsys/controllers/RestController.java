@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.RestBusiness;
-import com.hsys.business.forms.RestForm;
+import com.hsys.business.forms.RestHtmlListForm;
+import com.hsys.business.forms.RestJsonDeleteForm;
+import com.hsys.business.forms.RestJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.RestModel;
 
@@ -25,7 +27,7 @@ public class RestController extends BaseController {
     private RestBusiness restBusiness;
 
 	@RequestMapping("/html/list")
-	public String htmlList(RestForm restForm, Model model) {
+	public String htmlList(RestHtmlListForm restForm, Model model) {
 		List<RestModel> list = restBusiness.getRests(restForm);
 		model.addAttribute("list", list);
 		return "rest/list";
@@ -42,5 +44,36 @@ public class RestController extends BaseController {
 		return JsonResponse.success();
 	}
 	
+	@RequestMapping("/json/get")
+	@ResponseBody
+	public JsonResponse get(@RequestBody RestHtmlListForm restForm) {
+		try {
+			RestModel rest = restBusiness.getRest(restForm);
+			return JsonResponse.success().put("rest", rest);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
 	
+	@RequestMapping("/json/update")
+	@ResponseBody
+	public JsonResponse update(@RequestBody RestJsonUpdateForm form) {
+		try {
+			restBusiness.update(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/delete")
+	@ResponseBody
+	public JsonResponse delete(@RequestBody RestJsonDeleteForm form) {
+		try {
+			restBusiness.delete(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
 }

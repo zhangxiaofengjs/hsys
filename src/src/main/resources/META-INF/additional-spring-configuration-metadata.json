@@ -8,5 +8,15 @@
     "name": "hsys.version.number",
     "type": "java.lang.String",
     "description": "A description for 'hsys.version.number'"
+  },
+  {
+    "name": "hsys.upload.temp",
+    "type": "java.lang.String",
+    "description": "A description for 'hsys.upload.temp'"
+  },
+  {
+    "name": "hsys.upload.attendance",
+    "type": "java.lang.String",
+    "description": "A description for 'hsys.upload.attendance'"
   }
 ]}

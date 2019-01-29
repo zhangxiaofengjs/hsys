@@ -1,0 +1,21 @@
+﻿select c_no, c_name, c_sex, c_mail, c_place, c_address, c_id_number, c_school, c_major, c_degree, c_graduate_date, c_enter_date, c_exit_date
+from user_tbl 
+
+select c_date, c_start, c_end, c_type, c_len, replace(replace(c_sumary, CHR(10), ''), chr(13), '') as c_comment, c_no, c_status, c_meal_lunch, c_meal_supper
+from extra_hour_tbl as e
+left join user_tbl as u on u.c_id=e.c_user_id
+
+select c_date, c_start, c_end, c_type, replace(replace(c_sumary, CHR(10), ''), chr(13), '') as c_comment, c_no, c_status
+from rest_tbl as r
+left join user_tbl as u on u.c_id=r.c_user_id
+
+select c_date, c_start, c_end, replace(replace(c_start_comment || ' ' || c_end_comment, CHR(10), ''), chr(13), '') as c_comment, c_no
+from access_ctrl_tbl as a
+left join user_tbl as u on u.c_id=a.c_user_id
+
+select c_date, u.c_no, c_sum, i.c_type, replace(replace(i.c_detail, CHR(10), ''), chr(13), '') as c_comment, c_receipt_id, r.c_create_date as c_submit_date, 
+r.c_type, c_pay_date, u2.c_no, c_status, replace(replace(r.c_detail, CHR(10), ''), chr(13), '') as r_comment
+from expense_reimburse_tbl as i
+left join user_tbl as u on u.c_id=i.c_user_id
+left join expense_receipt_tbl as r on r.c_id=i.c_receipt_id
+left join user_tbl as u2 on u2.c_id=r.c_user_id

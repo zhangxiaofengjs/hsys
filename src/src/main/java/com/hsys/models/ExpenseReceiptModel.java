@@ -14,7 +14,12 @@ import org.apache.ibatis.type.Alias;
 public class ExpenseReceiptModel extends BaseModel {
 	
 
-	
+	public static final String COND_ID = "id";
+	public static final String COND_NO = "no";
+	public static final String FIELD_COMMENT = "comment";
+	public static final String FIELD_STATUS = "status";
+	public static final String FIELD_USER_ID = "userId";
+	public static final String FIELD_PAYEE_ID = "payeeId";
 	private String no;
 	private Date submitDate;
 	private Date payDate;
@@ -22,6 +27,7 @@ public class ExpenseReceiptModel extends BaseModel {
 	private int payeeId;
 	private String comment;
 	private int status;
+	private int projectId;
 	private UserModel user;
 	
 	
@@ -88,6 +94,14 @@ public class ExpenseReceiptModel extends BaseModel {
 
 	public void setPayeeId(int payeeId) {
 		this.payeeId = payeeId;
+	}
+
+	public int getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
 	}
 	
 	

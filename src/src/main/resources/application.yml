@@ -45,8 +45,8 @@ spring:
 logging: 
     level:
         org.springframework.web: WARN
-        com.zworks.hsys.mappers.NoticeMapper.queryList: WARN #定时通知太多，所以暂时不显示DEBUG信息
-        com.zworks.hsys: DEBUG
+        com.hsys.mappers: DEBUG
+        com.hsys: DEBUG
     file: c:/hsys/log/hsys.log
      
 # Mybatis配置
@@ -60,14 +60,11 @@ mybatis:
 hsys:
     version:
         number: v.HSYS2019.0
-    admin:
-        username: admin
-        password: $2a$10$qhZeMeQNJRuZ6bPCRvUOxecqqSMQ81Zs91n/fmyxCiCI6yalyMI2m #pdsys123 $2a$10$qbN23rlzj2.OoQv0F7kPfePrOVm7ehvdTzYMTZ54nKxXpYagbhqD.
     upload: 
-        location: c:/hsys/upload/ #上传文件路径
-        temp-folder: temp/ #临时文件夹
+        temp: c:/hsys/upload/temp #临时文件夹
+        attendance: c:/hsys/upload/attendance #考勤信息文件夹
+        expense-receipt: c:/hsys/upload/expense-receipt #报销单附件文件夹
         image-folder: image/ #图形文件夹
-        order-attachment-folder: order/attachment/ #导入的附件文件夹
     backup: #备份设定
         database:
             enable: true

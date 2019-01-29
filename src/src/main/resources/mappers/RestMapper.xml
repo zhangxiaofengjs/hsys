@@ -4,7 +4,8 @@
 <mapper namespace="com.hsys.mappers.RestMapper">
     <resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>
-        <result column="u_name" property="name"/>    
+        <result column="u_name" property="name"/>
+        <result column="u_no" property="no"/>    
     </resultMap>
     
 	<resultMap id="restResultMap" type="RestModel" >  
@@ -21,36 +22,36 @@
     </resultMap>
     
     <select id="queryList" resultMap="restResultMap">
-	select r.c_id as r_id,
-	r.c_date_start as r_start,
-	r.c_date_end as r_end,
-	r.c_len as r_len,
-	r.c_type as r_type,
-	r.c_summary as r_summary,
-	r.c_status as r_status,
-	r.c_approval_time as r_approvalDate,
-	appu.c_id as appu_id,
-	appu.c_name as appu_name,
-	u.c_id as u_id,
-	u.c_name as u_name
-	from rest_tbl as r
-	left join user_tbl as u on u.c_id=r.c_user_id
-	left join user_tbl as appu on appu.c_id=r.c_approval_user_id
-	<where>
-		<if test="cond.userNo != null and cond.date != null">
-			and u.c_no=#{user.no}
-			and r.c_date_start &lt;= #{date}
-			and r.c_date_end &gt;= #{date}
-		</if>
-		<if test="cond.userNo != null and cond.date == null">
-			and u.c_no=#{user.no}
-		</if>
-		<if test="cond.userNo == null and cond.date != null">
-			and r.c_date_start &lt;= #{date}
-			and r.c_date_end &gt;= #{date}
-		</if>
-	</where>
-		order by r.c_user_id
+		select  r.c_id as r_id,
+				r.c_date_start as r_start,
+				r.c_date_end as r_end,
+				r.c_len as r_len,
+				r.c_type as r_type,
+				r.c_summary as r_summary,
+				r.c_status as r_status,
+				r.c_approval_time as r_approvalDate,
+				appu.c_id as appu_id,
+				appu.c_name as appu_name,
+				appu.c_no as appu_no,
+				u.c_id as u_id,
+				u.c_name as u_name,
+				u.c_no as u_no
+		from rest_tbl as r
+		left join user_tbl as u on u.c_id=r.c_user_id
+		left join user_tbl as appu on appu.c_id=r.c_approval_user_id
+		<where>
+			<if test="cond.userNo != null">
+				and u.c_no=#{user.no}
+			</if>
+			<if test="cond.date != null">
+				and r.c_date_start &lt;= #{date}
+				and r.c_date_end &gt;= #{date}
+			</if>
+			<if test="cond.id != null">
+			    and r.c_id = #{id}
+			</if>
+		</where>
+		order by r.c_date_start
 	</select>
 
 	<insert id="add" parameterType="restModel">
@@ -69,7 +70,36 @@
     		#{summary},
     		#{user.id}
     	)
-      	
     </insert>
 
+	<update id="update">
+		update rest_tbl
+		<set>
+			<if test="update.len != null">
+				c_len = #{len},
+			</if>
+			<if test="update.dateStart != null">
+				c_date_start = #{dateStart},
+			</if>
+			<if test="update.dateEnd != null">
+				c_date_end = #{dateEnd},
+			</if>
+			<if test="update.type != null">
+				c_type = #{type},
+			</if>
+			<if test="update.summary != null">
+				c_summary = #{summary},
+			</if>
+		</set>
+		<where>
+			c_id = #{id}
+		</where>
+	</update>
+
+    <delete id="delete">
+    	delete from rest_tbl
+    	<where>
+				and c_id = #{id}
+		</where>
+    </delete>
 </mapper>

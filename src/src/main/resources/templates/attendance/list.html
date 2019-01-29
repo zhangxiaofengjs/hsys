@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="common/header::header">
+</head>
+<body>
+	<script th:src="@{/js/attendance/list.js}"></script> 
+	<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
+		<div class="container-fluid">
+	  		<div class="navbar-header">
+	  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
+	  		</div>
+	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/attendance/html/list}" method="post">
+	 			<div class="form-group">
+				   <input type="text" class="form-control" id="userNo" name="userNo" th:value="${attendanceForm!=null?attendanceForm.userNo:_}" placeholder="输入工号">
+	 			</div>
+	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
+	 			<button type="button" class="btn btn-sm btn-primary" id="upload">导入</button>
+			</form>
+		</div>
+	</nav>
+
+	<table id="attendanceTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
+		<thead>
+		    <tr>
+		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+		    	<th width=50px>工号</th>
+				<th width=180px style="text-align:center;">姓名</th>
+				<th width=180px style="text-align:center;">日期</th>
+				<th>详细</th>
+		    </tr>
+		</thead>
+		<tbody>
+			<tr th:each="attendance : ${list}"
+				th:rowid="${attendance.id}">
+				<td>
+					<input type="checkbox" name="select" th:rowid="${attendance.id}">
+				</td>
+				<td th:text="${attendance.user.no}"></td>
+				<td th:text="${attendance.user.name}"></td>
+				<td th:text="${attendance.start != null ? #dates.format(attendance.date, 'yyyy-MM-dd')+' '+#dates.format(attendance.start, 'HH:mm')+'~'+#dates.format(attendance.end, 'HH:mm') : #dates.format(attendance.date, 'yyyy-MM-dd')}"></td>
+				<td th:text="${attendance.comment}"></td>
+		    </tr>
+		</tbody>
+	</table>
+	<div th:replace="common/footer::copyright"></div>
+</body>
+</html>

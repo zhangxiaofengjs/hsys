@@ -2,24 +2,67 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.hsys.mappers.UserMapper">
+	<resultMap id="userRoleResultMap" type="userRoleModel" >  
+        <id column="ur_id" property="id"/>  
+        <result column="ur_role" property="role"/>  
+    </resultMap>
+	<resultMap id="groupResultMap" type="groupModel" >  
+        <id column="g_id" property="id"/>  
+        <result column="g_name" property="name"/>  
+    </resultMap>
 	<resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>  
         <result column="u_no" property="no"/>  
         <result column="u_name" property="name"/>  
+        <result column="u_sex" property="sex"/>  
         <result column="u_phone_number" property="phoneNumber"/>  
         <result column="u_addr" property="address"/>
+        <result column="u_place" property="place"/>
+        <result column="u_mail" property="mail"/>
         <result column="u_pwd" property="password"/>
-        <!-- <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" />-->  
+        <result column="u_id_number" property="idNumber"/>
+        <result column="u_school" property="school"/>
+        <result column="u_major" property="major"/>
+        <result column="u_degree" property="degree"/>
+        <result column="u_graduate_date" property="graduateDate"/>
+        <result column="u_enter_date" property="enterDate"/>
+        <result column="u_exit_date" property="exitDate"/>
+        <association property="group" resultMap="groupResultMap"/>
+        <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" /> 
     </resultMap>
 
 	<select id="queryList" resultMap="userResultMap">
 		select u.c_id as u_id,
 			   u.c_no as u_no,
 			   u.c_name as u_name,
+			   u.c_sex as u_sex,
 			   u.c_phone_number as u_phone_number,
+			   u.c_mail as u_mail,
 			   u.c_address as u_addr,
-			   u.c_password as u_pwd
+			   u.c_place as u_place,
+			   <choose>
+	                <when  test="cond.password != null">
+			   			u.c_password as u_pwd,
+			   		</when>
+			   		<otherwise>
+			   			'' as u_pwd,
+			   		</otherwise>
+			   </choose>
+			   u.c_id_number as u_id_number,
+			   u.c_school as u_school,
+			   u.c_major as u_major,
+			   u.c_degree as u_degree,
+			   u.c_graduate_date as u_graduate_date,
+			   u.c_enter_date as u_enter_date,
+			   u.c_exit_date as u_exit_date,
+			   g.c_id as g_id,
+			   g.c_name as g_name,
+			   ur.c_id as ur_id,
+			   ur.c_role as ur_role
 		from user_tbl as u
+		left join user_group_tbl as ug on ug.c_user_id=u.c_id
+		left join group_tbl as g on g.c_id=ug.c_group_id
+		left join (select * from user_role_tbl where c_enable=1) as ur on ur.c_user_id=u.c_id
 		<where>
 			<if test="cond.id != null">
 				and u.c_id = #{id}
@@ -64,8 +107,44 @@
     		<if test="update.password != null">
 				c_password = #{password},
 			</if>
+    		<if test="update.sex != null">
+				c_sex = #{sex},
+			</if>
     		<if test="update.name != null">
 				c_name = #{name},
+			</if>
+    		<if test="update.place != null">
+				c_place = #{place},
+			</if>
+    		<if test="update.mail != null">
+				c_mail = #{mail},
+			</if>
+    		<if test="update.major != null">
+				c_major = #{major},
+			</if>
+    		<if test="update.enterDate != null">
+				c_enter_date = #{enterDate},
+			</if>
+    		<if test="update.phoneNumber != null">
+				c_phone_number = #{phoneNumber},
+			</if>
+    		<if test="update.degree != null">
+				c_degree = #{degree},
+			</if>
+    		<if test="update.address != null">
+				c_address = #{address},
+			</if>
+    		<if test="update.idNumber != null">
+				c_id_number = #{idNumber},
+			</if>
+    		<if test="update.school != null">
+				c_school = #{school},
+			</if>
+    		<if test="update.exitDate != null">
+				c_exit_date = #{exitDate},
+			</if>
+    		<if test="update.graduateDate != null">
+				c_graduate_date = #{graduateDate},
 			</if>
 		</set>
     	<where>

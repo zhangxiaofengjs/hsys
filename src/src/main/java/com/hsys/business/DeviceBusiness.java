@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.hsys.business.forms.DeviceJsonDeleteForm;
 import com.hsys.business.forms.DeviceJsonGetForm;
@@ -77,6 +78,7 @@ public class DeviceBusiness {
 		deviceService.update(device);
 	}
 
+	@Transactional
 	public void delete(DeviceJsonDeleteForm form) {
 		int[] ids = form.getIds();
 		for(int id : ids) {

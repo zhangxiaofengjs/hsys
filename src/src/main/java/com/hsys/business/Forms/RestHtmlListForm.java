@@ -6,9 +6,18 @@ import java.util.Date;
  * @author: hancaipeng
  * @version: 2019/01/22
  */
-public class RestForm {
+public class RestHtmlListForm {
 	private String userNo;
 	private Date date;
+	private int id;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public Date getDate() {
 		return date;

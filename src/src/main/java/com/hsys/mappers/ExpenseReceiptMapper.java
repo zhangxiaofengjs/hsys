@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.hsys.models.DeviceModel;
 import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
 import com.hsys.models.UserModel;
@@ -15,7 +16,14 @@ import com.hsys.models.UserModel;
  */
 @Mapper
 public interface ExpenseReceiptMapper {
-	List<ExpenseReceiptModel> queryList();
+	List<ExpenseReceiptModel> queryList(ExpenseReceiptModel receipt);
+	
+	void add(ExpenseReceiptModel receipt);
+
+	void update(ExpenseReceiptModel receipt);
+
+	void delete(ExpenseReceiptModel receipt);
+
 
 	
 }

@@ -12,6 +12,7 @@ import org.apache.ibatis.type.Alias;
 public class AttendanceModel extends BaseModel {
 	public static final String COND_USER_ID = "userId";
 	public static final String COND_DATE = "date";
+	public static final String COND_USER_NO = "userNo";
 	
 	public static final String FIELD_START = "start";
 	public static final String FIELD_END = "end";
@@ -22,7 +23,21 @@ public class AttendanceModel extends BaseModel {
 	private Date end;
 	private String comment;
 	private UserModel user;
+	private String commentStart;
+	private String commentEnd;
 	
+	public String getCommentStart() {
+		return commentStart;
+	}
+	public void setCommentStart(String commentStart) {
+		this.commentStart = commentStart;
+	}
+	public String getCommentEnd() {
+		return commentEnd;
+	}
+	public void setCommentEnd(String commentEnd) {
+		this.commentEnd = commentEnd;
+	}
 	public Date getDate() {
 		return date;
 	}

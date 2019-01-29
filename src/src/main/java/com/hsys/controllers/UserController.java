@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.UserBusiness;
+import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
 import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
@@ -67,12 +68,21 @@ public class UserController extends BaseController {
 		return "user/list";
 	}
 	
+	@RequestMapping("/html/basic")
+	public String htmlList(Model model) {
+		return "user/basic";
+	}
+	
 	@RequestMapping("/html/detail")
-	public String detail(String no, Model model) {
-		UserModel user = userBusiness.getDetail(no);
+	public String detail(UserHtmlDetailForm form, Model model) {
+		UserModel user = null;
+		try {
+			user = userBusiness.getDetail(form);
+		} catch(Exception e) {
+			user = new UserModel();
+			user.setName("不存在用户");
+		}
 		model.addAttribute("user", user);
-		model.addAttribute("no", user.getNo());
-		
 		return "user/detail";
 	}
 	

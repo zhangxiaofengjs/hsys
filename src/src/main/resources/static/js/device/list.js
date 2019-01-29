@@ -49,7 +49,7 @@ $(document).ready(function(){
 							response.users.forEach(function(user,index){
 								field.options.push(
 									{ 
-										"text":user.name,
+										"text":"["+ user.no +"]" + user.name,
 										"value":user.id,
 									}
 								);
@@ -135,7 +135,7 @@ $(document).ready(function(){
 							response.users.forEach(function(user,index){
 								field.options.push(
 									{ 
-										"text":user.name,
+										"text":"["+ user.no +"]" + user.name,
 										"value":user.id,
 									}
 								);
