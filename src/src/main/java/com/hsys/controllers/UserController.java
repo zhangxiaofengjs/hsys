@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hsys.business.UserBusiness;
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
+import com.hsys.business.forms.UserJsonChangePwdForm;
 import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.UserModel;
@@ -42,6 +43,17 @@ public class UserController extends BaseController {
 	public JsonResponse initPwd(@RequestBody UserModel user) {
 		try {
 			userBusiness.initPwd(user);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/changepwd")
+	@ResponseBody
+	public JsonResponse changePwd(@RequestBody UserJsonChangePwdForm form) {
+		try {
+			userBusiness.changePwd(form);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}

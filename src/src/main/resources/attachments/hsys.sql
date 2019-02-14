@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS `expense_receipt_tbl` (
   `c_status` tinyint(11) NOT NULL DEFAULT '0' COMMENT '状态 填单中(0) 待审核(1) 财务处理中(2) 已领款(3)',
   `c_comment` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
   `c_project_id` int(11) DEFAULT NULL COMMENT '报销项目ID',
+  `c_attachment_path` varchar(50) COLLATE utf8_bin DEFAULT NULL COMMENT '附件路径',
   PRIMARY KEY (`c_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='报销单';
 
@@ -149,8 +150,8 @@ DELETE FROM `qm_tbl`;
 --  テーブル hsys.rest_tbl の構造をダンプしています
 CREATE TABLE IF NOT EXISTS `rest_tbl` (
   `c_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `c_date_start` date NOT NULL COMMENT '开始',
-  `c_date_end` date NOT NULL COMMENT '结束',
+  `c_date_start` datetime NOT NULL COMMENT '开始',
+  `c_date_end` datetime NOT NULL COMMENT '结束',
   `c_len` int(11) NOT NULL COMMENT '日期',
   `c_type` int(11) NOT NULL DEFAULT '0' COMMENT '种类 休(0) 病(1) 事(2) 婚(3) 丧(4) 公(5)',
   `c_summary` varchar(50) COLLATE utf8_bin NOT NULL COMMENT '备注',
@@ -188,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `user_role_tbl` (
   PRIMARY KEY (`c_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户角色表';
 
--- テーブル hsys.user_role_tbl: ~1 rows (約) のデータをダンプしています
+-- テーブル hsys.user_role_tbl: ~0 rows (約) のデータをダンプしています
 DELETE FROM `user_role_tbl`;
 /*!40000 ALTER TABLE `user_role_tbl` DISABLE KEYS */;
 INSERT INTO `user_role_tbl` (`c_id`, `c_user_id`, `c_role`, `c_enable`) VALUES
@@ -218,13 +219,11 @@ CREATE TABLE IF NOT EXISTS `user_tbl` (
   PRIMARY KEY (`c_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户表';
 
--- テーブル hsys.user_tbl: ~3 rows (約) のデータをダンプしています
+-- テーブル hsys.user_tbl: ~1 rows (約) のデータをダンプしています
 DELETE FROM `user_tbl`;
 /*!40000 ALTER TABLE `user_tbl` DISABLE KEYS */;
 INSERT INTO `user_tbl` (`c_id`, `c_no`, `c_name`, `c_phone_number`, `c_sex`, `c_password`, `c_mail`, `c_place`, `c_qm_id`, `c_address`, `c_id_number`, `c_school`, `c_major`, `c_degree`, `c_graduate_date`, `c_enter_date`, `c_exit_date`) VALUES
-	(1, 'admin', '管理员', NULL, 0, '$2a$10$1hwr9zPt9EzlDAdtHd8GZusYbbIggAl8u.no.p6DE..2dtkqhEjAe', '44', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-	(2, 'NT1', '1号与昂', NULL, 0, NULL, '7', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-	(3, 'NT2', '欧阳震s1', 'sssssssss', 1, '123', '7#asda', 'ssssss', NULL, '背景222', 'ssddddd', '南京大学', '计算机科学与技术', 1, '2017-01-25', '2019-01-03', '2019-01-31');
+	(1, 'admin', '管理员', NULL, 0, '$2a$10$yggjrP1Vte9RKgbHQ1SQs.HBJ2NKGzZIUCRASqV4E7gIPM.CJr6s.', '44', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 /*!40000 ALTER TABLE `user_tbl` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

@@ -10,7 +10,9 @@ $(document).ready(function(){
 
 		if(pEditDiv.length == 0) {
 			var editor = "";
-			if(id == "e_group" ||
+			if(id == "e_group" ) {
+				editor = '<input type="selecttree" class="form-control" name="{0}_value" id="{0}_value">'.format(id);
+			} else if(//id == "e_group" ||
 				id == "e_sex" ||
 				id == "e_degree") {
 				editor = '<select class="form-control" style="display:inline;width:200px;" name="{0}_value" id="{0}_value"></select>'.format(id);
@@ -43,7 +45,7 @@ $(document).ready(function(){
 					        </datalist>'.format(id);
 				}
 			}
-			pDispDiv.after('<div id="{0}_edit_div" style="display:inline-block;">\
+			pDispDiv.after('<div id="{0}_edit_div" class="form-inline;">\
 							{3}\
 							<a id="{0}_update" class="hsys-a-pointer" href="javascript:void(0)" onclick="doUpdate(this)">\
 								<img src="{1}" />\
@@ -56,6 +58,20 @@ $(document).ready(function(){
 								hsys.url('/icons/update.png'),
 								hsys.url('/icons/cancel.png'),
 								editor));
+			
+			if(id == "e_group"){
+				//egroup 重新初始化下拉框
+				htreeview.initPullDown({
+					"id":"{0}_value".format(id),
+					"css": {
+						"display": "inline-block",
+						"width": "300px",
+					},
+					"ajax":{
+						"url":'/group/json/children'
+					}
+				});
+			}
 		} else {
 			pEditDiv.show();
 		}
@@ -93,6 +109,9 @@ $(document).ready(function(){
 							val=="3"?"selected":"",
 							val=="4"?"selected":"",
 							val=="5"?"selected":""));
+		} else if(id == "e_group"){
+			var dispVal = $("#{0}_disp_div span".format(id)).text();
+			htreeview.setPullDownValue(id + "_value", val, dispVal);
 		} else {
 			var url = null;
 			if(id == "e_group") {
@@ -143,9 +162,9 @@ function doUpdate(pA) {
 	hsys.ajax({
 		"url":"/user/json/update",
 		"data": {
-			"id": $("input[name='e_user_id'").val(),
+			"id": $("input[name='e_user_id']").val(),
 			"field": id,
-			"value": $("#{0}_value".format(id)).val()
+			"value": $("[name='{0}_value']".format(id)).val()
 		},
 		"success": function(data) {
 			hsys.refresh();

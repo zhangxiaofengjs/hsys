@@ -11,7 +11,7 @@
 	  		</div>
 	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/expense/html/main}" method="post">
 	 			<div class="form-group">
-				   <input type="text" class="form-control" id="no" name="no" th:value="${userForm!=null?userForm.no:_}" placeholder="输入工号">
+				   <input type="text" class="form-control" id="userNo" name="userNo" th:value="${ReceiptListForm!=null?ReceiptListForm.userNo:_}" placeholder="输入工号">
 	 			</div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 	 			<button type="button" class="btn btn-sm btn-primary" id='addReceipt'>添加</button>
@@ -26,18 +26,19 @@
 		<thead>
 		    <tr>
 		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
-				<th width=80px>编号</th>
+				<th width=200px>编号</th>
 				<th width=80px>种类</th>
 				<th width=100px>提交日</th>
-				<th width=100px>领款日</th>
 				<th width=200px>【工号】领款人</th>			
+				<th width=100px>领款日</th>
 				<th width=80px>状态</th>
 				<th>附件</th>
 				<th>备注</th>
 		    </tr>
 		</thead>
 		<tbody>
-			<tr th:each="receipt : ${list}">
+			<tr th:each="receipt : ${list}"
+				th:with="user=${receipt.user}">
 				<td>
 					<input type="checkbox" name="select" th:rowid="${receipt.id}">
 				</td>		
@@ -48,19 +49,21 @@
 					<span th:case="2">支付核销</span>
 				</td>
 				<td th:text="${#dates.format(receipt.submitDate, 'yyyy-MM-dd')}"></td>
+				<td th:text="${user !=null && user.no !=null  ? '['+ user.no +']' + user.name:''}"></td>
 				<td th:text="${#dates.format(receipt.payDate, 'yyyy-MM-dd')}"></td>
-				<td th:text="'['+${receipt.payeeId}+']'+' '+${receipt.user !=null? receipt.user.name:''}"></td>
 				<td th:switch="${receipt.status}">
 					<span th:case="0" class="label label-info">填单中</span>
 					<span th:case="1" class="label label-primary">待审核</span>
-					<span th:case="2" class="label label-success">处理中</span>
+					<span th:case="2" class="label label-success">会计处理中</span>
 					<span th:case="3" class="label label-default">已领款</span>
 				</td>
 				<td>
 		      		<img width="16px" th:src="@{/icons/add.png}" />
 		      		<img width="16px" th:src="@{/icons/attachment.png}" />
 		      		<img width="16px" th:src="@{/icons/delete.png}" />
-		      		<img width="16px" th:src="@{/icons/download.png}" />
+		      		<a th:id="${'downloadReceiptAttachment_' + receipt.id}" th:receiptId="${receipt.id}" class="a-pointer" href="javascript:void(0);">
+		      			<img width="16px" th:src="@{/icons/download.png}" />
+		      		</a>
 				</td>
 				<td th:text="${receipt.comment}"></td>
 		    </tr>

@@ -32,7 +32,7 @@ public class HsysException extends RuntimeException {
 	}
 
 	public HsysException(Exception e) {
-		super("hsys error:", e);
+		super("hsys error:" + e.getMessage(), e);
 	}
 
 	public int getCode() {

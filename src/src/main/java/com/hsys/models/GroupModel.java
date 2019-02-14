@@ -12,6 +12,7 @@ public class GroupModel extends BaseModel {
 	
 	public static final String COND_FUZZY_NAME = "fuzzyName";
 	public static final String COND_USER_ID = "userId";
+	public static final String COND_PARENT_ID = "parentId";
 
 	private String name;
 	

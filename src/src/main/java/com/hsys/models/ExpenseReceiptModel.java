@@ -2,8 +2,6 @@ package com.hsys.models;
 
 import java.util.Date;
 
-import javax.xml.crypto.Data;
-
 import org.apache.ibatis.type.Alias;
 
 /**
@@ -12,26 +10,26 @@ import org.apache.ibatis.type.Alias;
  */
 @Alias("expenseReceiptModel")
 public class ExpenseReceiptModel extends BaseModel {
-	
-
+	public static final String COND_USER_NO = "userNo";
 	public static final String COND_ID = "id";
 	public static final String COND_NO = "no";
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
 	public static final String FIELD_USER_ID = "userId";
 	public static final String FIELD_PAYEE_ID = "payeeId";
+	public static final String FIELD_TYPE = "type";
+	
 	private String no;
 	private Date submitDate;
 	private Date payDate;
 	private int type;
 	private int payeeId;
 	private String comment;
+	private String attachmentPath;
 	private int status;
 	private int projectId;
 	private UserModel user;
 	
-	
-
 	public String getNo() {
 		return no;
 	}
@@ -103,6 +101,12 @@ public class ExpenseReceiptModel extends BaseModel {
 	public void setProjectId(int projectId) {
 		this.projectId = projectId;
 	}
-	
-	
+
+	public String getAttachmentPath() {
+		return attachmentPath;
+	}
+
+	public void setAttachmentPath(String attachmentPath) {
+		this.attachmentPath = attachmentPath;
+	}
 }

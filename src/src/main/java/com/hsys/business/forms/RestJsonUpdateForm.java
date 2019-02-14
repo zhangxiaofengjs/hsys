@@ -5,18 +5,18 @@ package com.hsys.business.forms;
  * @version: 2019/01/22
  */
 import java.util.Date;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.hsys.common.HsysDateTimeDeserializer;
+import com.hsys.common.HsysDateTimeSerializer;
 
 public class RestJsonUpdateForm {
 	private  int id;
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+	@JsonSerialize(using=HsysDateTimeSerializer.class)
+    @JsonDeserialize(using=HsysDateTimeDeserializer.class)
 	private Date dateStart;
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+	@JsonSerialize(using=HsysDateTimeSerializer.class)
+    @JsonDeserialize(using=HsysDateTimeDeserializer.class)
 	private Date dateEnd;
 	private int type;
 	private String summary;

@@ -20,4 +20,6 @@ public interface RestMapper {
 	void update(RestModel rest);
 	
 	void delete(RestModel rest);
+	
+	void approve(RestModel rest);
 }

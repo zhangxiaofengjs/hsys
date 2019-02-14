@@ -16,6 +16,16 @@ String.prototype.left = function(n) {
     return str.substr(0, n);
 };
 
+String.prototype.padLeft = function (len, charStr) {
+    var s = this + '';
+    return new Array(len - s.length + 1).join(charStr,  '') + s;
+}
+
+String.prototype.padRight = function (len, charStr) {
+    var s = this + '';
+    return s + new Array(len - s.length + 1).join(charStr,  '');
+}
+
 // Jquery中带点中括号的选择器替换 a.b =>  a\.b a[0]=a\[0\]
 String.prototype.safeJqueryId = function() {
     var str = String(this);

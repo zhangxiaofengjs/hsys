@@ -42,8 +42,9 @@
 				<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
 					[<a href="javascript:void(0);" id="changePwd" style="color:#fff;">
 						<b sec:authentication="name"></b>
+						<b th:text="${'('+ user.no + ')'}"></b>
 						</a>] 登录中
-					<input type="hidden" id="userid" name="userid" th:value="${user != null ? user.id :_}">
+					<input type="hidden" id="userno" name="userno" th:value="${user != null ? user.no :_}">
 					<a th:href="@{/logout}" style="text-decoration:underline;color:#fff;">退出</a>
 		  		</div>
 			</div>

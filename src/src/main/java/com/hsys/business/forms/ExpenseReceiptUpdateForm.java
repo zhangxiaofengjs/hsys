@@ -4,6 +4,7 @@ public class ExpenseReceiptUpdateForm {
 	private int id;
 	private String no;
 	private int status;
+	private int type;
 	private int payeeId;
 	private String comment;
 	public int getId() {
@@ -41,6 +42,12 @@ public class ExpenseReceiptUpdateForm {
 	}
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
 	}
 
 }

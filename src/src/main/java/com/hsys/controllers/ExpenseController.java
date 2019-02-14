@@ -1,9 +1,9 @@
 package com.hsys.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,22 +11,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.ExpenseReceiptBusiness;
-import com.hsys.business.forms.DeviceJsonDeleteForm;
-import com.hsys.business.forms.DeviceJsonGetForm;
-import com.hsys.business.forms.DeviceJsonUpdateForm;
 import com.hsys.business.forms.ExpenseHtmlForm;
 import com.hsys.business.forms.ExpenseReceiptDeleteForm;
 import com.hsys.business.forms.ExpenseReceiptGetForm;
-import com.hsys.business.forms.ExpenseReceiptSubmitForm;
 import com.hsys.business.forms.ExpenseReceiptUpdateForm;
+import com.hsys.business.forms.ReceiptListForm;
 import com.hsys.common.HsysList;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.mappers.ExpenseItemMapper;
-import com.hsys.mappers.ExpenseReceiptMapper;
-import com.hsys.models.DeviceModel;
 import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
-import com.hsys.models.UserModel;
 
 /**
  * @author: qs
@@ -36,21 +30,19 @@ import com.hsys.models.UserModel;
 @RequestMapping("/expense")
 public class ExpenseController extends BaseController {
 	@Autowired
-    private ExpenseReceiptMapper expenseReceiptMapper;
-	@Autowired
 	private ExpenseItemMapper expenseItemMapper;
 	@Autowired
     private ExpenseReceiptBusiness expenseReceiptBusiness; 
 	
 	@RequestMapping("/html/main")
-    public String listMain(ExpenseHtmlForm expenseForm, Model model) {
+    public String listMain(ExpenseHtmlForm expenseForm, Model model,ReceiptListForm receiptListForm) {
 		if(expenseForm.getType() == null) {
 			expenseForm.setType("receipts");
 		}
 		if("receipts".equals(expenseForm.getType())) {
-			ExpenseReceiptModel receipt = new ExpenseReceiptModel();
-			List<ExpenseReceiptModel> list = expenseReceiptMapper.queryList(receipt);
-			model.addAttribute("list",list );
+				List<ExpenseReceiptModel> list = expenseReceiptBusiness.getReceipts(receiptListForm);
+				model.addAttribute("list",list );
+			
 		} else if("receipt".equals(expenseForm.getType())) {
 			List<ExpenseItemModel> item= expenseItemMapper.queryList();
 			model.addAttribute("list",item );
@@ -72,7 +64,7 @@ public class ExpenseController extends BaseController {
 		return "expense/receiptitems";
 	}
 	
-	@RequestMapping("/json/add")
+	@RequestMapping("/json/receipt/add")
 	@ResponseBody
 	public JsonResponse add(@RequestBody ExpenseReceiptModel receipt) {
 		try {
@@ -83,7 +75,7 @@ public class ExpenseController extends BaseController {
 		return JsonResponse.success();
 	}
 	
-	@RequestMapping("/json/update")
+	@RequestMapping("/json/receipt/update")
 	@ResponseBody
 	public JsonResponse update(@RequestBody ExpenseReceiptUpdateForm form) {
 		try {
@@ -94,7 +86,7 @@ public class ExpenseController extends BaseController {
 		return JsonResponse.success();
 	}
 	
-	@RequestMapping("/json/get")
+	@RequestMapping("/json/receipt/get")
 	@ResponseBody
 	public JsonResponse get(@RequestBody ExpenseReceiptGetForm form) {
 		try {
@@ -105,7 +97,7 @@ public class ExpenseController extends BaseController {
 		}
 	}
 	
-	@RequestMapping("/json/delete")
+	@RequestMapping("/json/receipt/delete")
 	@ResponseBody
 	public JsonResponse delete(@RequestBody ExpenseReceiptDeleteForm form) {
 		try {
@@ -136,5 +128,15 @@ public class ExpenseController extends BaseController {
 			return JsonResponse.error(e.getMessage());
 		}
 		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/receipt/attachment/download")
+	@ResponseBody
+	public ResponseEntity<byte[]> downloadAttachment(int receiptId) {
+		try {
+			return expenseReceiptBusiness.downloadReceiptAttachment(receiptId);
+		} catch(Exception ex) {
+			return null;
+		}
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.RestBusiness;
 import com.hsys.business.forms.RestHtmlListForm;
+import com.hsys.business.forms.RestJsonApproveForm;
 import com.hsys.business.forms.RestJsonDeleteForm;
 import com.hsys.business.forms.RestJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
@@ -29,6 +30,7 @@ public class RestController extends BaseController {
 	@RequestMapping("/html/list")
 	public String htmlList(RestHtmlListForm restForm, Model model) {
 		List<RestModel> list = restBusiness.getRests(restForm);
+		model.addAttribute("restForm", restForm);
 		model.addAttribute("list", list);
 		return "rest/list";
 	}
@@ -71,6 +73,17 @@ public class RestController extends BaseController {
 	public JsonResponse delete(@RequestBody RestJsonDeleteForm form) {
 		try {
 			restBusiness.delete(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+
+	@RequestMapping("/json/approve")
+	@ResponseBody
+	public JsonResponse approve(@RequestBody RestJsonApproveForm form) {
+		try {
+			restBusiness.approve(form);
 			return JsonResponse.success();
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());

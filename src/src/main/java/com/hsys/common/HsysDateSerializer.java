@@ -12,8 +12,9 @@ import java.util.Date;
  * @author: zhangxiaofengjs@163.com
  * @version: 2019/01/03
  */
-public class JsonDateSerializer extends JsonSerializer<Date> {
+public class HsysDateSerializer extends JsonSerializer<Date> {
     public static final SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+
     public void serialize(Date date, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException,JsonProcessingException
     {

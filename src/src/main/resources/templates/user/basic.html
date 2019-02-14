@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>HSYS</title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="common/header::header">
 </head>
 <body>
 <div class="panel panel-default">
@@ -14,6 +11,158 @@
 		<h3>asdsadsdsdasd</h3>
 		</marquee>
     </div>
+    <!-- 
+	<input type="button" id="aaa"/>
+    <div class="form-group" id="postree" style="position:absolute;left:100px;width:300px;">
+	    <input class="form-control" id="itree"/>
+	    <div id="itreetgt"></div>
+    </div> -->
 </div>
+ <script th:src="@{/js/common/htreeview.js}"></script> 
+ <script>
+ $(document).ready(function(){
+ 	var dlg = hdlg.showForm({
+		"title":"修改密码",
+		"url": '/group/json/test',
+		"fields":[
+			{
+				"label":"no",
+				"id":"no",
+				"type":"selecttree",
+				"multiple":true,
+				"checkbox":true,
+				"nodeAjax":{
+ 					"url":'/group/json/children',
+ 				},
+ 				"value": 1,
+ 				"dispValue": "aaaa",
+				"nodes":[
+		 			{
+		 				"text":"第1层",
+		 				"value":1,
+		 				"expand":true,
+		 				"nodes":[
+		 		 			{
+		 		 				"text":"第2层",
+		 		 			},
+		 		 			{
+		 		 				"text":"第3层",
+		 		 				"checkbox":true,
+		 		 				"nodes":[
+		 		 		 			{
+		 		 		 				"text":"第4层层层层层层层层层层层188888888888888888888888888888888888888",
+		 		 		 				"checkbox":true,
+		 		 		 			},
+		 		 		 			{
+		 		 		 				"text":"第4层2",
+		 		 		 			},
+		 		 		 		]
+		 		 			},
+		 		 		]
+		 			},
+		 			{
+		 				"text":"第一层2222",
+		 				"value":"0",
+		 				"expand":false,
+		 			},
+		 			{
+		 				"text":"第一层3333",
+		 				"expand":true,
+		 				"nodes":[
+		 		 			{
+		 		 				"text":"1111-1",
+		 		 			},
+		 		 			{
+		 		 				"text":"2222-1",
+		 		 				"nodes":[
+		 		 		 			{
+		 		 		 				"text":"1111-2",
+		 		 		 			},
+		 		 		 			{
+		 		 		 				"text":"2222-2",
+		 		 		 			},
+		 		 		 		]
+		 		 			},
+		 		 		]
+		 			},
+		 		]
+			},
+			{
+				"label":"no111",
+				"id":"no111",
+				"type":"text",
+				"value":"asd"
+			}
+		],
+		"success": function(data) {
+		},
+		"error": function(data) {
+		}
+	});
+ 	 	
+ 	htreeview.init({
+ 		"target":"itreetgtd",
+ 		"pulldown": {
+ 			"enable":true,
+	 		"posParent":"postreed",
+	 		"pulldownParent":"itreed",
+ 			"valueParent": "itreed",
+ 		},
+ 		"multiple": false,
+ 		"nodes":[
+ 			{
+ 				"text":"第1层",
+ 				"value":1,
+ 				"expand":true,
+ 				"nodes":[
+ 		 			{
+ 		 				"text":"第2层",
+ 		 			},
+ 		 			{
+ 		 				"text":"第3层",
+ 		 				"checkbox":true,
+ 		 				"nodes":[
+ 		 		 			{
+ 		 		 				"text":"第4层层层层层层层层层层层188888888888888888888888888888888888888",
+ 		 		 				"checkbox":true,
+ 		 		 			},
+ 		 		 			{
+ 		 		 				"text":"第4层2",
+ 		 		 			},
+ 		 		 		]
+ 		 			},
+ 		 		]
+ 			},
+ 			{
+ 				"text":"第一层2222",
+ 			},
+ 			{
+ 				"text":"第一层3333",
+ 				"expand":true,
+ 				"nodes":[
+ 		 			{
+ 		 				"text":"1111-1",
+ 		 			},
+ 		 			{
+ 		 				"text":"2222-1",
+ 		 				"nodes":[
+ 		 		 			{
+ 		 		 				"text":"1111-2",
+ 		 		 			},
+ 		 		 			{
+ 		 		 				"text":"2222-2",
+ 		 		 			},
+ 		 		 		]
+ 		 			},
+ 		 		]
+ 			},
+ 		]
+ 	});
+ 	
+ 	
+ });
+ </script> 
+ <hr>
+<div id="tree1"></div>
 </body>
 </html>

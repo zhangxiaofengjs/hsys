@@ -6,11 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hsys.business.forms.DeviceHtmlListForm;
 import com.hsys.business.forms.DeviceJsonDeleteForm;
 import com.hsys.business.forms.DeviceJsonGetForm;
 import com.hsys.business.forms.DeviceJsonUpdateForm;
+import com.hsys.common.HsysString;
 import com.hsys.exception.HsysException;
 import com.hsys.models.DeviceModel;
+import com.hsys.models.UserModel;
 import com.hsys.services.DeviceService;
 
 /**
@@ -21,10 +24,15 @@ import com.hsys.services.DeviceService;
 public class DeviceBusiness {
 	@Autowired
     private DeviceService deviceService;
-	@Autowired
 	
-	public List<DeviceModel> getDevices() {
+	public List<DeviceModel> getDevices(DeviceHtmlListForm deviceHtmlListForm) {
 		DeviceModel device = new DeviceModel();
+		if (HsysString.isNullOrEmpty(deviceHtmlListForm.getUserNo()) == false) {
+			UserModel user = new UserModel();
+			user.setNo(deviceHtmlListForm.getUserNo());
+			device.setUser(user);
+			device.setCond(DeviceModel.COND_USER_NO, true);
+		}
 		device.setNo(device.getNo());
 		List<DeviceModel> list = deviceService.queryList(device);
 		return list;

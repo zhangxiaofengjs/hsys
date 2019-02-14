@@ -27,21 +27,29 @@ public class HsysDate {
         return null;
     }
     
-    public static Date parse(String strDate, String format) {
-	    try {
-	    	SimpleDateFormat df = new SimpleDateFormat(format);
-	        Date date= df.parse(strDate);
-	        return date;
-	    } catch(ParseException px) {
-	        px.printStackTrace();
-	    }
-	    return null;
+    public static Date parse(String strDate, String format) throws ParseException {
+    	if(HsysString.isNullOrEmpty(strDate)) {
+    		return null;
+    	}
+    	SimpleDateFormat df = new SimpleDateFormat(format);
+        Date date= df.parse(strDate);
+        return date;
     }
     
-    public static Date parse(String strDate) {
+    public static Date parse(String strDate) throws ParseException {
 	    return parse(strDate, DATE_TIME_PATTERN);
     }
     
+    public static Date tryParse(String date, String fmt) {
+    	try {
+    		Date d = parse(date, fmt);
+    		return d;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
     public static Date addDay(Date date, int days) {
     	if(date == null) {
     		return null;
@@ -108,4 +116,6 @@ public class HsysDate {
 		
 		return null;
 	}
+
+	
 }

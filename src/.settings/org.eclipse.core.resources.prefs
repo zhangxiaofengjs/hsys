@@ -1,5 +1,7 @@
 eclipse.preferences.version=1
+encoding//src/main/java=UTF-8
 encoding//src/main/java/com/hsys/io/AttendanceRawDataReader.java=UTF-8
+encoding//src/main/resources=UTF-8
 encoding//src/main/resources/templates/attendance/list.html=UTF-8
 encoding//src/main/resources/templates/common/footer.html=UTF-8
 encoding//src/main/resources/templates/device/list.html=UTF-8
@@ -10,5 +12,9 @@ encoding//src/main/resources/templates/expense/receipts.html=UTF-8
 encoding//src/main/resources/templates/index.html=UTF-8
 encoding//src/main/resources/templates/login.html=UTF-8
 encoding//src/main/resources/templates/rest/list.html=UTF-8
+encoding//src/main/resources/templates/user/basic.html=UTF-8
 encoding//src/main/resources/templates/user/detail.html=UTF-8
 encoding//src/main/resources/templates/user/list.html=UTF-8
+encoding//src/test/java=UTF-8
+encoding//src/test/resources=UTF-8
+encoding/<project>=UTF-8

@@ -16,6 +16,7 @@
 		<result column="e_payee_id" property="payeeId"/> 
 		<result column="e_comment" property="comment"/> 
 		<result column="e_status" property="status"/> 
+		<result column="e_attachment_path" property="attachmentPath"/> 
 		<result column="e_project_id" property="projectId"/> 
 		<association property="user" resultMap="userResultMap"/>
 	</resultMap> 
@@ -29,6 +30,7 @@
 				e.c_payee_id as e_payee_id,
 				e.c_status as e_status,
 				e.c_comment as e_comment,
+				e.c_attachment_path as e_attachment_path,
 				e.c_project_id as e_project_id,
 				u.c_no as u_no,
 				u.c_name as u_name			   
@@ -38,12 +40,15 @@
 			<if test="cond.id != null">
 				and e.c_id = #{id}
 			</if>
+			<if test="cond.userNo != null">
+				and u.c_no like '%' #{user.no} '%'
+			</if>
 			<if test="cond.no != null">
 				and e.c_no = #{no}
 			</if>
 		</where>
 	</select>
-	<insert id="add" parameterType="deviceModel">
+	<insert id="add" parameterType="expenseReceiptModel">
     	insert into expense_receipt_tbl (
     		c_no,
     		c_comment,
@@ -60,7 +65,7 @@
     		0,
     		null,
     		null,
-    		0
+    		null
     	)
     </insert>
     <update id="update">

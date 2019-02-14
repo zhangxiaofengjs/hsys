@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
+import com.hsys.business.forms.UserJsonChangePwdForm;
 import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.common.HsysDate;
 import com.hsys.exception.HsysException;
@@ -109,15 +110,15 @@ public class UserBusiness {
 			user.setSchool(userUpdateForm.getValue());
 			user.setUpdate(UserModel.FIELD_SCHOOL);
 		} else if("e_graduateDate".equals(userUpdateForm.getField())) {
-			Date date = HsysDate.parse(userUpdateForm.getValue(), "yyyy-MM-dd");
+			Date date = HsysDate.tryParse(userUpdateForm.getValue(), "yyyy-MM-dd");
 			user.setGraduateDate(date);
 			user.setUpdate(UserModel.FIELD_GRADUATE_DATE);
 		} else if("e_enterDate".equals(userUpdateForm.getField())) {
-			Date date = HsysDate.parse(userUpdateForm.getValue(), "yyyy-MM-dd");
+			Date date = HsysDate.tryParse(userUpdateForm.getValue(), "yyyy-MM-dd");
 			user.setEnterDate(date);
 			user.setUpdate(UserModel.FIELD_ENTER_DATE);
 		} else if("e_exitDate".equals(userUpdateForm.getField())) {
-			Date date = HsysDate.parse(userUpdateForm.getValue(), "yyyy-MM-dd");
+			Date date = HsysDate.tryParse(userUpdateForm.getValue(), "yyyy-MM-dd");
 			user.setExitDate(date);
 			user.setUpdate(UserModel.FIELD_EXIT_DATE);
 		} else if("e_group".equals(userUpdateForm.getField())) {
@@ -126,6 +127,26 @@ public class UserBusiness {
 			return;
 		}
 		
+		userService.update(user);
+	}
+
+	public void changePwd(UserJsonChangePwdForm form) {
+		UserModel user = userService.queryByNoWithPassword(form.getNo());
+		if(user == null) {
+			throw new HsysException("该工号不存在。"); 
+		}
+		
+		if(form.getPassword2() == null || !form.getPassword2().equals(form.getPassword3())) {
+			throw new HsysException("新密码两次输入不一致。");
+		}
+		
+		if(!encoder.matches(form.getPassword(), user.getPassword())) {
+			throw new HsysException("当前密码错误。");
+		}
+		
+		String pwd = encoder.encode(form.getPassword2());
+		user.setPassword(pwd);
+		user.setUpdate(UserModel.FIELD_PASSWORD);
 		userService.update(user);
 	}
 }

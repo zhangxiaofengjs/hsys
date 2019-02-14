@@ -31,10 +31,13 @@
 	        <if test="cond.userId != null">
 	        	and ug.c_user_id=#{cond.userId}
 	        </if>
+	        <if test="cond.parentId != null">
+	        	and g.c_parent_id=#{cond.parentId}
+	        </if>
 		</where>
 		order by g.c_name
 	</select>
-
+<!-- 
 	<insert id="add" parameterType="userModel">
     	insert into user_tbl (
     		c_no,
@@ -51,7 +54,7 @@
       		select LAST_INSERT_ID() as id
       	</selectKey>
     </insert>
-
+ -->
 	<insert id="addUserGroup">
     	insert into user_group_tbl (
     		c_user_id,
@@ -71,7 +74,7 @@
 			c_user_id = #{userId}
 		</where>
     </update>
-    
+ <!--    
 	<update id="update">
     	update user_tbl
 		<set>
@@ -85,5 +88,5 @@
     	<where>
 			c_id = #{id}
 		</where>
-    </update>
+    </update> -->
 </mapper>

@@ -5,11 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hsys.mappers.DeviceMapper;
 import com.hsys.mappers.ExpenseReceiptMapper;
-import com.hsys.models.DeviceModel;
 import com.hsys.models.ExpenseReceiptModel;
-import com.hsys.models.UserModel;
 
 /**
  * @author: qs

@@ -52,20 +52,18 @@ $(document).ready(function(){
 
 	$("#initPwd").click(function(){
 		var self = $(this);
-		var selIds = htbl.getSelectedRowId("userTable");
-		if(selIds.length != 1) {
+		var selId = htbl.getSelectedRowId("userTable");
+		if(selId == null) {
 			return;
 		}
 
-		var id = selIds[0];
-		
 		hdlg.showYesNo(
 			"确定重置该用户密码?",
 			function() {
 				hsys.ajax({
 					"url":"/user/json/initpwd",
 					"data": {
-						"id": id
+						"id": selId
 					},
 					"success": function() {
 						hsys.success("重置密码为[123]成功，请用户及时修改密码确保安全。", false);

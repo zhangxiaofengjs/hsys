@@ -28,8 +28,8 @@
 			<if test="cond.id != null">
 				and d.c_id = #{id}
 			</if>
-			<if test="cond.no != null">
-				and d.c_no = #{no}
+			<if test="cond.userNo != null">
+				and d.c_no like '%' #{user.no} '%'  or u.c_no like '%' #{user.no} '%'
 			</if>
 		</where>
 	</select>

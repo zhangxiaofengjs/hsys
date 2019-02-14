@@ -6,23 +6,31 @@ import org.apache.ibatis.type.Alias;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.hsys.common.HsysDateTimeDeserializer;
+import com.hsys.common.HsysDateTimeSerializer;
 @Alias("restModel")
 public class RestModel extends BaseModel {
 	public static final String COND_USER_NO = "userNo";
 	public static final String COND_DATE = "date";
 	public static final String COND_ID = "id";
+	public static final String CONID_DATE_START ="dateStart";
+	public static final String CONID_DATE_END ="dateEnd";
+	public static final String CONID_FUZZY_USER_NO = "fuzzyUserNo"; 
 	
 	public static final String FIELD_DATE_START = "dateStart";
 	public static final String FIELD_DATE_END = "dateEnd";
 	public static final String FIELD_TYPE = "type";
 	public static final String FIELD_SUMMARY = "summary";
 	public static final String FIELD_LEN = "len";
+	public static final String FIELD_APPROVE = "approve";
 	
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+	@JsonSerialize(using=HsysDateTimeSerializer.class)
+    @JsonDeserialize(using=HsysDateTimeDeserializer.class)
 	private Date dateStart;
-	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd")
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+	@JsonSerialize(using=HsysDateTimeSerializer.class)
+    @JsonDeserialize(using=HsysDateTimeDeserializer.class)
 	private Date dateEnd;
 	private int type;
 	private String summary;

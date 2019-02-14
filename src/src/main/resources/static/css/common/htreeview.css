@@ -1,0 +1,17 @@
+@charset "UTF-8";
+
+.htv-display-none {
+	display:none;
+}
+
+.htv-no-border-radius {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}
+
+.htv-no-bottom-border-radius {
+   border-bottom-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+}

@@ -14,6 +14,7 @@ public class DeviceModel extends BaseModel {
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
 	public static final String FIELD_USER_ID = "userId";
+	public static final String COND_USER_NO = "userNo";
 	
 	private String no;
 	private String comment;

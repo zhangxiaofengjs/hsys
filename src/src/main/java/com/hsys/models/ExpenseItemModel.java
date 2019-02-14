@@ -1,9 +1,6 @@
 package com.hsys.models;
 
 import java.util.Date;
-
-import javax.xml.crypto.Data;
-
 import org.apache.ibatis.type.Alias;
 
 /**
@@ -12,9 +9,6 @@ import org.apache.ibatis.type.Alias;
  */
 @Alias("expenseItemModel")
 public class ExpenseItemModel extends BaseModel {
-	
-
-	
 	private Date date;
 	private int userId;
 	private int payeeId;
@@ -72,10 +66,4 @@ public class ExpenseItemModel extends BaseModel {
 	public void setUser(UserModel user) {
 		this.user = user;
 	}
-	
-	
-
-	
-	
-	
 }

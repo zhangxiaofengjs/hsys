@@ -152,6 +152,38 @@ hdlg.showYesNo = function(text, acceptFunc, rejectFunc) {
 //			  "options":[],
 //			  "value": "a",
 //		  },
+//		  {
+//				"label":"id11",
+//				"id":"id11",
+//				"type":"selecttree",
+//				"multiple":true,
+//				"checkbox":true,
+//				"nodeAjax":{
+//				    "url":'/group/json/children', //{nodes:[{text:xxx, value:yyy}]}
+//				},
+//				"value": 1,
+//				"dispValue": "aaaa",
+//		  },
+//		  {
+//			  "label":"id13",
+//			  "id":"id13",
+//			  "type":"selecttree",
+//			  "multiple":true,
+//			  "checkbox":true,
+//			  "value": 1,
+//			  "dispValue": "aaaa",
+//			  "nodes":[
+//				  {
+//					  "text":"第1层",
+//					  "value":1,
+//					  "expand":true,
+//					  "nodes":[
+//					  {
+// 		 				"text":"第2层",
+// 		 		      }]
+//				  }
+//			  ]
+//		  },
 //	  ],
 //	  "ajax":{
 //		  "url":"/user/json/get", 
@@ -382,14 +414,13 @@ hdlg.prototype.showFormDlg = function(opt) {
 		if(f.ajax && !f.depend) { //需要ajax并且不依赖其他ajaxDepend的项目之间初始化
 			self.buildAjaxField(f);
 		} else {
-			//if(!f.depend && f.afterBuild) {
-			//	(f.afterBuild)('afterInit');
-			//}
 		}
 		
 		//bootstrap-select 搜索框必须刷新才能显示
 		self.refreshSelectPickField(f);
-		
+
+		self.initTreeViewField(f);
+
 		if(f.buttons) {
 			f.buttons.forEach(function(btn, idx) {
 				if(btn.hasOwnProperty("click")) {
@@ -462,6 +493,8 @@ hdlg.prototype.field = function(id) {
 }
 
 hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
+	var self = this;
+	
 	var strFormHtml = "";
 
 	if(checkLoadElem) {
@@ -479,15 +512,42 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 	}
 
 	if(field.type == "select") {
-		strFormHtml += '<select class="form-control selectpicker show-tick" data-live-search="true" data-live-search-placeholder="输入搜索字符" name="{0}" id="{0}" {1}>'.
-			format(field.id, field.disabled || '');
+		strFormHtml += '<select class="form-control selectpicker show-tick" \
+			data-live-search="{3}" \
+			data-live-search-placeholder="{4}" \
+			data-style="{5}" \
+			{6} \
+			data-selected-text-format="count > 99" \
+			name="{0}" id="{0}" {1} {2}>'.
+			format(field.id,
+					field.disabled || '',
+					field.multiple ? 'multiple' : '',
+					field.dataLiveSearch || 'true',
+					field.dataLiveSearchPlaceHolder || '输入搜索字符',
+					field.dataStyle || 'btn-default',
+					field.dataMaxOptions ? 'data-max-options="' + field.dataMaxOptions + '"' : ''
+			);
+		//$('.selectpicker').selectpicker('val', ['1','2','3']).trigger("change"); 赋值
 		field.options.forEach(function(opt, idxo) {
-			strFormHtml += '<option value ="{0}" {2}>{1}</option>'.
-				format(opt.value || '', 
-						opt.text || '',
-						(opt.selected || field.value==opt.value)?"selected":"");
+			if(opt.group) {
+				//分组
+				strFormHtml += '<optgroup label="{0}">'.format(opt.text);
+				
+				opt.options.forEach(function(item, idxi) {
+					strFormHtml += self.getSelectOptionHtml(item, field.value);
+				});
+				
+				strFormHtml += '</optgroup>';
+			}
+			else
+			{
+				strFormHtml += self.getSelectOptionHtml(opt, field.value);
+			}
 		});
 		strFormHtml += '</select>';
+	} else if(field.type == "selecttree") {
+		strFormHtml += '<div id="{0}" name={0}></div>'.
+						format(field.id);
 	} else if(field.type == "html") {
 		strFormHtml += '<div id={0} name={0} style="padding-top:7px;">{1}</div>'.
 			format(field.id, field.value || '');
@@ -533,6 +593,14 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 	return '<div>' + strFormHtml + '</div>';//外层的DIV是为了验证valid的时候添加input-group用
 };
 
+hdlg.prototype.getSelectOptionHtml = function(opt, value) {
+	return '<option value ="{0}" {3} {2}>{1}</option>'.
+			format(opt.value || '', 
+					opt.text || '',
+					(opt.selected || value==opt.value)?"selected":"",
+					opt.dataContent ? 'data-content=\"' + opt.dataContent + "\"" : '');
+}
+
 hdlg.prototype.doAjax = function() {
 	var self = this;
 	var opt = this.option;
@@ -577,7 +645,7 @@ hdlg.prototype.buildAjaxField = function(field) {
 		data:JSON.stringify(ajaxOpt.data),
 		processData: false,
         cache: false,
-		context:$(("#"+field.id).safeJqueryId())[0],//设置success/error的回调上下文this([0]表示转化为dom元素咯)
+		context:self.elem(field.id)[0],//设置success/error的回调上下文this([0]表示转化为dom元素咯)
 		success: function(response) {
 			if(ajaxOpt.success) {
 				(ajaxOpt.success)(response, self);
@@ -630,18 +698,41 @@ hdlg.prototype.refreshSelectPickField = function(fieldOrId) {
 	this.elem(field.id).selectpicker('refresh');
 };
 
-hdlg.prototype.elemId = function(id) {
+hdlg.prototype.initTreeViewField = function(fieldOrId) {
+	var self = this;
+	
+	var field = fieldOrId;
+	if(typeof(field)=="string"){
+		field = this.field(field);
+	}
+	if(field.type!='selecttree') {
+		return;
+	}
+
+	htreeview.initPullDown({
+		"id": field.id,
+		"multiple":field.multiple,
+		"checkbox":field.checkbox,
+		"nodes":field.nodes,
+		"ajax":field.nodeAjax,
+	});
+
+	htreeview.setPullDownValue(field.id, field.value, field.dispValue);
+}
+
+hdlg.prototype.elemId = function(id, prefix) {
 	//从当前dlg往下查找子元素，否则容易和画面其他元素发生重名，导致错误
-	var strId = "#{0} [id='{1}']".format(
+	var strId = "#{0} [id='{1}{2}']".format(
 		this.id(),
+		prefix != undefined ? prefix : '',
 		id.safeJqueryId());
 	
 	return strId;
 };
 
 //取得JsQuery元素
-hdlg.prototype.elem = function(id) {
-	var strId = this.elemId(id);
+hdlg.prototype.elem = function(id, prefix) {
+	var strId = this.elemId(id, prefix);
 	return $(strId);
 };
 
@@ -751,13 +842,14 @@ hdlg.prototype.afterSubmit = function() {
 //		'id':22
 //	}
 //};
-//将 a.b.c=1的名字转化为{'a':{'b':{'c':1}}}取得b对象,
-//将 a.b[0].c=1的名字转化为{'a':{'b':[{'c':1}]}}取得b对象,
+//将 a.b.c=1的名字转化为{'a':{'b':{'c':1}}}返回b对象,
+//将 a.b[0].c=1的名字转化为{'a':{'b':[{'c':1}]}}返回b对象,
+//将 a.b.c[0]=1的名字转化为{'a':{'b':{'c':[1]}}}返回b对象,
 function getJsonObj(o, strName) {
 	var names = strName.split(".");
 	
 	var ret = o;
-	for(var i = 0; i < names.length -1; i++) {
+	for(var i = 0; i < names.length - 1; i++) {
 		var name = names[i];
 		
 		var isArray = false;
@@ -787,7 +879,8 @@ function getJsonObj(o, strName) {
 		
 		//取元素
 		ret = ret[name];
-		
+
+		//如果是数组的话，取得数组位置的元素
 		if(isArray) {
 			while(ret.length <= arrIndex) {
 				ret.push({});//放0到指定位置空对象
@@ -805,11 +898,44 @@ hdlg.encodeFormJson = function(frm) {
    var a = $(frm).serializeArray();
 
    $.each(a, function() {
-	   var obj = getJsonObj(o, this.name);
-	   var names = this.name.split(".");
-	   var name = names.pop();
-	   
-	   obj[name] = this.value || '';
+		var obj = getJsonObj(o, this.name);
+		var names = this.name.split(".");
+		var propName = names.pop();
+		   
+		//准备设定属性值
+		if(propName.substring(propName.length-1, propName.length) == "]") {
+			//如果是数组,值类型改为数组
+			var is = propName.indexOf("[");
+			var ie = propName.indexOf("]");
+			var arrIndex = parseInt(propName.substring(is+1, ie));
+			propName = propName.substring(0, is);
+
+			var valArry = obj[propName];
+			if(valArry == undefined) {
+				valArry = [];
+				obj[propName] = valArry;
+			}
+			while(valArry.length <= arrIndex) {
+				valArry.push(undefined);//放0到指定位置空对象
+			}
+			valArry[arrIndex] = this.value || '';
+		} else {
+			//a.b.c和a.b.c两个的时候，转换为{'a':{'b':{'c':[1,2]}}}
+			if(obj.hasOwnProperty(propName)) {
+				//已经存在的key，变成数组
+				var val = obj[propName];
+				if($.isArray(val)) {
+					val.push(this.value || '');
+				} else {
+					var array = new Array();
+					array.push(val);
+					array.push(this.value || '');
+					obj[propName] = array;
+				}
+			} else {
+				obj[propName] = this.value || '';
+			}
+		}
    });
    return o;
 };

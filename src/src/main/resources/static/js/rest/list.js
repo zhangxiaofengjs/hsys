@@ -16,7 +16,7 @@ $(document).ready(function(){
 							 response.users.forEach(function(user,index){
 								 field.options.push(
 										 { 
-										    "text":"工号:"+user.no+" 姓名:"+user.name,
+										    "text":"["+user.no+"] "+user.name,
 											"value":user.id,
 										 }
 									 
@@ -29,29 +29,22 @@ $(document).ready(function(){
 				{
 					"id":"dateStart",
 					"label":"开始日期",
-					"type":"date",
+					"type":"datetime-local",
 					"required":true,
-					"value": hdate.yyyy_MM_dd(new Date()),
+					"value": hdate.format(new Date(),"yyyy-MM-ddTHH:mm"),
 				},
 				{
 					"id":"dateEnd",
 					"label":"结束日期",
-					"type":"date",
+					"type":"datetime-local",
 					"required":true,
-					"value": hdate.yyyy_MM_dd(new Date()),
+					"value": hdate.format(new Date(),"yyyy-MM-ddTHH:mm"),
 				},
-//				{
-//					"id":"end",
-//				    "label":"结束时间",
-//					"type":"time",
-//					"required":true,
-//					"value":"20:30",
-//				},
 				{
 					"id":"len",
 					"label":"请假时长（小时）",
 					"type":"number",
-					"min":"4",
+					"min":"1",
 					"max":"8",
 					"value":"4",
 					"required":true,
@@ -134,14 +127,14 @@ $(document).ready(function(){
 				{
 					"id":"dateStart",
 					"label":"开始日期",
-					"type":"date",
+					"type":"datetime-local",
 					"required":true,
 					"depend": true,
 				},
 				{
 					"id":"dateEnd",
 					"label":"结束日期",
-					"type":"date",
+					"type":"datetime-local",
 					"required":true,
 					"depend": true,
 				},
@@ -149,7 +142,7 @@ $(document).ready(function(){
 					"id":"len",
 					"label":"请假时长（小时）",
 					"type":"number",
-					"min":"4",
+					"min":"1",
 					"max":"8",
 					"required":true,
 					"depend": true,
@@ -236,6 +229,34 @@ $(document).ready(function(){
 			function() {
 				hsys.ajax({
 					"url":"/rest/json/delete",
+					"data": {
+						"ids": selIds
+					},
+					"success": function() {
+						hsys.success(true);
+					},
+					"error": function(data) {
+						hsys.error(data.msg);
+					}
+				});
+			}
+		);
+	});
+	
+	$("#approveRest").click(function(){
+		var self = $(this);
+		var selIds = htbl.getSelectedRowId("restTable", true);
+		if(selIds == null) {
+			return;
+		}
+
+		var id = selIds[0];
+		
+		hdlg.showYesNo(
+			"确定批准选中的请假记录吗?",
+			function() {
+				hsys.ajax({
+					"url":"/rest/json/approve",
 					"data": {
 						"ids": selIds
 					},

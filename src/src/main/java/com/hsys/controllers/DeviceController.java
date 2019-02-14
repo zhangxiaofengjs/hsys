@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.DeviceBusiness;
+import com.hsys.business.forms.DeviceHtmlListForm;
 import com.hsys.business.forms.DeviceJsonDeleteForm;
 import com.hsys.business.forms.DeviceJsonGetForm;
 import com.hsys.business.forms.DeviceJsonUpdateForm;
@@ -71,8 +72,8 @@ public class DeviceController extends BaseController {
 	}
 	
 	@RequestMapping("/html/list")
-	public String htmlList(Model model) {
-		List<DeviceModel> devices = deviceBusiness.getDevices();
+	public String htmlList(DeviceHtmlListForm deviceHtmlListForm,Model model) {
+		List<DeviceModel> devices = deviceBusiness.getDevices(deviceHtmlListForm);
 		model.addAttribute("devices", devices);
 		return "device/list";
 	}

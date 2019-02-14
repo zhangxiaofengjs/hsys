@@ -27,7 +27,7 @@ public class RestServices {
 			rest.setId(id);
 			rest.setCond(RestModel.COND_ID, true);
 			List<RestModel> list =queryList(rest);
-			if(list.size() != 0) {
+			if(list.size() == 1) {
 				return list.get(0);
 			}
 		}
@@ -44,4 +44,5 @@ public class RestServices {
 		rest.setCond(RestModel.COND_ID, true);
 		restMapper.delete(rest);
 	}
+	
 }

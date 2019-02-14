@@ -40,12 +40,17 @@
 		left join user_tbl as u on u.c_id=r.c_user_id
 		left join user_tbl as appu on appu.c_id=r.c_approval_user_id
 		<where>
-			<if test="cond.userNo != null">
-				and u.c_no=#{user.no}
+			<if test="cond.fuzzyUserNo  != null">
+				and u.c_no = #{user.no}
 			</if>
-			<if test="cond.date != null">
-				and r.c_date_start &lt;= #{date}
-				and r.c_date_end &gt;= #{date}
+			<if test="cond.userNo != null">
+				and u.c_no like '%${user.no}%'
+			</if>
+			<if test="cond.dateStart != null">
+				and r.c_date_start &gt;= #{dateStart}
+			</if>
+			<if test="cond.dateEnd != null">
+				and r.c_date_start &lt;= #{dateEnd}
 			</if>
 			<if test="cond.id != null">
 			    and r.c_id = #{id}
@@ -89,6 +94,11 @@
 			</if>
 			<if test="update.summary != null">
 				c_summary = #{summary},
+			</if>
+			<if test="update.approve != null">
+				c_approval_user_id = #{approvalUser.id},
+				c_approval_time = #{approvalDate},
+				c_status = #{status},
 			</if>
 		</set>
 		<where>

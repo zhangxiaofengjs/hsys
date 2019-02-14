@@ -9,25 +9,25 @@ hdate.format = function(date, strFormat) {
 	strDate = strDate.replace(/yyyy/g, year);
 	strDate = strDate.replace(/yy/g, (year +"").substr(2));
 	
-	var month = dateObj.getMonth() + 1 < 10 ? "0" + (dateObj.getMonth() + 1) : dateObj.getMonth() + 1;
-	strDate = strDate.replace(/MM/g, month);
-	strDate = strDate.replace(/M/g, (month + "").substr(1));
+	var month = "" + (dateObj.getMonth() + 1);
+	strDate = strDate.replace(/MM/g, month.padLeft(2, '0'));
+	strDate = strDate.replace(/M/g, month);
 
-	var day = dateObj.getDate() < 10 ? "0" + dateObj.getDate() : dateObj.getDate();
-	strDate = strDate.replace(/dd/g, day);
-	strDate = strDate.replace(/d/g, (day + "").substr(1));
+	var day = "" + dateObj.getDate();
+	strDate = strDate.replace(/dd/g, day.padLeft(2, '0'));
+	strDate = strDate.replace(/d/g, day);
 	
-	var hour = dateObj.getHours();
-	strDate = strDate.replace(/HH/g, hour);
-	strDate = strDate.replace(/H/g, (hour + "").substr(1));
+	var hour = "" + dateObj.getHours();
+	strDate = strDate.replace(/HH/g, hour.padLeft(2, '0'));
+	strDate = strDate.replace(/H/g, hour);
 
-	var min = dateObj.getMinutes();
-	strDate = strDate.replace(/mm/g, min);
-	strDate = strDate.replace(/m/g, (min + "").substr(1));
+	var min = "" + dateObj.getMinutes();
+	strDate = strDate.replace(/mm/g, min.padLeft(2, '0'));
+	strDate = strDate.replace(/m/g, min);
 
-	var sec = dateObj.getSeconds();
-	strDate = strDate.replace(/ss/g, sec);
-	strDate = strDate.replace(/s/g, (sec + "").substr(1));
+	var sec = "" + dateObj.getSeconds();
+	strDate = strDate.replace(/ss/g, sec.padLeft(2, '0'));
+	strDate = strDate.replace(/s/g, sec);
 
 	return strDate;
 };

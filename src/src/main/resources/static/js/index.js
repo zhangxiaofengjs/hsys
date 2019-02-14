@@ -20,39 +20,35 @@ $(document).ready(function(){
   $("#changePwd").click(function(){
 	  var self = $(this);
 
-	  var fields = [
-		{
-			"id":"id",
-			"label":"id",
-			"type":"hidden",
-			"value":$("#userid").val(),
-			"required":"required",
-		},
-		{
-			"id":"password",
-			"label":"旧密码",
-			"type":"password",
-			"required":"required",
-		},
-		{
-			"id":"password2",
-			"label":"新密码",
-			"type":"password",
-			"required":"required",
-		},
-		{
-			"id":"password3",
-			"label":"再输入新密码",
-			"type":"password",
-			"required":"required",
-		},
-		];
-		
-		var dlg = hdlg.showForm({
-			"target":"chg_pwd_dlg_div",
+	  var dlg = hdlg.showForm({
 			"title":"修改密码",
-			"fields":fields,
-			"url":"/user/changepwd",
+			"fields":[
+				{
+					"id":"no",
+					"type":"hidden",
+					"value":$("#userno").val(),
+					"required":"required",
+				},
+				{
+					"id":"password",
+					"label":"旧密码",
+					"type":"password",
+					"required":"required",
+				},
+				{
+					"id":"password2",
+					"label":"新密码",
+					"type":"password",
+					"required":"required",
+				},
+				{
+					"id":"password3",
+					"label":"再输入新密码",
+					"type":"password",
+					"required":"required",
+				},
+			],
+			"url":"/user/json/changepwd",
 			"valid": function() {
 				if(dlg.elem("password2").val() != dlg.elem("password3").val()) {
 					dlg.setError("password2", "两次输入密码不一致");
@@ -62,15 +58,10 @@ $(document).ready(function(){
 				return true;
 			},
 			"success": function(data) {
-				dlg.hide();
-				hdlg.success({
-					"ok" : function() {
-						hsys.refresh();
-					}
-				});
+				hsys.success(true);
 			},
 			"error": function(data) {
-				alert(data.msg);
+				hsys.error(data.msg);
 			}
 		});
   	});

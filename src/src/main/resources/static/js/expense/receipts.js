@@ -9,7 +9,7 @@ $(document).ready(function(){
 					"label":"编号",
 					"type":"text",
 					"required":true,
-					"value":'#'+ hdate.yyyy_MM_dd(new Date)+'-',
+					"value":'#'+ hdate.yyyyMMdd(new Date)+'-',
 				},
 				{
 					"id":"type",
@@ -52,7 +52,7 @@ $(document).ready(function(){
 					"required":true,
 				},
 			],
-			"url":"/expense/json/add",
+			"url":"/expense/json/receipt/add",
 			"success": function(data, dlg) {
 				hsys.success(true);
 			},
@@ -116,7 +116,7 @@ $(document).ready(function(){
 				},
 			],
 			"ajax":{//取得信息，更新到dlg上
-				"url":"/expense/json/get",
+				"url":"/expense/json/receipt/get",
 				"data": {
 					"id": selId
 				},
@@ -127,10 +127,9 @@ $(document).ready(function(){
 					dlg.buildField("no", receipt.no);
 					dlg.buildField("comment", receipt.comment);
 					dlg.buildField("type", receipt.type);
-					dlg.buildField("payeeId", receipt.user.id, false, false);//需要加载用户一览
 				},
 			},
-			"url":"/expense/json/update",
+			"url":"/expense/json/receipt/update",
 			"success": function(data, dlg) {
 				hsys.success(true);
 			},
@@ -152,7 +151,7 @@ $(document).ready(function(){
 			"确定删除选中的报销单吗?",
 			function() {
 				hsys.ajax({
-					"url":"/expense/json/delete",
+					"url":"/expense/json/receipt/delete",
 					"data": {
 						"ids": selIds
 					},
@@ -212,6 +211,26 @@ $(document).ready(function(){
 						}
 					});
 				}
+		);
+	});
+	
+	$("[id^='downloadReceiptAttachment_'").click(function(){
+		var self = $(this);
+		var receiptId = self.attr('receiptId');
+		
+		hdlg.showYesNo(
+			"确定下载该订单附件?",
+			function() {
+				hsys.download({
+					"url": "/expense/json/receipt/attachment/download",
+					"data": [
+						{
+							"name": "receiptId",
+							"value": receiptId
+						},
+					]
+				});
+			}
 		);
 	});
 });

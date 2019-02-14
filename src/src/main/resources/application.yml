@@ -61,9 +61,9 @@ hsys:
     version:
         number: v.HSYS2019.0
     upload: 
-        temp: c:/hsys/upload/temp #临时文件夹
-        attendance: c:/hsys/upload/attendance #考勤信息文件夹
-        expense-receipt: c:/hsys/upload/expense-receipt #报销单附件文件夹
+        temp-folder: c:/hsys/upload/temp #临时文件夹
+        attendance-folder: c:/hsys/upload/attendance #考勤信息文件夹
+        receipt-attachment-folder: c:/hsys/upload/receipt-attachment-folder #报销单附件文件夹
         image-folder: image/ #图形文件夹
     backup: #备份设定
         database:

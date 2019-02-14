@@ -27,7 +27,6 @@ public class AttendanceService {
 
 	public AttendanceModel queryOne(AttendanceModel a) {
 		List<AttendanceModel> us = queryList(a);
-		
 		if(us.size() == 1) {
 			return us.get(0);
 		}
