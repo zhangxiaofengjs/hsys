@@ -15,9 +15,9 @@ public class RestModel extends BaseModel {
 	public static final String COND_USER_NO = "userNo";
 	public static final String COND_DATE = "date";
 	public static final String COND_ID = "id";
-	public static final String CONID_DATE_START ="dateStart";
-	public static final String CONID_DATE_END ="dateEnd";
-	public static final String CONID_FUZZY_USER_NO = "fuzzyUserNo"; 
+	public static final String COND_DATE_START ="dateStart";
+	public static final String COND_DATE_END ="dateEnd";
+	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo"; 
 	
 	public static final String FIELD_DATE_START = "dateStart";
 	public static final String FIELD_DATE_END = "dateEnd";

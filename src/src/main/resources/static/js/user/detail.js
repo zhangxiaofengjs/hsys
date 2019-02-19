@@ -4,7 +4,9 @@ $(document).ready(function(){
 		var id = self.attr("id");
 
 		var pDispDiv = $("#{0}_disp_div".format(id));
-		pDispDiv.hide();
+		if(id != "e_role" ) {
+			pDispDiv.hide();
+		}
 		
 		var pEditDiv = $("#{0}_edit_div".format(id));
 
@@ -20,6 +22,9 @@ $(document).ready(function(){
 					id == "e_enterDate" ||
 					id == "e_exitDate" ) {
 				editor = '<input type="date" name="{0}_value" id="{0}_value" value="" class="form-control" style="display:inline;width:200px;">'.format(id);
+			} else if(id == "e_role" ) {
+				//nothing
+				editor = '';
 			} else {
 				editor = '<input list="{0}_list" name="{0}_value" id="{0}_value" value="" class="form-control" style="display:inline;width:200px;">'.format(id);
 				if( id == "e_major" ) {
@@ -94,6 +99,11 @@ $(document).ready(function(){
 			pSelect.children().remove();
 			pSelect.append('<option value=0 {0}>男</option><option value=1 {1}>女</option>'.
 					format(val=="0"?"selected":"", val=="1"?"selected":""));
+		} else if(id == "e_role") {
+			//checkbox 设为可编辑即可
+			$(":checkbox[name='e_role_value']").each(function() {
+				$(this).removeAttr("onclick");
+			});
 		} else if(id == "e_degree") {
 			var pSelect = $("#{0}_value".format(id));
 			pSelect.children().remove();
@@ -159,12 +169,25 @@ function doUpdate(pA) {
 	var id = self.attr("id");
 	id = id.left(id.length - "_update".length);
 
+	var val;
+	if(id == 'e_role') {
+		var list = [];
+		$(":checkbox[name='e_role_value']").each(function() {
+			if($(this).prop("checked")) {
+				list.push($(this).attr("id"));
+			}
+		});
+		val = list.join(",");
+	} else {
+		val = $("[name='{0}_value']".format(id)).val();
+	}
+	
 	hsys.ajax({
 		"url":"/user/json/update",
 		"data": {
 			"id": $("input[name='e_user_id']").val(),
 			"field": id,
-			"value": $("[name='{0}_value']".format(id)).val()
+			"value": val
 		},
 		"success": function(data) {
 			hsys.refresh();

@@ -36,7 +36,20 @@
 				and a.c_date = #{date}
 			</if>
 			<if test="cond.userNo != null">
-				and u.c_no = #{user.no}
+				<choose>
+	                <when  test="cond.fuzzyUserNo != null">
+			   			and u.c_no like '%${user.no}%'
+			   		</when>
+			   		<otherwise>
+			   			and u.c_no = #{user.no}
+			   		</otherwise>
+				</choose>
+			</if>
+			<if test="cond.startDate != null">
+				and a.c_date <![CDATA[ >= ]]> #{cond.startDate}
+			</if>
+			<if test="cond.endDate != null">
+				and a.c_date <![CDATA[ <= ]]> #{cond.endDate}
 			</if>
 		</where>
 		order by a.c_user_id, a.c_date

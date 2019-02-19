@@ -8,6 +8,8 @@ import org.apache.ibatis.type.Alias;
  */
 @Alias("userRoleModel")
 public class UserRoleModel extends BaseModel {
+	public static final String COND_USER_ID = "userId";
+	
 	private String role;
 	private int enable;
 

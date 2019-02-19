@@ -62,7 +62,14 @@
 		from user_tbl as u
 		left join user_group_tbl as ug on ug.c_user_id=u.c_id
 		left join group_tbl as g on g.c_id=ug.c_group_id
-		left join (select * from user_role_tbl where c_enable=1) as ur on ur.c_user_id=u.c_id
+		<choose>
+			<when test="cond.containsDisableRole != null">
+				left join user_role_tbl as ur on ur.c_user_id=u.c_id
+			</when>
+			<otherwise>
+				left join (select * from user_role_tbl where c_enable=1) as ur on ur.c_user_id=u.c_id
+			</otherwise>
+		</choose>
 		<where>
 			<if test="cond.id != null">
 				and u.c_id = #{id}
@@ -83,7 +90,7 @@
 		</where>
 		order by u.c_no
 	</select>
-	 
+
 	<insert id="add" parameterType="userModel">
     	insert into user_tbl (
     		c_no,
@@ -101,6 +108,18 @@
       	</selectKey>
     </insert>
  
+ 	<insert id="addRole" parameterType="userRoleModel">
+    	insert into user_role_tbl (
+    		c_user_id,
+    		c_role,
+    		c_enable)
+    	values (
+    		#{cond.userId},
+    		#{role},
+    		#{enable}
+    	)
+    </insert>
+    
 	<update id="update">
     	update user_tbl
 		<set>
@@ -149,6 +168,17 @@
 		</set>
     	<where>
 			c_id = #{id}
+		</where>
+    </update>
+
+	<update id="updateRole">
+    	update user_role_tbl
+		<set>
+			c_enable = #{enable}
+		</set>
+    	<where>
+			c_user_id=#{cond.userId} and
+			c_role=#{role}
 		</where>
     </update>
 </mapper>

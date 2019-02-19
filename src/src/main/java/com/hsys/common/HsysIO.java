@@ -42,9 +42,9 @@ public class HsysIO {
         try {
 			file.transferTo(uploadedFile);
 		} catch (IllegalStateException e) {
-			throw new HsysException(e);
+		//	throw new HsysException(e);
 		} catch (IOException e) {
-			throw new HsysException(e);
+		//	throw new HsysException(e);
 		}
     }
 

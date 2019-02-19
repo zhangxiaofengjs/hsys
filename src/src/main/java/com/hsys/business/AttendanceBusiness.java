@@ -74,7 +74,11 @@ public class AttendanceBusiness {
 			user.setNo(attendanceForm.getUserNo());
 			attendance.setUser(user);
 			attendance.setCond(AttendanceModel.COND_USER_NO, true);
+			attendance.setCond(AttendanceModel.COND_FUZZY_USER_NO, true);
 		}
+		
+		attendance.setCond(AttendanceModel.COND_START_DATE, attendanceForm.getStart());
+		attendance.setCond(AttendanceModel.COND_END_DATE, attendanceForm.getEnd());
 		
 		List<AttendanceModel> list = attendanceService.queryList(attendance);
 		return list;

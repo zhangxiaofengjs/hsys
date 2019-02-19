@@ -13,6 +13,8 @@ import com.hsys.business.RestBusiness;
 import com.hsys.business.forms.RestHtmlListForm;
 import com.hsys.business.forms.RestJsonApproveForm;
 import com.hsys.business.forms.RestJsonDeleteForm;
+import com.hsys.business.forms.RestJsonGetForm;
+import com.hsys.business.forms.RestJsonRejectForm;
 import com.hsys.business.forms.RestJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.RestModel;
@@ -28,9 +30,15 @@ public class RestController extends BaseController {
     private RestBusiness restBusiness;
 
 	@RequestMapping("/html/list")
-	public String htmlList(RestHtmlListForm restForm, Model model) {
-		List<RestModel> list = restBusiness.getRests(restForm);
-		model.addAttribute("restForm", restForm);
+	public String htmlList(RestHtmlListForm form, Model model) {
+		List<RestModel> list = restBusiness.getRests(form);
+		
+		if(form.getApprove()) {
+			//审核页面，检查审核权限
+			//TODO
+		}
+
+		model.addAttribute("form", form);
 		model.addAttribute("list", list);
 		return "rest/list";
 	}
@@ -48,9 +56,9 @@ public class RestController extends BaseController {
 	
 	@RequestMapping("/json/get")
 	@ResponseBody
-	public JsonResponse get(@RequestBody RestHtmlListForm restForm) {
+	public JsonResponse get(@RequestBody RestJsonGetForm form) {
 		try {
-			RestModel rest = restBusiness.getRest(restForm);
+			RestModel rest = restBusiness.getRest(form);
 			return JsonResponse.success().put("rest", rest);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
@@ -84,6 +92,17 @@ public class RestController extends BaseController {
 	public JsonResponse approve(@RequestBody RestJsonApproveForm form) {
 		try {
 			restBusiness.approve(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/reject")
+	@ResponseBody
+	public JsonResponse approve(@RequestBody RestJsonRejectForm form) {
+		try {
+			restBusiness.reject(form);
 			return JsonResponse.success();
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());

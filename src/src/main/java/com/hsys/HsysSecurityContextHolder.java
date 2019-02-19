@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.hsys.business.UserBusiness;
 import com.hsys.models.UserModel;
 import com.hsys.security.HsysLoginUser;
 
@@ -12,7 +13,7 @@ import com.hsys.security.HsysLoginUser;
  * @date 2019/01/29
  */
 public class HsysSecurityContextHolder {
-	public static HsysLoginUser getLoginUser() {
+	public static HsysLoginUser getHsysLoginUser() {
 		HsysLoginUser loginUser = null;
 		SecurityContext context = SecurityContextHolder.getContext();
 		if(context != null) {
@@ -33,8 +34,20 @@ public class HsysSecurityContextHolder {
 		return loginUser;
 	}
 	
+	public static UserModel getLoginUser() {
+		HsysLoginUser loginUser = getHsysLoginUser();
+		return loginUser.getUser();
+	}
+	
+	public static boolean getLoginUserHasRole(String role) {
+		HsysLoginUser loginUser = getHsysLoginUser();
+		UserModel user = loginUser.getUser();
+		
+		return UserBusiness.hasRole(user.getRoles(), role);
+	}
+	
 	public static int getLoginUserId() {
-		return getLoginUser().getUser().getId();
+		return getHsysLoginUser().getUser().getId();
 	}
 	
 	public static boolean isLoginUser(UserModel user) {
@@ -42,7 +55,7 @@ public class HsysSecurityContextHolder {
 			return false;
 		}
 		
-		HsysLoginUser lUser = getLoginUser();
+		HsysLoginUser lUser = getHsysLoginUser();
 		if(lUser == null) {
 			return false;
 		}

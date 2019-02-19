@@ -171,6 +171,23 @@
 					</div>
 				</td>
 			</tr>
+			<!-- 权限信息 -->
+			<tr>
+				<td rowspan=1>权限信息</td>
+				<td colspan=2>
+					<div id="e_role_disp_div">
+						<th:block th:each="role : ${T(com.hsys.models.enums.ROLE).ALL}">
+							<input type="checkbox" name="e_role_value" th:id="${role}" th:checked="${T(com.hsys.business.UserBusiness).hasRole(user.roles, role)}" onclick="return false;" >
+							<th:block th:switch="${role}">
+								<span class="label label-danger" th:case="${T(com.hsys.models.enums.ROLE).ADMIN}">管理员</span>
+								<span class="label label-warning" th:case="${T(com.hsys.models.enums.ROLE).USER_EDIT}">用户编辑</span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_APPROVE}">休假批准</span>
+							</th:block>
+						</th:block>
+						<a id="e_role" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+					</div>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 	<div th:replace="common/footer::copyright"></div>

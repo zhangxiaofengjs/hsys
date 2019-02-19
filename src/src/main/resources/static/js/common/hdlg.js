@@ -571,7 +571,18 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 						    opt.text);
 		});
 		strFormHtml += '<div style="padding-top:7px;">{0}</div>'.format(strChBoxGroup);
-	} else {
+	} else if(field.type == "btn-group") {
+		var btnGroup = "";
+		field.options.forEach(function(opt, idx) {
+			btnGroup += (idx!=0?"&nbsp;":"") + '<input type="button" id="{0}" name="{0}" value="{1}" {2}>{3}'.
+					format(field.id,
+						    opt.value,
+						    opt.value == field.value ?"checked":"",
+						    opt.text);
+		});
+		strFormHtml += '<div id={0} name={0} style="padding-top:7px;">{1}</div>'.
+		format(field.id, field.value || '');
+	}else {
 		var strAttrHtml = "";
 		strAttrHtml += ' type="{0}"'.format(field.type);
 		strAttrHtml += ' class="{0} {1} form-control"'.format(field.type=='file'?'hsys-no-boder-form-control':'', field.class || '');

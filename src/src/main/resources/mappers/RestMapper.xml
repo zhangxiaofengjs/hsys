@@ -40,11 +40,15 @@
 		left join user_tbl as u on u.c_id=r.c_user_id
 		left join user_tbl as appu on appu.c_id=r.c_approval_user_id
 		<where>
-			<if test="cond.fuzzyUserNo  != null">
-				and u.c_no = #{user.no}
-			</if>
 			<if test="cond.userNo != null">
-				and u.c_no like '%${user.no}%'
+				<choose>
+	                <when test="cond.fuzzyUserNo != null">
+	                   	and u.c_no like '%${user.no}%'
+	                </when>
+	                <otherwise>
+	                    and u.c_no=#{user.no}
+	                </otherwise>
+	            </choose>
 			</if>
 			<if test="cond.dateStart != null">
 				and r.c_date_start &gt;= #{dateStart}

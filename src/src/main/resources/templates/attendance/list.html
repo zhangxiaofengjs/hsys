@@ -12,7 +12,13 @@
 	  		</div>
 	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/attendance/html/list}" method="post">
 	 			<div class="form-group">
-				   <input type="text" class="form-control" id="userNo" name="userNo" th:value="${attendanceForm!=null?attendanceForm.userNo:_}" placeholder="输入工号">
+				   <input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo" th:value="${form!=null?form.userNo:_}" placeholder="输入工号">
+	 			</div>
+	 			<div class="form-group">
+				   <input type="date" class="form-control hsys-fc-date-width" id="start" name="start" th:value="${#dates.format(form.start, 'yyyy-MM-dd')}" placeholder="开始">
+	 			</div>
+	 			<div class="form-group">
+				   <input type="date" class="form-control" style="width:150px" id="end" name="end" th:value="${#dates.format(form.end, 'yyyy-MM-dd')}" placeholder="结束">
 	 			</div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 	 			<button type="button" class="btn btn-sm btn-primary" id="upload">导入</button>
@@ -25,8 +31,10 @@
 		    <tr>
 		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
 		    	<th width=50px>工号</th>
-				<th width=180px style="text-align:center;">姓名</th>
-				<th width=180px style="text-align:center;">日期</th>
+				<th width=100px style="text-align:center;">姓名</th>
+				<th width=100px style="text-align:center;">日期</th>
+				<th width=80px style="text-align:center;">出勤</th>
+				<th width=80px style="text-align:center;">退勤</th>
 				<th>详细</th>
 		    </tr>
 		</thead>
@@ -38,11 +46,14 @@
 				</td>
 				<td th:text="${attendance.user.no}"></td>
 				<td th:text="${attendance.user.name}"></td>
-				<td th:text="${attendance.start != null ? #dates.format(attendance.date, 'yyyy-MM-dd')+' '+#dates.format(attendance.start, 'HH:mm')+'~'+#dates.format(attendance.end, 'HH:mm') : #dates.format(attendance.date, 'yyyy-MM-dd')}"></td>
+				<td th:text="${#dates.format(attendance.date, 'yyyy-MM-dd')}"></td>
+				<td th:text="${#dates.format(attendance.start, 'HH:mm')}"></td>
+				<td th:text="${#dates.format(attendance.end, 'HH:mm')}"></td>
 				<td th:text="${attendance.comment}"></td>
 		    </tr>
 		</tbody>
 	</table>
+	<div th:if="${#lists.size(list) == 0}" class="alert alert-warning">当前过滤条件下没有考勤数据。</div>
 	<div th:replace="common/footer::copyright"></div>
 </body>
 </html>

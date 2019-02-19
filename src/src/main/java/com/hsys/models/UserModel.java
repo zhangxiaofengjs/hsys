@@ -29,6 +29,8 @@ public class UserModel extends BaseModel {
 	public static final String COND_FUZZY_NO = "fuzzyNo";
 	public static final String COND_ID = "id";
 	public static final String COND_NO = "no";
+	public static final String COND_CONTAINS_DISABLE_ROLE = "containsDisableRole";
+	
 
 	private String no;
 	private String name;

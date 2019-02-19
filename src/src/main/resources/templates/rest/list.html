@@ -12,21 +12,22 @@
 	  		</div>
 	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/rest/html/list}" method="post">
 	 			<div class="form-group">
-				   <input type="text" class="form-control" id="userNo" name="userNo" th:value="${restForm!=null?restForm.userNo:_}" placeholder="输入工号">
+				   <input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo" th:value="${form.userNo}" placeholder="输入工号">
 	 			</div>
 	 			<div class="form-group">
-	 			开始
-				   <input type="date" class="form-control" id="dateStart" name="dateStart" th:value="${restForm!=null?restForm.dateStart:_}">
-				 截止
-				   <input type="date" class="form-control" id="dateEnd" name="dateEnd" th:value="${restForm!=null?restForm.dateEnd:_}">
+				   <input type="date" class="form-control hsys-fc-date-width" id="dateStart" name="dateStart" th:value="${#dates.format(form.dateStart,'yyyy-MM-dd')}">～
+				   <input type="date" class="form-control hsys-fc-date-width" id="dateEnd" name="dateEnd" th:value="${#dates.format(form.dateEnd,'yyyy-MM-dd')}">
 	 			</div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
-	 			<div class="form-group">
+	 			<div class="form-group" th:if="${not form.approve}">
 		 			<button type="button" class="btn btn-sm btn-primary" id='addRest'>添加</button>
 		 			<button type="button" class="btn btn-sm btn-primary" id='updateRest'>编辑</button>
 		 			<button type="button" class="btn btn-sm btn-primary" id='deleteRest'>删除</button>
-		 			<button type="button" class="btn btn-sm btn-primary" id='approveRest'>批准</button>
 		 		</div>
+		 		<div class="form-group" th:if="${form.approve}">
+			 		<button type="button" class="btn btn-sm btn-primary" id='approveRest'>批准</button>
+			 		<button type="button" class="btn btn-sm btn-primary" id='rejectRest'>驳回</button>
+			 	</div>
 			</form>
 		</div>
 	</nav>
@@ -36,12 +37,12 @@
 		    <tr>
 		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
 				<th width=180px style="text-align:center;">请假日期</th>
-				<th width=50px>时长</th>
+				<th width=60px>时长(h)</th>
 				<th width=50px>种类</th>
 				<th>请假事由</th>
-				<th width=200px>请假人</th>
+				<th width=150px>请假人</th>
 				<th width=50px>状态</th>
-				<th width=220px style="text-align:center;">批准信息</th>
+				<th width=220px style="text-align:center;">审核</th>
 		    </tr>
 		</thead>
 		<tbody>
@@ -49,9 +50,11 @@
 				th:with="approvalUser=${rest.approvalUser}"
 				th:rowid="${rest.id}">
 				<td>
-					<input type="checkbox" name="select" th:rowid="${rest.id}">
+					<input type="checkbox" name="select" th:rowid="${rest.id}" th:title="${rest.id}">
 				</td>
-				<td th:text="${T(com.hsys.common.HsysDate).isSameDate(rest.dateStart, rest.dateEnd) ? #dates.format(rest.dateStart, 'yyyy-MM-dd HH:mm')+'~'+#dates.format(rest.dateEnd, 'HH:mm') : #dates.format(rest.dateStart, 'yyyy-MM-dd')+'~'+#dates.format(rest.dateEnd, 'yyyy-MM-dd')}"></td>
+				<td th:text="${T(com.hsys.common.HsysDate).equalsDate(rest.dateStart, rest.dateEnd) ? 
+							#dates.format(rest.dateStart, 'yyyy-MM-dd HH:mm')+'~'+#dates.format(rest.dateEnd, 'HH:mm') : 
+							#dates.format(rest.dateStart, 'yyyy-MM-dd')+'~'+#dates.format(rest.dateEnd, 'yyyy-MM-dd')}"></td>
 				<td th:text="${rest.len}" style="text-align:center;"></td>
 				<td th:switch="${rest.type}">
 					<span class="label label-primary" th:case="0">休假</span>
@@ -66,6 +69,7 @@
 				<td th:switch="${rest.status}">
 					<span class="label label-primary" th:case="0">登录中</span>
 					<span class="label label-success" th:case="1">批准</span>
+					<span class="label label-danger" th:case="2">驳回</span>
 				</td>
 				<td th:text="${approvalUser != null? '[' + approvalUser.name+'] '+#dates.format(rest.approvalDate, 'MM-dd HH:mm') : _}"></td>
 		    </tr>

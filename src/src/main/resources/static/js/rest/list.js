@@ -15,11 +15,10 @@ $(document).ready(function(){
 							 var field = dlg.field("user.id");
 							 response.users.forEach(function(user,index){
 								 field.options.push(
-										 { 
-										    "text":"["+user.no+"] "+user.name,
-											"value":user.id,
-										 }
-									 
+									 { 
+									    "text":"["+user.no+"] "+user.name,
+										"value":user.id,
+									 }
 								 );
 							 });
 							  dlg.buildField("user.id");
@@ -31,14 +30,14 @@ $(document).ready(function(){
 					"label":"开始日期",
 					"type":"datetime-local",
 					"required":true,
-					"value": hdate.format(new Date(),"yyyy-MM-ddTHH:mm"),
+					"value": hdate.format(new Date(),"yyyy-MM-ddT") + "08:30",
 				},
 				{
 					"id":"dateEnd",
 					"label":"结束日期",
 					"type":"datetime-local",
 					"required":true,
-					"value": hdate.format(new Date(),"yyyy-MM-ddTHH:mm"),
+					"value": hdate.format(new Date(),"yyyy-MM-ddT") + "17:30",
 				},
 				{
 					"id":"len",
@@ -46,7 +45,7 @@ $(document).ready(function(){
 					"type":"number",
 					"min":"1",
 					"max":"8",
-					"value":"4",
+					"value":"8",
 					"required":true,
 				},
 				{
@@ -80,6 +79,7 @@ $(document).ready(function(){
 						},
 					],
 					"value":0,
+					"required":true,
 				},
 				{
 					"id":"summary",
@@ -257,6 +257,34 @@ $(document).ready(function(){
 			function() {
 				hsys.ajax({
 					"url":"/rest/json/approve",
+					"data": {
+						"ids": selIds
+					},
+					"success": function() {
+						hsys.success(true);
+					},
+					"error": function(data) {
+						hsys.error(data.msg);
+					}
+				});
+			}
+		);
+	});
+	
+	$("#rejectRest").click(function(){
+		var self = $(this);
+		var selIds = htbl.getSelectedRowId("restTable", true);
+		if(selIds == null) {
+			return;
+		}
+		
+		var id = selIds[0];
+		
+		hdlg.showYesNo(
+			"确定驳回选中的请假记录吗?",
+			function() {
+				hsys.ajax({
+					"url":"/rest/json/reject",
 					"data": {
 						"ids": selIds
 					},

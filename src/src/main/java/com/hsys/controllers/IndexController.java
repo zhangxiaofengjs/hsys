@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.hsys.HsysSecurityContextHolder;
 import com.hsys.config.HsysConfig;
-import com.hsys.security.HsysLoginUser;
+import com.hsys.models.UserModel;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -24,9 +24,9 @@ public class IndexController extends BaseController {
 	
 	@RequestMapping(value= {"/", "/index"})
     public String index(Model model) {
-		HsysLoginUser loginUser = (HsysLoginUser) HsysSecurityContextHolder.getLoginUser();
+		UserModel loginUser = HsysSecurityContextHolder.getLoginUser();
 		model.addAttribute("version", config.getVersion());
-		model.addAttribute("user", loginUser.getUser());
+		model.addAttribute("user", loginUser);
         return "index";
     }
 	

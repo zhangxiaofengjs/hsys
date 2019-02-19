@@ -13,6 +13,9 @@ public class AttendanceModel extends BaseModel {
 	public static final String COND_USER_ID = "userId";
 	public static final String COND_DATE = "date";
 	public static final String COND_USER_NO = "userNo";
+	public static final String COND_START_DATE = "startDate";
+	public static final String COND_END_DATE = "endDate";
+	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo";
 	
 	public static final String FIELD_START = "start";
 	public static final String FIELD_END = "end";

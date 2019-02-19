@@ -1,11 +1,11 @@
 package com.hsys.business;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
 import com.hsys.business.forms.UserJsonChangePwdForm;
@@ -13,6 +13,8 @@ import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.common.HsysDate;
 import com.hsys.exception.HsysException;
 import com.hsys.models.UserModel;
+import com.hsys.models.UserRoleModel;
+import com.hsys.models.enums.ROLE;
 import com.hsys.security.HsysPasswordEncoder;
 import com.hsys.services.GroupService;
 import com.hsys.services.UserService;
@@ -72,7 +74,11 @@ public class UserBusiness {
 	}
 
 	public void update(UserJsonUpdateForm userUpdateForm) {
-		UserModel user = userService.queryById(userUpdateForm.getId());
+		UserModel user = new UserModel();
+		user.setId(userUpdateForm.getId());
+		user.setCond(UserModel.COND_ID, true);
+		user.setCond(UserModel.COND_CONTAINS_DISABLE_ROLE, true);
+		user = userService.queryOne(user);
 		if(user == null) {
 			throw new HsysException("该工号不存在。id=" + userUpdateForm.getId()); 
 		}
@@ -95,8 +101,8 @@ public class UserBusiness {
 			user.setMajor(userUpdateForm.getValue());
 			user.setUpdate(UserModel.FIELD_MAJOR);
 		} else if("e_place".equals(userUpdateForm.getField())) {
-				user.setPlace(userUpdateForm.getValue());
-				user.setUpdate(UserModel.FIELD_PLACE);
+			user.setPlace(userUpdateForm.getValue());
+			user.setUpdate(UserModel.FIELD_PLACE);
 		} else if("e_phoneNumber".equals(userUpdateForm.getField())) {
 			user.setPhoneNumber(userUpdateForm.getValue());
 			user.setUpdate(UserModel.FIELD_PHONE_NUMBER);
@@ -125,6 +131,26 @@ public class UserBusiness {
 			int groupId = Integer.parseInt(userUpdateForm.getValue());
 			groupService.setUserGroup(user.getId(), groupId);
 			return;
+		} else if("e_role".equals(userUpdateForm.getField())) {
+			String[] roles = userUpdateForm.getValue().split(",");
+			List<String> rList =  Arrays.asList(roles);
+			for(String r : ROLE.ALL) {
+				UserRoleModel ur = UserBusiness.getRole(user.getRoles(), r);
+				if(rList.contains(r)) {
+					if(ur == null) {
+						userService.updateRole(user.getId(), r, true);
+					} else {
+						userService.addRole(user.getId(), r);
+					}
+				} else {
+					if(ur != null) {
+						userService.updateRole(user.getId(), r, false);
+					}
+				}
+			}
+			return;
+		} else {
+			throw new HsysException("想定以外的更新。");
 		}
 		
 		userService.update(user);
@@ -148,5 +174,22 @@ public class UserBusiness {
 		user.setPassword(pwd);
 		user.setUpdate(UserModel.FIELD_PASSWORD);
 		userService.update(user);
+	}
+	
+	public static UserRoleModel getRole(List<UserRoleModel> roles, String role) {
+		if(roles == null) {
+			return null;
+		}
+		
+		for(UserRoleModel r : roles) {
+			if(r.getRole().equals(role)) {
+				return r;
+			}
+		}
+		return null;
+	}
+	
+	public static boolean hasRole(List<UserRoleModel> roles, String role) {
+		return getRole(roles, role) != null;
 	}
 }

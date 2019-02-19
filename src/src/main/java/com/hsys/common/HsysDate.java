@@ -61,6 +61,18 @@ public class HsysDate {
     	return ca.getTime();
     }
 
+    public static boolean equalsDate(Date date1, Date date2) {
+    	if(date1 == null && date2 == null) {
+    		return true;
+    	} else if(date1 == null || date2 == null) {
+    		return false;
+    	}
+    
+    	Date d1 = startOfDay(date1);
+    	Date d2 = startOfDay(date2);
+    	return d1.compareTo(d2) == 0;
+    }
+    
 	public static Date now() {
 		Calendar ca = Calendar.getInstance();
 		return ca.getTime();
@@ -71,6 +83,10 @@ public class HsysDate {
 		Calendar ca = Calendar.getInstance();
     	ca.setTime(now);
     	ca.set(Calendar.DAY_OF_MONTH, 1);
+    	ca.set(Calendar.HOUR_OF_DAY, 0);
+    	ca.set(Calendar.MINUTE, 0);
+    	ca.set(Calendar.SECOND, 0);
+    	ca.set(Calendar.MILLISECOND, 0);
     	return ca.getTime();
 	}
 
@@ -100,22 +116,61 @@ public class HsysDate {
     	return ca.getTime();
 	}
 	
-	public static Date getCurrentDate() {
-		Date now = now();
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_TIME_PATTERN);
-    	try {
-			return sdf.parse(sdf.format(new Date()));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return now;
+	public static Date Today() {
+		Calendar ca = Calendar.getInstance();
+    	ca.set(Calendar.HOUR_OF_DAY, 0);
+    	ca.set(Calendar.MINUTE, 0);
+    	ca.set(Calendar.SECOND, 0);
+    	ca.set(Calendar.MILLISECOND, 0);
+		return ca.getTime();
 	}
 
-	public static String Today() {
+	/*
+	 * 当月工作开始日期,上个月的21日
+	 */
+	public static Date startOfWorkMonth() {
+		Date d = addDay(thisMonthStart(), -1);
 		
-		return null;
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(d);
+		ca.set(Calendar.DAY_OF_MONTH, 21);
+		ca.set(Calendar.HOUR_OF_DAY, 0);
+    	ca.set(Calendar.MINUTE, 0);
+    	ca.set(Calendar.SECOND, 0);
+    	ca.set(Calendar.MILLISECOND, 0);
+    	
+    	return ca.getTime();
 	}
 
-	
+	/*
+	 * 本月结束工作日，本月21号
+	 */
+	public static Date endOfWorkMonth() {
+		Date d = startOfDay(now());
+		
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(d);
+		
+		ca.set(Calendar.DAY_OF_MONTH, 20);
+		ca.set(Calendar.HOUR_OF_DAY, 0);
+    	ca.set(Calendar.MINUTE, 0);
+    	ca.set(Calendar.SECOND, 0);
+    	ca.set(Calendar.MILLISECOND, 0);
+    	
+    	return ca.getTime();
+	}
+
+	/*
+	 * 是否按刻的时间
+	 */
+	public static boolean isQuarterMinute(Date date) {
+		if(date == null) {
+			return false;
+		}
+		
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(date);
+		
+		return ca.get(Calendar.MINUTE) % 15 == 0;
+	}
 }

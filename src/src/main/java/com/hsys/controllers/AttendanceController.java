@@ -37,9 +37,10 @@ public class AttendanceController extends BaseController {
 	}
 	
 	@RequestMapping("/html/list")
-	public String htmlList(AttendanceForm attendanceForm, Model model) {
-		List<AttendanceModel> list = attendanceBusiness.getAttendances(attendanceForm);
+	public String htmlList(AttendanceForm form, Model model) {
+		List<AttendanceModel> list = attendanceBusiness.getAttendances(form);
 		model.addAttribute("list", list);
+		model.addAttribute("form", form);
 		return "attendance/list";
 	}
 }

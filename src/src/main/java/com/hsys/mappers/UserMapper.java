@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.hsys.models.UserModel;
+import com.hsys.models.UserRoleModel;
 
 
 /**
@@ -20,4 +21,8 @@ public interface UserMapper {
 	void update(UserModel user);
 
 	void changePassword(UserModel user);
+
+	void updateRole(UserRoleModel ur);
+
+	void addRole(UserRoleModel ur);
 }

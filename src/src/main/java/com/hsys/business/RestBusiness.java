@@ -2,21 +2,25 @@ package com.hsys.business;
 
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hsys.HsysSecurityContextHolder;
 import com.hsys.business.forms.RestHtmlListForm;
 import com.hsys.business.forms.RestJsonApproveForm;
 import com.hsys.business.forms.RestJsonDeleteForm;
+import com.hsys.business.forms.RestJsonGetForm;
+import com.hsys.business.forms.RestJsonRejectForm;
 import com.hsys.business.forms.RestJsonUpdateForm;
 import com.hsys.common.HsysDate;
 import com.hsys.common.HsysString;
 import com.hsys.exception.HsysException;
 import com.hsys.models.RestModel;
 import com.hsys.models.UserModel;
+import com.hsys.models.enums.ROLE;
+import com.hsys.models.enums.RestStatus;
 import com.hsys.models.enums.RestType;
 import com.hsys.services.RestServices;
 
@@ -29,55 +33,27 @@ public class RestBusiness {
 	@Autowired
 	private RestServices restService;
 
-	@SuppressWarnings("deprecation")
 	public List<RestModel> getRests(RestHtmlListForm restForm) {
-			RestModel rest = new RestModel();
-		
-		if (HsysString.isNullOrEmpty(restForm.getUserNo()) == true) {
-			if (HsysString.isNullOrEmpty(restForm.getDateStart()) == true && HsysString.isNullOrEmpty(restForm.getDateEnd()) == true) {
-				Date nowDate = new Date();
-				Date endDate = new Date();
-				if(nowDate.getDate() < 21) {
-					if(nowDate.getMonth() == 1) {
-						nowDate.setMonth(12);
-						nowDate.setYear(nowDate.getYear()-1);
-					}else {
-						nowDate.setMonth(nowDate.getMonth()-1);
-					}
-				}else {
-					if(nowDate.getMonth() == 12) {
-						endDate.setMonth(1);
-						endDate.setYear(nowDate.getYear()+1);
-						
-					}else {
-						endDate.setMonth(endDate.getMonth()+1);
-					}
-				}
-				nowDate.setDate(21);
-				nowDate.setHours(0);
-				nowDate.setMinutes(0);
-				endDate.setDate(20);
-				endDate.setHours(23);
-				endDate.setMinutes(59);
-				rest.setDateStart(nowDate);
-				rest.setDateEnd(endDate);
-				rest.setCond(RestModel.CONID_DATE_START, true);
-				rest.setCond(RestModel.CONID_DATE_END, true);
-			}
-		}else {
+		RestModel rest = new RestModel();
+
+		if (!HsysString.isNullOrEmpty(restForm.getUserNo())) {
 			UserModel user = new UserModel();
 			user.setNo(restForm.getUserNo());
 			rest.setUser(user);
 			rest.setCond(RestModel.COND_USER_NO, true);
+			rest.setCond(RestModel.COND_FUZZY_USER_NO, true);
 		}
-		if(HsysString.isNullOrEmpty(restForm.getDateStart()) == false) {
-			rest.setDateStart(HsysDate.tryParse(restForm.getDateStart(), "yyyy-MM-dd"));
-			rest.setCond(RestModel.CONID_DATE_START, true);
-		}
-		if(HsysString.isNullOrEmpty(restForm.getDateEnd()) == false) {
-			rest.setDateEnd(HsysDate.tryParse(restForm.getDateEnd(),"yyyy-MM-dd"));
-			rest.setCond(RestModel.CONID_DATE_END, true);
-		}
+		
+		Date d1 = restForm.getDateStart();
+		d1 = HsysDate.startOfDay(d1);
+		rest.setDateStart(d1);
+		rest.setCond(RestModel.COND_DATE_START, true);
+		
+		Date d2 = restForm.getDateEnd();
+		d2 = HsysDate.endOfDay(d2);
+		rest.setDateEnd(d2);
+		rest.setCond(RestModel.COND_DATE_END, true);
+		
 		return restService.queryList(rest);
 	}
 
@@ -86,8 +62,8 @@ public class RestBusiness {
 		restService.add(rest);
 	}
 	
-	public RestModel getRest(RestHtmlListForm restForm) {
-		RestModel rest = restService.queryById(restForm.getId());
+	public RestModel getRest(RestJsonGetForm form) {
+		RestModel rest = restService.queryById(form.getId());
 		if(rest == null) {
 			throw new HsysException("该记录不存在。");
 		}
@@ -96,8 +72,12 @@ public class RestBusiness {
 	
 	public void update(RestJsonUpdateForm form) {
 		RestModel rest = restService.queryById(form.getId());
+		
 		if(rest == null) {
 			throw new HsysException("该记录不存在");
+		}
+		if(rest.getStatus() != RestStatus.Regist) {
+			throw new HsysException("已经审核的数据不能修改");
 		}
 		if(rest.getLen() != form.getLen()) {
 			rest.setLen(form.getLen());
@@ -127,24 +107,28 @@ public class RestBusiness {
 		if (rest.getUser() == null) {
 			throw new HsysException("不存在用户");
 		}
+		
 		if (rest.getDateStart() == null || rest.getDateEnd() == null || rest.getLen() == 0) {
 			throw new HsysException("时间不能为空");
 		}
+		
 		if (rest.getType() > RestType.Public || rest.getType() < RestType.Vacation) {
 			throw new HsysException("种类超出范围");
 		}
+		
 		if (rest.getDateStart().compareTo(rest.getDateEnd()) == 1) {
 			throw new HsysException("结束时间不得小于开始时间");
 		}
-		if(rest.getDateStart().getMinutes()%15 != 0 ) {
+		
+		if(!HsysDate.isQuarterMinute(rest.getDateStart()) ||
+			!HsysDate.isQuarterMinute(rest.getDateEnd())) {
 			throw new HsysException("时间只能为15的倍数");
 		}
-		if(rest.getDateEnd().getMinutes()%15 != 0 ) {
-			throw new HsysException("时间只能为15的倍数");
-		}
+		
 		if (rest.getLen() > 8 || rest.getLen() < 1) {
 			throw new HsysException("请假时长超出范围");
 		}
+		
 		if (rest.getType() == 0) {
 			if (rest.getLen() != 4 && rest.getLen() != 8) {
 				throw new HsysException("时长只能是四小时或八小时");
@@ -152,7 +136,7 @@ public class RestBusiness {
 		}
 	}
 	
-	@Transactional(propagation=Propagation.REQUIRED) 
+	@Transactional
 	public void delete(RestJsonDeleteForm form) {
 		int[] ids = form.getIds();
 		for(int id : ids) {
@@ -160,28 +144,64 @@ public class RestBusiness {
 			if(rest == null) {
 				throw new HsysException("该数据不存在");
 			}
-			if(rest.getStatus() != 0) {
-				throw new HsysException("已经批准的数据不能删除");
+			if(rest.getStatus() != RestStatus.Regist) {
+				throw new HsysException("已经审核的数据不能删除。");
 			}
+			restService.deleteById(id);
+		}
+		for(int id : ids) {
 			restService.deleteById(id);
 		}
 	}
 	
 	public void approve(RestJsonApproveForm form) {
+		if(!HsysSecurityContextHolder.getLoginUserHasRole(ROLE.REST_APPROVE)) {
+			throw new HsysException("无权限");
+		}
 		int[] ids = form.getIds();
 		for(int id : ids) {
 			RestModel rest = restService.queryById(id);
-			if(rest.getStatus() != 0) {
+			if(rest == null) {
+				throw new HsysException("该数据不存在");
+			}
+			if(rest.getStatus() == RestStatus.Approval) {
 				throw new HsysException("已经批准的数据不能批准");
 			}
+		}
+		for(int id : ids) {
+			RestModel rest = restService.queryById(id);
 			UserModel approveUser = new UserModel();
 			approveUser.setId(HsysSecurityContextHolder.getLoginUserId());
 			rest.setApprovalUser(approveUser);
 			rest.setApprovalDate(new Date());
-			rest.setStatus(1);
+			rest.setStatus(RestStatus.Approval);
 			rest.setUpdate(RestModel.FIELD_APPROVE);
 			restService.update(rest);
 		}
 	}
 
+	public void reject(RestJsonRejectForm form) {
+		if(!HsysSecurityContextHolder.getLoginUserHasRole(ROLE.REST_APPROVE)) {
+			throw new HsysException("无权限");
+		}
+
+		int[] ids = form.getIds();
+		for(int id : ids) {
+			RestModel rest = restService.queryById(id);
+			if(rest == null) {
+				throw new HsysException("该数据不存在");
+			}
+		}
+
+		for(int id : ids) {
+			RestModel rest = restService.queryById(id);
+			UserModel approveUser = new UserModel();
+			approveUser.setId(HsysSecurityContextHolder.getLoginUserId());
+			rest.setApprovalUser(approveUser);
+			rest.setApprovalDate(new Date());
+			rest.setStatus(RestStatus.Reject);
+			rest.setUpdate(RestModel.FIELD_APPROVE);
+			restService.update(rest);
+		}
+	}
 }
