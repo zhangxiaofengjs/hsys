@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hsys.HsysSecurityContextHolder;
 import com.hsys.business.forms.DeviceHtmlListForm;
 import com.hsys.business.forms.DeviceJsonDeleteForm;
 import com.hsys.business.forms.DeviceJsonGetForm;
@@ -14,6 +15,7 @@ import com.hsys.common.HsysString;
 import com.hsys.exception.HsysException;
 import com.hsys.models.DeviceModel;
 import com.hsys.models.UserModel;
+import com.hsys.models.enums.ROLE;
 import com.hsys.services.DeviceService;
 
 /**
@@ -47,22 +49,27 @@ public class DeviceBusiness {
 	}
 	
 	public void add(DeviceModel device) {
-		//检测编号长度
-		if(device.getNo().length()>7) {
-			throw new HsysException("该设备编号过长"); 
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.DEVICE_EDIT)) {
+			throw new HsysException("权限不足"); 
 		}
 		
 		DeviceModel deviceExist = deviceService.queryByNo(device.getNo());
-
 		//检测编号是否已经存在
 		if(deviceExist != null) {
 			throw new HsysException("该设备存在:%s", deviceExist.getNo()); 
 		}
-
+		//检测编号长度
+		if(device.getNo().length()>7) {
+			throw new HsysException("该设备编号过长"); 
+				}
 		deviceService.add(device);
 	}
 
 	public void update(DeviceJsonUpdateForm form) {
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.DEVICE_EDIT)) {
+			throw new HsysException("权限不足"); 
+		}
+		
 		DeviceModel device = deviceService.queryById(form.getId());
 		if(device == null) {
 			throw new HsysException("该设备不存在。");
@@ -88,6 +95,10 @@ public class DeviceBusiness {
 
 	@Transactional
 	public void delete(DeviceJsonDeleteForm form) {
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.DEVICE_EDIT)) {
+			throw new HsysException("权限不足"); 
+		}
+		
 		int[] ids = form.getIds();
 		for(int id : ids) {
 			deviceService.deleteById(id);

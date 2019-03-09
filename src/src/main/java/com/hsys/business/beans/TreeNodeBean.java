@@ -1,6 +1,6 @@
 package com.hsys.business.beans;
 
-public class GroupTreeNodeBean {
+public class TreeNodeBean {
 	private int value;
 	private String text;
 	

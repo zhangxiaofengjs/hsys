@@ -7,18 +7,22 @@
         <result column="u_name" property="name"/>       
         <result column="u_no" property="no"/>       
     </resultMap>
+	<resultMap id="projectResultMap" type="projectModel" >  
+        <id column="p_id" property="id"/>
+        <result column="p_no" property="no"/>       
+        <result column="p_name" property="name"/>       
+    </resultMap>
 	<resultMap id="expenseReceiptResultMap" type="expenseReceiptModel" >
 	 	<id column="e_id" property="id"/>
 		<result column="e_no" property="no"/> 
 		<result column="e_submit_date" property="submitDate"/> 
 		<result column="e_pay_date" property="payDate"/> 
 		<result column="e_type" property="type"/> 
-		<result column="e_payee_id" property="payeeId"/> 
 		<result column="e_comment" property="comment"/> 
 		<result column="e_status" property="status"/> 
 		<result column="e_attachment_path" property="attachmentPath"/> 
-		<result column="e_project_id" property="projectId"/> 
-		<association property="user" resultMap="userResultMap"/>
+		<association property="project" resultMap="projectResultMap"/>
+		<association property="payee" resultMap="userResultMap"/>
 	</resultMap> 
 	<select id="queryList" resultMap="expenseReceiptResultMap">
 		select 	
@@ -33,15 +37,42 @@
 				e.c_attachment_path as e_attachment_path,
 				e.c_project_id as e_project_id,
 				u.c_no as u_no,
-				u.c_name as u_name			   
+				u.c_id as u_id,
+				u.c_name as u_name,		   
+				p.c_id as p_id,
+				p.c_no as p_no,
+				p.c_name as p_name			   
 		from expense_receipt_tbl as e 
 		left join user_tbl as u on e.c_payee_id=u.c_id
+		<if test="cond.payeeGroupId != null">
+			left join user_group_tbl as ug on e.c_payee_id=ug.c_user_id
+		</if>
+		left join project_tbl as p on e.c_project_id=p.c_id
 		<where>
 			<if test="cond.id != null">
 				and e.c_id = #{id}
 			</if>
-			<if test="cond.userNo != null">
-				and u.c_no like '%' #{user.no} '%'
+			<if test="cond.payeeNo != null">
+				<choose>
+	                <when test="cond.fuzzyPayeeNo != null">
+	                   	and u.c_no like '%${payee.no}%'
+	                </when>
+	                <otherwise>
+	                    and u.c_no=#{payee.no}
+	                </otherwise>
+	            </choose>
+	        </if>
+			<if test="cond.payeeGroupId != null">
+				and ug.c_group_id = #{cond.payeeGroupId}
+			</if>
+			<if test="cond.status != null">
+				and e.c_status = #{status}
+			</if>
+			<if test="cond.projectIds != null">
+				and p.c_id in
+				<foreach item="pid" collection="cond.projectIds" separator="," open="(" close=")" index="i">
+			    	#{pid}
+			    </foreach>
 			</if>
 			<if test="cond.no != null">
 				and e.c_no = #{no}
@@ -57,16 +88,19 @@
     		c_pay_date,
 			c_submit_date,
 			c_payee_id
-			 )
+			)
     	values (
     		#{no},
     		#{comment},
     		#{type},
-    		0,
-    		null,
-    		null,
-    		null
+    		#{status},
+    		#{payDate},
+    		#{submitDate},
+    		#{payee.id}
     	)
+    	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      		select LAST_INSERT_ID() as id
+      	</selectKey>
     </insert>
     <update id="update">
     	update expense_receipt_tbl
@@ -81,12 +115,17 @@
 				c_type = #{type},
 			</if>
     		<if test="update.payeeId != null">
-				c_payee_id = #{payeeId},
+				c_payee_id = #{payee.id},
 			</if>
-			<if test="cond.status != null">
-				 c_status = #{status}
+			<if test="update.status != null">
+				c_status = #{status},
 			</if>
-			
+			<if test="update.payDate != null">
+				c_pay_date = #{payDate},
+			</if>
+			<if test="update.projectId != null">
+				c_project_id = #{project.id},
+			</if>
 		</set>
     	<where>
 			c_id = #{id}
@@ -95,9 +134,7 @@
     <delete id="delete">
     	delete from expense_receipt_tbl
     	<where>
-			<if test="cond.id != null">
-				and c_id = #{id}
-			</if>
+			and c_id = #{id}
 		</where>
     </delete>
  

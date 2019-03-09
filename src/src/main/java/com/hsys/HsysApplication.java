@@ -18,11 +18,12 @@ public class HsysApplication {
 
 	public static void main(String[] args) {
 		logger.info("hsys starting ...");
+
+		SpringApplication app = new SpringApplication(HsysApplication.class);
 		
-		SpringApplication app = new SpringApplication(HsysApplication.class); 
-        @SuppressWarnings("unused")
 		ConfigurableApplicationContext configAppContext = app.run(args);
 
+        HsysApplicationContext.setContext(configAppContext);
         logger.info("\n"+
         		"-----------------------------------\n"+
         		"*                                 *\n"+

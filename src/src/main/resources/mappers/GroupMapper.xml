@@ -4,21 +4,23 @@
 <mapper namespace="com.hsys.mappers.GroupMapper">
 	<resultMap id="groupResultMap" type="groupModel" >  
         <id column="g_id" property="id"/>  
-        <result column="g_name" property="name"/>  
+        <result column="g_name" property="name"/>
+        <association property="parent" resultMap="groupResultMap" columnPrefix="p"/>
     </resultMap>
 
 	<select id="queryList" resultMap="groupResultMap">
 		select g.c_id as g_id,
-			   g.c_name as g_name
+			   g.c_name as g_name,
+			   g.c_parent_id as pg_id
 		from group_tbl as g
 		<if test="cond.userId != null">
 			left join user_group_tbl as ug on ug.c_group_id=g.c_id
 		</if>
 		<where>
-			<if test="id > 0">
+			<if test="cond.id != null">
 				and g.c_id = #{id}
 			</if>
-			<if test="name != null">
+			<if test="cond.name != null">
 				<choose>
 	                <when test="cond.fuzzyName != null">
 	                   	and g.c_name like '%${name}%'

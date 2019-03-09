@@ -5,9 +5,11 @@ $(document).ready(function(){
 		var rowid = self.attr("rowid");
 		var checked = self.prop("checked");
 
+		var tbl = self.closest("table");
+		
 		if(self.attr("name")=="selectAll") {
 			//全选
-			var chkBoxes = $(":checkbox[name='select']");
+			var chkBoxes = $("#{0} :checkbox[name='select']".format(tbl.attr("id")));
 			chkBoxes.each(function() {
 				if(checked) {
 					 $(this).prop('checked', true)
@@ -16,9 +18,9 @@ $(document).ready(function(){
 					$(this).removeProp('checked')
 				}
 			});
-			var rows = $("tr");
+			var rows = $("#"+ tbl.attr("id") + " tr");
 			rows.each(function() {
-				if($(this).attr("rowid") != null) {
+				if($(this).find(":checkbox").attr("name") == "select") {
 					if(checked) {
 						$(this).addClass("info");
 					} else {
@@ -28,9 +30,9 @@ $(document).ready(function(){
 			});
 		} else {
 			if(checked) {
-				$("tr[rowid='" + rowid + "']").addClass("info");
+				self.closest("tr").addClass("info");
 			} else {
-				$("tr[rowid='" + rowid + "']").removeClass("info");
+				self.closest("tr").removeClass("info");
 			}
 		}
 	});
@@ -61,10 +63,10 @@ htbl.getSelectedRowId = function(tableId, bAllowMulti, bShowErr) {
 		return null;
 	}
 	
-	if(bShowErr && !bAllowMulti && selectIdArr.length != 1) {
-		hdlg.showOK("请仅选择一个要操作的对象。");
-		return null;
-	}
+//	if(bShowErr && !bAllowMulti && selectIdArr.length != 1) {
+//		hdlg.showOK("请仅选择一个要操作的对象。");
+//		return null;
+//	}
 
 	if(!bAllowMulti) {
 		return selectIdArr[0];

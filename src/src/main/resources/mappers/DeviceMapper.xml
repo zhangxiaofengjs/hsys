@@ -28,6 +28,9 @@
 			<if test="cond.id != null">
 				and d.c_id = #{id}
 			</if>
+			<if test="cond.no != null">
+				and d.c_no = #{no}
+			</if>
 			<if test="cond.userNo != null">
 				and d.c_no like '%' #{user.no} '%'  or u.c_no like '%' #{user.no} '%'
 			</if>
@@ -66,9 +69,7 @@
     <delete id="delete">
     	delete from device_tbl
     	<where>
-			<if test="cond.id != null">
 				and c_id = #{id}
-			</if>
 		</where>
     </delete>
 </mapper>

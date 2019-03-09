@@ -12,5 +12,8 @@ import com.hsys.models.ExpenseItemModel;
  */
 @Mapper
 public interface ExpenseItemMapper {
-	List<ExpenseItemModel> queryList();
+	List<ExpenseItemModel> queryList(ExpenseItemModel item);
+	void add(ExpenseItemModel item);
+	void delete(ExpenseItemModel item);
+	void update(ExpenseItemModel item);
 }

@@ -10,17 +10,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.hsys.HsysSecurityContextHolder;
+import com.hsys.business.ExpenseItemBusiness;
 import com.hsys.business.ExpenseReceiptBusiness;
+import com.hsys.business.beans.ReceiptDetailBean;
 import com.hsys.business.forms.ExpenseHtmlForm;
+import com.hsys.business.forms.ExpenseItemDeleteForm;
+import com.hsys.business.forms.ExpenseItemGetForm;
+import com.hsys.business.forms.ExpenseItemUnlinkForm;
+import com.hsys.business.forms.ExpenseItemUpdateForm;
 import com.hsys.business.forms.ExpenseReceiptDeleteForm;
-import com.hsys.business.forms.ExpenseReceiptGetForm;
+import com.hsys.business.forms.ExpenseReceiptJsonForm;
+import com.hsys.business.forms.ExpenseReceiptSetProjectForm;
 import com.hsys.business.forms.ExpenseReceiptUpdateForm;
-import com.hsys.business.forms.ReceiptListForm;
 import com.hsys.common.HsysList;
 import com.hsys.controllers.beans.JsonResponse;
-import com.hsys.mappers.ExpenseItemMapper;
 import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
+import com.hsys.models.enums.ROLE;
 
 /**
  * @author: qs
@@ -30,38 +37,30 @@ import com.hsys.models.ExpenseReceiptModel;
 @RequestMapping("/expense")
 public class ExpenseController extends BaseController {
 	@Autowired
-	private ExpenseItemMapper expenseItemMapper;
-	@Autowired
     private ExpenseReceiptBusiness expenseReceiptBusiness; 
+	@Autowired
+	private ExpenseItemBusiness expenseItemBusiness;
 	
 	@RequestMapping("/html/main")
-    public String listMain(ExpenseHtmlForm expenseForm, Model model,ReceiptListForm receiptListForm) {
-		if(expenseForm.getType() == null) {
-			expenseForm.setType("receipts");
+    public String listMain(ExpenseHtmlForm form, Model model) {
+		if(form.getType() == null) {
+			form.setType("receipts");
 		}
-		if("receipts".equals(expenseForm.getType())) {
-				List<ExpenseReceiptModel> list = expenseReceiptBusiness.getReceipts(receiptListForm);
-				model.addAttribute("list",list );
-			
-		} else if("receipt".equals(expenseForm.getType())) {
-			List<ExpenseItemModel> item= expenseItemMapper.queryList();
-			model.addAttribute("list",item );
-			model.addAttribute("receipt", new ExpenseReceiptModel() );
-		} else if("items".equals(expenseForm.getType())) {
-			List<ExpenseItemModel> item= expenseItemMapper.queryList();
+		if("receipts".equals(form.getType())) {
+			List<ExpenseReceiptModel> list = expenseReceiptBusiness.getReceipts(form);
+			model.addAttribute("list",list );
+		} else if("receipt".equals(form.getType())) {
+			ReceiptDetailBean bean = expenseReceiptBusiness.getReceiptDetail(form);
+			model.addAttribute("bean", bean);
+		} else if("items".equals(form.getType())) {
+			List<ExpenseItemModel> item= expenseItemBusiness.getItems(form);
 			model.addAttribute("list",item );
 		} else {
 			model.addAttribute("list", HsysList.New());
 		}
-		model.addAttribute("form", expenseForm);
+		form.setFilterUser(HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.EXPENSE_LIST, ROLE.EXPENSE_LIST_ALL) );
+		model.addAttribute("form", form);
 		return "expense/main";
-	}
-	
-	@RequestMapping("/html/receipt/detail")
-	public String receiptDetail(Integer id, Model model) {
-		List<ExpenseItemModel> item= expenseItemMapper.queryList();
-		model.addAttribute("list",item );
-		return "expense/receiptitems";
 	}
 	
 	@RequestMapping("/json/receipt/add")
@@ -88,7 +87,7 @@ public class ExpenseController extends BaseController {
 	
 	@RequestMapping("/json/receipt/get")
 	@ResponseBody
-	public JsonResponse get(@RequestBody ExpenseReceiptGetForm form) {
+	public JsonResponse get(@RequestBody ExpenseReceiptJsonForm form) {
 		try {
 			ExpenseReceiptModel receipt = expenseReceiptBusiness.getReceipt(form);
 			return JsonResponse.success().put("receipt", receipt);
@@ -130,6 +129,28 @@ public class ExpenseController extends BaseController {
 		return JsonResponse.success();
 	}
 	
+	@RequestMapping("/json/receipt/reject")
+	@ResponseBody
+	public JsonResponse reject(@RequestBody ExpenseReceiptModel receipt) {
+		try {
+			expenseReceiptBusiness.reject(receipt);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/receipt/finish")
+	@ResponseBody
+	public JsonResponse finish(@RequestBody ExpenseReceiptModel receipt) {
+		try {
+			expenseReceiptBusiness.finish(receipt);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
 	@RequestMapping("/json/receipt/attachment/download")
 	@ResponseBody
 	public ResponseEntity<byte[]> downloadAttachment(int receiptId) {
@@ -137,6 +158,94 @@ public class ExpenseController extends BaseController {
 			return expenseReceiptBusiness.downloadReceiptAttachment(receiptId);
 		} catch(Exception ex) {
 			return null;
+		}
+	}
+	
+	@RequestMapping("/json/receipt/setproject")
+	@ResponseBody
+	public JsonResponse Setproject(@RequestBody ExpenseReceiptSetProjectForm form) {
+		try {
+			expenseReceiptBusiness.Setproject(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/item/add")
+	@ResponseBody
+	public JsonResponse add(@RequestBody ExpenseItemModel item) {
+		try {
+			expenseItemBusiness.add(item);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/item/delete")
+	@ResponseBody
+	public JsonResponse delete(@RequestBody ExpenseItemDeleteForm form) {
+		try {
+			expenseItemBusiness.delete(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/item/update")
+	@ResponseBody
+	public JsonResponse update(@RequestBody ExpenseItemUpdateForm form) {
+		try {
+			expenseItemBusiness.update(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/item/get")
+	@ResponseBody
+	public JsonResponse get(@RequestBody ExpenseItemGetForm form) {
+		try {
+			ExpenseItemModel item = expenseItemBusiness.getItem(form);
+			return JsonResponse.success().put("item", item);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/item/unlink")
+	@ResponseBody
+	public JsonResponse release(@RequestBody ExpenseItemUnlinkForm form) {
+		try {
+			expenseItemBusiness.unlink(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/item/getunlinked")
+	@ResponseBody
+	public JsonResponse getUnlinked() {
+		try {
+			List<ExpenseItemModel> items = expenseItemBusiness.getUnlinked();
+			return JsonResponse.success().put("items", items);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/item/link")
+	@ResponseBody
+	public JsonResponse link(@RequestBody ExpenseItemGetForm form) {
+		try {
+			expenseItemBusiness.link(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
 		}
 	}
 }

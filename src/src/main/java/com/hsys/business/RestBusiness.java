@@ -9,14 +9,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hsys.HsysSecurityContextHolder;
 import com.hsys.business.forms.RestHtmlListForm;
+import com.hsys.business.forms.RestJsonAddForm;
 import com.hsys.business.forms.RestJsonApproveForm;
+import com.hsys.business.forms.RestJsonCancelRequestForm;
 import com.hsys.business.forms.RestJsonDeleteForm;
 import com.hsys.business.forms.RestJsonGetForm;
 import com.hsys.business.forms.RestJsonRejectForm;
 import com.hsys.business.forms.RestJsonUpdateForm;
 import com.hsys.common.HsysDate;
+import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
 import com.hsys.exception.HsysException;
+import com.hsys.models.ExtraTimeModel;
 import com.hsys.models.RestModel;
 import com.hsys.models.UserModel;
 import com.hsys.models.enums.ROLE;
@@ -33,31 +37,79 @@ public class RestBusiness {
 	@Autowired
 	private RestServices restService;
 
-	public List<RestModel> getRests(RestHtmlListForm restForm) {
-		RestModel rest = new RestModel();
+	public List<RestModel> getRests(RestHtmlListForm form) {
+		if(form.isApprove()) {
+			//审核页面，检查审核权限
+			if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_APPROVE)) {
+				form.setApprove(false);
+				return HsysList.New();
+			}
+		}
+		else if(form.isView()) {
+			//检查一览权限
+			if(!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.REST_LIST, ROLE.REST_LIST_ALL)) {
+				form.setView(false);
+				return HsysList.New();
+			}
+		} else if(form.isUser()) {
+			form.setUserNo(HsysSecurityContextHolder.getLoginUser().getNo());
+		} else {
+			return HsysList.New();
+		}
 
-		if (!HsysString.isNullOrEmpty(restForm.getUserNo())) {
+		RestModel rest = new RestModel();
+		if (!HsysString.isNullOrEmpty(form.getUserNo())) {
 			UserModel user = new UserModel();
-			user.setNo(restForm.getUserNo());
+			user.setNo(form.getUserNo());
 			rest.setUser(user);
 			rest.setCond(RestModel.COND_USER_NO, true);
 			rest.setCond(RestModel.COND_FUZZY_USER_NO, true);
 		}
 		
-		Date d1 = restForm.getDateStart();
+		Date d1 = form.getDateStart();
 		d1 = HsysDate.startOfDay(d1);
 		rest.setDateStart(d1);
 		rest.setCond(RestModel.COND_DATE_START, true);
 		
-		Date d2 = restForm.getDateEnd();
+		Date d2 = form.getDateEnd();
 		d2 = HsysDate.endOfDay(d2);
 		rest.setDateEnd(d2);
 		rest.setCond(RestModel.COND_DATE_END, true);
 		
+		if(form.isApprove()) {
+			List<Integer> statuss = HsysList.New();
+			statuss.add(RestStatus.Regist);
+			statuss.add(RestStatus.CancelRequest);
+			rest.setCond(RestModel.COND_STATUS_MULTI, statuss);
+		}
+
+		if((form.isApprove() || form.isView()) &&
+			!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_LIST_ALL)) {
+			rest.setCond(ExtraTimeModel.COND_GROUP_ID,
+			HsysSecurityContextHolder.getLoginUser().getGroup().getId());
+		}
+
 		return restService.queryList(rest);
 	}
 
-	public void add(RestModel rest) {
+	public void add(RestJsonAddForm form) {
+		RestModel rest = new RestModel();
+		rest.setDateEnd(form.getDateEnd());
+		rest.setDateStart(form.getDateStart());
+		rest.setLen(form.getLen());
+		rest.setSummary(form.getSummary());
+		rest.setType(form.getType());
+		
+		UserModel user;
+		if(form.getUserId() == 0) {
+			//当前用户
+			user = HsysSecurityContextHolder.getLoginUser();
+		} else {
+			user = new UserModel();
+			user.setId(form.getUserId());
+		}
+		rest.setUser(user);
+
 		checkRest(rest);
 		restService.add(rest);
 	}
@@ -149,13 +201,11 @@ public class RestBusiness {
 			}
 			restService.deleteById(id);
 		}
-		for(int id : ids) {
-			restService.deleteById(id);
-		}
 	}
 	
+	@Transactional
 	public void approve(RestJsonApproveForm form) {
-		if(!HsysSecurityContextHolder.getLoginUserHasRole(ROLE.REST_APPROVE)) {
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_APPROVE)) {
 			throw new HsysException("无权限");
 		}
 		int[] ids = form.getIds();
@@ -167,21 +217,19 @@ public class RestBusiness {
 			if(rest.getStatus() == RestStatus.Approval) {
 				throw new HsysException("已经批准的数据不能批准");
 			}
-		}
-		for(int id : ids) {
-			RestModel rest = restService.queryById(id);
-			UserModel approveUser = new UserModel();
-			approveUser.setId(HsysSecurityContextHolder.getLoginUserId());
-			rest.setApprovalUser(approveUser);
-			rest.setApprovalDate(new Date());
-			rest.setStatus(RestStatus.Approval);
-			rest.setUpdate(RestModel.FIELD_APPROVE);
+			
+			rest.setApprovalUser(HsysSecurityContextHolder.getLoginUser());
+			rest.setApprovalDate(HsysDate.now());
+			rest.setStatus(rest.getStatus() == RestStatus.CancelRequest ? RestStatus.Cancel : RestStatus.Approval);
+			rest.setUpdate(RestModel.FIELD_APPROVAL_USER_ID);
+			rest.setUpdate(RestModel.FIELD_STATUS);
 			restService.update(rest);
 		}
 	}
 
+	@Transactional
 	public void reject(RestJsonRejectForm form) {
-		if(!HsysSecurityContextHolder.getLoginUserHasRole(ROLE.REST_APPROVE)) {
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_APPROVE)) {
 			throw new HsysException("无权限");
 		}
 
@@ -191,16 +239,37 @@ public class RestBusiness {
 			if(rest == null) {
 				throw new HsysException("该数据不存在");
 			}
+			if(rest.getStatus() == RestStatus.Reject) {
+				throw new HsysException("已经驳回的数据不能驳回");
+			}
+			
+			rest.setApprovalUser(HsysSecurityContextHolder.getLoginUser());
+			rest.setApprovalDate(HsysDate.now());
+			rest.setStatus(rest.getStatus() == RestStatus.CancelRequest ? RestStatus.Approval : RestStatus.Reject);
+			rest.setUpdate(RestModel.FIELD_APPROVAL_USER_ID);
+			rest.setUpdate(RestModel.FIELD_STATUS);
+			restService.update(rest);
 		}
+	}
+
+	@Transactional
+	public void cancelRequest(RestJsonCancelRequestForm form) {
+		int[] ids = form.getIds();
 
 		for(int id : ids) {
 			RestModel rest = restService.queryById(id);
-			UserModel approveUser = new UserModel();
-			approveUser.setId(HsysSecurityContextHolder.getLoginUserId());
-			rest.setApprovalUser(approveUser);
-			rest.setApprovalDate(new Date());
-			rest.setStatus(RestStatus.Reject);
-			rest.setUpdate(RestModel.FIELD_APPROVE);
+			if(rest == null) {
+				throw new HsysException("该数据不存在");
+			}
+			
+			if(rest.getStatus() != RestStatus.Approval) {
+				throw new HsysException("已经批准的数据才能取消");
+			}
+			rest.setApprovalUser(HsysSecurityContextHolder.getLoginUser());
+			rest.setApprovalDate(HsysDate.now());
+			rest.setStatus(RestStatus.CancelRequest);
+			rest.setUpdate(RestModel.FIELD_APPROVAL_USER_ID);
+			rest.setUpdate(RestModel.FIELD_STATUS);
 			restService.update(rest);
 		}
 	}

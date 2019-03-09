@@ -14,7 +14,7 @@ $(document).ready(function(){
 			var editor = "";
 			if(id == "e_group" ) {
 				editor = '<input type="selecttree" class="form-control" name="{0}_value" id="{0}_value">'.format(id);
-			} else if(//id == "e_group" ||
+			} else if(id == "e_companyName" ||
 				id == "e_sex" ||
 				id == "e_degree") {
 				editor = '<select class="form-control" style="display:inline;width:200px;" name="{0}_value" id="{0}_value"></select>'.format(id);
@@ -124,8 +124,8 @@ $(document).ready(function(){
 			htreeview.setPullDownValue(id + "_value", val, dispVal);
 		} else {
 			var url = null;
-			if(id == "e_group") {
-				url = "/group/json/list";
+			if(id == "e_companyName") {
+				url = "/company/json/list";
 			}
 			else {
 				return;
@@ -135,12 +135,12 @@ $(document).ready(function(){
 				"url": url,
 				"data": {},
 				"success": function(data) {
-					if(id == "e_group") {
-						var groups = data.groups;
+					if(id == "e_companyName") {
+						var companies = data.companies;
 						var strHtml = "";
-						groups.forEach(function(group, idx) {
+						companies.forEach(function(c, idx) {
 							strHtml += '<option value="{0}" {2}>{1}</option>'.
-							format(group.id, group.name, val==group.id?"selected":"");
+							format(c.id, c.name, val==c.id?"selected":"");
 						});
 						var pSelect = $("#{0}_value".format(id));
 						pSelect.children().remove();
@@ -159,6 +159,13 @@ function cancelUpdate(pA) {
 	var self = $(pA);
 	var id = self.attr("id");
 	id = id.left(id.length - "_cancel".length);
+	
+	if(id == 'e_role') {
+		//checkbox 设为可编辑即不可
+		$(":checkbox[name='e_role_value']").each(function() {
+			$(this).attr("onclick", "return false;");
+		});
+	}
 	
 	$("#{0}_disp_div".format(id)).show();
 	$("#{0}_edit_div".format(id)).hide();

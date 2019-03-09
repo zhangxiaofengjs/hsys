@@ -4,12 +4,23 @@
 	width:15px;
 }
 
+.hsys-table-index-column {
+	width:15px;
+	text-align: center;
+	font-size: 12px;
+	font-style: italic;
+}
+
 .hsys-text-right {
 	text-align: right;
 }
 
 .hsys-text-center {
 	text-align: center;
+}
+
+.hsys-text-left {
+	text-align: left;
 }
 
 .hsys-no-boder-form-control {

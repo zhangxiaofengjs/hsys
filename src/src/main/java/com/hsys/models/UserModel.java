@@ -15,6 +15,7 @@ public class UserModel extends BaseModel {
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_SEX = "sex";
 	public static final String FIELD_PLACE = "place";
+	public static final String FIELD_COMPANY_NAME = "companyName";
 	public static final String FIELD_EXIT_DATE = "exitDate";
 	public static final String FIELD_ENTER_DATE = "enterDate";
 	public static final String FIELD_PHONE_NUMBER = "phoneNumber";
@@ -30,6 +31,8 @@ public class UserModel extends BaseModel {
 	public static final String COND_ID = "id";
 	public static final String COND_NO = "no";
 	public static final String COND_CONTAINS_DISABLE_ROLE = "containsDisableRole";
+	public static final String COND_EXIT_DATE_NULL = "exitDateNull";
+	public static final String COND_EXIT_DATE_NOT_NULL = "exitDateNotNull";
 	
 
 	private String no;
@@ -48,6 +51,7 @@ public class UserModel extends BaseModel {
 	private Date enterDate;
 	private Date exitDate;
 	private GroupModel group;
+	private CompanyModel company;
 	private List<UserRoleModel> roles;
 	
 	public String getIdNumber() {
@@ -184,5 +188,13 @@ public class UserModel extends BaseModel {
 
 	public void setRoles(List<UserRoleModel> roles) {
 		this.roles = roles;
+	}
+
+	public CompanyModel getCompany() {
+		return company;
+	}
+
+	public void setCompany(CompanyModel company) {
+		this.company = company;
 	}
 }

@@ -65,34 +65,43 @@
 					    	</a>
 					    </li>
 					    <li>
-					    	<a href="#" th:refURL="'order/list'" th:displayText="'常用功能/加班记录'">
+					    	<a href="#" th:refURL="'extratime/html/list?user=true'" th:displayText="'常用功能/加班记录'">
 					    		<i style="padding-left:20px;" class="glyphicon glyphicon-copy"></i>
 					    		<span style="margin-left:5px;"><b>加班记录</b></span>
 					    	</a>
 					    </li>
 					    <li>
-					    	<a href="#" th:refURL="'rest/html/list?display=1'" th:displayText="'常用功能/请假记录'">
+					    	<a href="#" th:refURL="'rest/html/list?user=true'" th:displayText="'常用功能/请假记录'">
 					    		<i style="padding-left:20px;" class="glyphicon glyphicon-tent"></i>
 					    		<span style="margin-left:5px;"><b>请假记录</b></span>
 					    	</a>
 					    </li>
 					    <li>
-					    	<a href="#" th:refURL="'expense/html/main'" th:displayText="'常用功能/报销记录'">
+					    	<a href="#" th:refURL="'expense/html/main?user=true'" th:displayText="'常用功能/报销记录'">
 					    		<i style="padding-left:20px;" class="glyphicon glyphicon-transfer"></i>
 					    		<span style="margin-left:5px;"><b>报销记录</b></span>
 					    	</a>
 					    </li>
+					    <li>
+					    	<a href="#" th:refURL="'user/html/list?view=true'" th:displayText="'常用功能/员工信息查询'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-transfer"></i>
+					    		<span style="margin-left:5px;"><b>员工信息查询</b></span>
+					    	</a>
+					    </li>
 					</ul> 
 		         </li>  
-		         <li>  
+		         <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+		         									  T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE,
+		         									  T(com.hsys.models.enums.ROLE).REST_APPROVE)}">  
 	                 <a href="#approvalmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
 	                 	 <i class="glyphicon glyphicon-retweet"></i>
 					     <span style="margin-left:5px;"><b>确认审核</b></span> 
 	                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
 	                 </a>  
 	                 <ul id="approvalmgr" class="nav nav-list collapse secondmenu" style="height: 0px;">  
-		                <li>
-		                	<a href="#" th:refURL="'extratime/html/approval'" th:displayText="'aaa/dd'">
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+		                									T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE)}">
+		                	<a href="#" th:refURL="'extratime/html/list?approve=true'" th:displayText="'aaa/dd'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-log-in"></i>
 		                		<span style="margin-left:5px;"><b>加班审核</b></span>
 		                	</a>
@@ -101,45 +110,66 @@
 		                									T(com.hsys.models.enums.ROLE).REST_APPROVE)}">
 		                	<a href="#" th:refURL="'rest/html/list?approve=true'" th:displayText="'确认审核/休假审核'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-shopping-cart"></i>
-		                		<span style="margin-left:5px;"><b>休假审核</b></span>
+		                		<span style="margin-left:5px;"><b>请假审核</b></span>
 		                	</a>
-		                </li>  
+		                </li>
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+		                									T(com.hsys.models.enums.ROLE).EXPENSE_LIST,
+		                									T(com.hsys.models.enums.ROLE).EXPENSE_LIST_ALL)}">
+					    	<a href="#" th:refURL="'expense/html/main?approval=true'" th:displayText="'确认审核/报销审核'">
+					    		<i style="padding-left:20px;" class="glyphicon glyphicon-transfer"></i>
+					    		<span style="margin-left:5px;"><b>报销审核</b></span>
+					    	</a>
+					    </li>
 	            	</ul>  
 	       		</li>
-		         <li>  
+		         <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).REST_LIST,
+		         									  T(com.hsys.models.enums.ROLE).REST_LIST_ALL,
+		         									  T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST,
+		         									  T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL,
+		         									  T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
+		         									  T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL)}">  
 	                 <a href="#mgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
 	                 	 <i class="glyphicon glyphicon-home"></i>
-					     <span style="margin-left:5px;"><b>考勤管理</b></span> 
+					     <span style="margin-left:5px;"><b>出勤管理</b></span> 
 	                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
 	                 </a>  
 	                 <ul id="mgr" class="nav nav-list collapse secondmenu" style="height: 0px;">  
-		                <li>
-		                	<a href="#" th:refURL="'attendance/html/list'" th:displayText="'管理/考勤管理'">
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST,
+		                									 T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL)}">
+		                	<a href="#" th:refURL="'attendance/html/list'" th:displayText="'考勤管理/考勤管理'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-th-list"></i>
-		                		<span style="margin-left:5px;"><b>出勤记录</b></span>
+		                		<span style="margin-left:5px;"><b>出勤记录一览</b></span>
 		                	</a>
 		                </li>  
-		                <li>
-		                	<a href="#" th:refURL="'extratime/html/approval'" th:displayText="'aaa/dd'">
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
+		                									 T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL)}">
+		                	<a href="#" th:refURL="'extratime/html/list?view=true'" th:displayText="'考勤管理/加班记录一览'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-log-in"></i>
-		                		<span style="margin-left:5px;"><b>加班记录</b></span>
+		                		<span style="margin-left:5px;"><b>加班记录一览</b></span>
 		                	</a>
 		                </li>  
-		                <li>
-		                	<a href="#" th:refURL="'rest/html/list?display=0'" th:displayText="'aaa/ff'">
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).REST_LIST,
+		                									 T(com.hsys.models.enums.ROLE).REST_LIST_ALL)}">
+		                	<a href="#" th:refURL="'rest/html/list?view=true'" th:displayText="'考勤管理/请假记录一览'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-shopping-cart"></i>
-		                		<span style="margin-left:5px;"><b>休假记录</b></span>
+		                		<span style="margin-left:5px;"><b>请假记录一览</b></span>
 		                	</a>
 		                </li>  
-		                <li>
-		                	<a href="#" th:refURL="'warehouse/history/main'" th:displayText="'aaa/ww'">
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
+		                									 T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL,
+		                									 T(com.hsys.models.enums.ROLE).REST_LIST,
+		                									 T(com.hsys.models.enums.ROLE).REST_LIST_ALL)}">
+		                	<a href="#" th:refURL="'statistic/html/list'" th:displayText="'考勤管理/统计'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-retweet"></i>
-		                		<span style="margin-left:5px;"><b>出勤统计</b></span>
+		                		<span style="margin-left:5px;"><b>统计</b></span>
 		                	</a>
 		                </li>  
 	            	</ul>  
 	       		</li>
-	       		<li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN)}">
+	       		<li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+                									T(com.hsys.models.enums.ROLE).USER_EDIT,
+                									T(com.hsys.models.enums.ROLE).DEVICE_EDIT)}">
 	                 <a href="#sysmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
 	                 	 <i class="glyphicon glyphicon-cog"></i>
 					     <span style="margin-left:5px;">
@@ -155,16 +185,17 @@
 		                		<span style="margin-left:5px;"><b>员工维护</b></span>
 		                	</a>
 		                </li>  
-		                <li>
+		                <!-- <li>
 		                	<a href="#" th:refURL="'group/html/list'" th:displayText="'系统维护  > 组织维护'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-leaf"></i>
 		                		<span style="margin-left:5px;"><b>组织维护</b></span>
 		                	</a>
-		                </li>  
-		                <li>
+		                </li>   -->
+		                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+		                									T(com.hsys.models.enums.ROLE).DEVICE_EDIT)}">
 		                	<a href="#" th:refURL="'device/html/list'" th:displayText="'系统维护  > 设备维护'">
 		                		<i style="padding-left:20px;" class="glyphicon glyphicon-tower"></i>
-		                		<span style="margin-left:5px;"><b>设备维护</b></span>
+		                		<span style="margin-left:5px;"><b>设备一览</b></span>
 		                	</a>
 		                </li>  
 	            	</ul>  

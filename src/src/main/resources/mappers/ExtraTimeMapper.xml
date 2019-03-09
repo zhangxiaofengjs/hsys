@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hsys.mappers.ExtraTimeMapper">
+	<resultMap id="userResultMap" type="userModel" >  
+        <id column="u_id" property="id"/>
+        <result column="u_name" property="name"/>       
+        <result column="u_no" property="no"/>       
+    </resultMap>
+	<resultMap id="extraResultMap" type="ExtraTimeModel" >    
+        <result column="e_id" property="id"/>  
+        <result column="e_date" property="date"/>  
+        <result column="e_startTime" property="startTime"/>  
+        <result column="e_endTime" property="endTime"/>
+        <result column="e_type" property="type"/>  
+        <result column="e_length" property="length"/>
+        <result column="e_comment" property="comment"/>
+        <result column="e_status" property="status"/> 
+        <result column="e_meal_lunch" property="mealLunch"/>
+        <result column="e_meal_supper" property="mealSupper"/>
+        <result column="e_approval_date" property="approvalDate"/>
+        <association property="user" resultMap="userResultMap"/>
+		<association property="appUser" resultMap="userResultMap" columnPrefix="a"/>
+        <!-- <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" />-->  
+    </resultMap>
+
+	<select id="queryList" resultMap="extraResultMap">
+		select e.c_id as e_id,
+		       e.c_date as e_date,
+			   e.c_start as e_startTime,
+			   e.c_end as e_endTime,
+			   e.c_type as e_type,
+			   e.c_len as e_length,
+			   e.c_comment as e_comment,
+		       e.c_user_id as e_user_id,
+			   e.c_status as e_status,
+			   e.c_meal_lunch as e_meal_lunch,
+			   e.c_meal_supper as e_meal_supper,
+			   e.c_approval_user_id as e_approval_user_id,
+			   e.c_approval_time as e_approval_date,
+			   e.c_expense_item_id as e_expense_item_id,
+			   u.c_id as u_id,
+			   u.c_no as u_no,
+			   u.c_name as u_name,
+			   a.c_id as au_id,
+			   a.c_no as au_no,
+			   a.c_name as au_name
+		from extra_time_tbl as e
+		left join user_tbl as u on e.c_user_id=u.c_id
+		left join user_tbl as a on e.c_approval_user_id=a.c_id
+		left join user_group_tbl as ug on ug.c_user_id=e.c_user_id
+		<where>
+			<if test="cond.id != null">
+				and e.c_id = #{id}
+			</if>
+			<if test="cond.status != null">
+				and e.c_status = #{status}
+			</if>
+			<if test="cond.userNo != null">
+				<choose>
+	                <when test="cond.fuzzyUserNo != null">
+	                   	and u.c_no like '%${user.no}%'
+	                </when>
+	                <otherwise>
+	                    and u.c_no=#{user.no}
+	                </otherwise>
+	            </choose>
+			</if>
+			<if test="cond.startDate != null">
+				and e.c_date <![CDATA[>=]]> #{cond.startDate}
+			</if>
+			<if test="cond.endDate != null">
+				and e.c_date <![CDATA[<=]]> #{cond.endDate}
+			</if>
+			<if test="cond.groupId != null">
+				and ug.c_group_id = #{cond.groupId}
+			</if>
+		</where>
+		<if test="sortOrder != null and sortOrder.size() != 0">
+			order by
+			<foreach collection ="sortOrder" item="orderCond" index= "index" separator =",">
+                 #{orderCond.key} #{orderCond.flag}
+            </foreach >
+		</if>
+	</select>
+	
+	<insert id="add" parameterType="extraTimeModel">
+    	insert into extra_time_tbl (
+		       c_date,
+			   c_start,
+			   c_end,
+			   c_type,
+			   c_len,
+			   c_comment,
+		       c_user_id,
+			   c_status,
+			   c_meal_lunch,
+			   c_meal_supper,
+			   c_approval_user_id,
+			   c_approval_time)
+    	values (
+    		#{date},
+    		#{startTime},
+    		#{endTime},
+    		#{type},
+    		#{length},
+    		#{comment},
+    		#{user.id},
+    		#{status},
+    		#{mealLunch},
+    		#{mealSupper},
+    		#{appUser.id},
+    		#{approvalDate}
+    	)
+    </insert>
+    <update id="update">
+    	update extra_time_tbl
+		<set>
+    		<if test="update.date != null">
+				c_date = #{date},
+			</if>
+    		<if test="update.startTime != null">
+				c_start = #{startTime},
+			</if>
+    		<if test="update.endTime != null">
+				c_end = #{endTime},
+			</if>
+    		<if test="update.type != null">
+				c_type = #{type},
+			</if>
+    		<if test="update.length != null">
+				c_len = #{length},
+			</if>
+    		<if test="update.comment != null">
+				c_comment = #{comment},
+			</if>
+    		<if test="update.status != null">
+				c_status = #{status},
+			</if>
+			<if test="update.mealLunch != null">
+				c_meal_lunch = #{mealLunch},
+			</if>
+			<if test="update.mealSupper != null">
+				c_meal_supper = #{mealSupper}
+			</if>
+		</set>
+    	<where>
+			c_id = #{id}
+		</where>
+    </update>
+     <delete id="delete">
+    	delete from extra_time_tbl
+    	<where>
+				and c_id = #{id}
+		</where>
+    </delete>
+</mapper>

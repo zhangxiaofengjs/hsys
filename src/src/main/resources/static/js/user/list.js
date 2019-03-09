@@ -52,8 +52,8 @@ $(document).ready(function(){
 
 	$("#initPwd").click(function(){
 		var self = $(this);
-		var selId = htbl.getSelectedRowId("userTable");
-		if(selId == null) {
+		var selIds = htbl.getSelectedRowId("userTable", true);
+		if(selIds == null) {
 			return;
 		}
 
@@ -63,7 +63,7 @@ $(document).ready(function(){
 				hsys.ajax({
 					"url":"/user/json/initpwd",
 					"data": {
-						"id": selId
+						"ids": selIds
 					},
 					"success": function() {
 						hsys.success("重置密码为[123]成功，请用户及时修改密码确保安全。", false);

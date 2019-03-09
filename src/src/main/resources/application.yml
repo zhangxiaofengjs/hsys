@@ -44,9 +44,9 @@ spring:
 #log配置
 logging: 
     level:
-        org.springframework.web: DEBUG
+        org.springframework.web: WARN
         com.hsys.mappers: DEBUG
-        com.hsys: DEBUG
+        com.hsys: INFO
     file: c:/hsys/log/hsys.log
      
 # Mybatis配置
@@ -64,7 +64,6 @@ hsys:
         temp-folder: c:/hsys/upload/temp #临时文件夹
         attendance-folder: c:/hsys/upload/attendance #考勤信息文件夹
         receipt-attachment-folder: c:/hsys/upload/receipt-attachment-folder #报销单附件文件夹
-        image-folder: image/ #图形文件夹
     backup: #备份设定
         database:
             enable: true

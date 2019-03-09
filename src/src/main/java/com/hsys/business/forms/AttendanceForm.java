@@ -17,11 +17,11 @@ public class AttendanceForm {
 	
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
-	private Date start = HsysDate.thisMonthStart();
+	private Date start = HsysDate.startOfWorkMonth();
 
 	@JsonSerialize(using=HsysDateSerializer.class)
 	@JsonDeserialize(using=HsysDateDeserializer.class)
-	private Date end = HsysDate.Today();
+	private Date end = HsysDate.endOfWorkMonth();
 
 	public String getUserNo() {
 		return userNo;
@@ -46,5 +46,4 @@ public class AttendanceForm {
 	public void setEnd(Date end) {
 		this.end = end;
 	}
-
 }

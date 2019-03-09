@@ -2,7 +2,7 @@
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head></head>
 <body>
-<div th:fragment="content(list)">
+<div th:fragment="content()">
 <script th:src="@{/js/expense/receipts.js}"></script> 
 	<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
 		<div class="container-fluid">
@@ -10,15 +10,19 @@
 	  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 	  		</div>
 	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/expense/html/main}" method="post">
+				<input type="hidden" name="user" th:value="${form.user}">
+				<input type="hidden" name="approval" th:value="${form.approval}">
 	 			<div class="form-group">
-				   <input type="text" class="form-control" id="userNo" name="userNo" th:value="${ReceiptListForm!=null?ReceiptListForm.userNo:_}" placeholder="输入工号">
+					<input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo"  th:if="${form.filterUser}" th:value="${form.userNo}" placeholder="领款工号">
+					<select class="form-control">  
+						<option value=0>未领款</option>
+				        <option value=1>已领款</option>
+					</select>
+		 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 	 			</div>
-	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='addReceipt'>添加</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='updateReceipt'>编辑</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='deleteReceipt'>删除</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='submitReceipt'>提交</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='approvalReceipt'>批准</button>
+	 			<button type="button" class="btn btn-sm btn-primary" th:if="${form.user}" id='addReceipt'>添加</button>
+	 			<button type="button" class="btn btn-sm btn-primary" th:if="${form.user}" id='updateReceipt'>编辑</button>
+	 			<button type="button" class="btn btn-sm btn-primary" th:if="${form.user}" id='deleteReceipt'>删除</button>
 			</form>
 		</div>
 	</nav>
@@ -26,23 +30,26 @@
 		<thead>
 		    <tr>
 		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
-				<th width=200px>编号</th>
+				<th width=150px>编号</th>
 				<th width=80px>种类</th>
 				<th width=100px>提交日</th>
-				<th width=200px>【工号】领款人</th>			
+				<th width=200px>领款人</th>			
 				<th width=100px>领款日</th>
-				<th width=80px>状态</th>
-				<th>附件</th>
+				<th width=80px>状态</th><!-- 
+				<th width=100px>附件</th> -->
 				<th>备注</th>
 		    </tr>
 		</thead>
 		<tbody>
 			<tr th:each="receipt : ${list}"
-				th:with="user=${receipt.user}">
+				th:with="user=${receipt.payee}">
 				<td>
 					<input type="checkbox" name="select" th:rowid="${receipt.id}">
 				</td>		
-				<td><a th:text="${receipt.no}" th:href="@{'/expense/html/main?type=receipt&receiptId=' +${receipt.id}}"></a></td>
+				<td>
+					<a th:text="${receipt.no}" th:href="@{'/expense/html/main?type=receipt&receiptId=' +${receipt.id + '&user=' + form.user + '&approval=' + form.approval}}">
+					</a>
+				</td>
 				<td th:switch="${receipt.type}">
 					<span th:case="0">用餐</span>
 					<span th:case="1">出租车</span>
@@ -56,7 +63,7 @@
 					<span th:case="1" class="label label-primary">待审核</span>
 					<span th:case="2" class="label label-success">会计处理中</span>
 					<span th:case="3" class="label label-default">已领款</span>
-				</td>
+				</td><!--
 				<td>
 		      		<img width="16px" th:src="@{/icons/add.png}" />
 		      		<img width="16px" th:src="@{/icons/attachment.png}" />
@@ -64,7 +71,7 @@
 		      		<a th:id="${'downloadReceiptAttachment_' + receipt.id}" th:receiptId="${receipt.id}" class="a-pointer" href="javascript:void(0);">
 		      			<img width="16px" th:src="@{/icons/download.png}" />
 		      		</a>
-				</td>
+				</td> -->
 				<td th:text="${receipt.comment}"></td>
 		    </tr>
 		</tbody>

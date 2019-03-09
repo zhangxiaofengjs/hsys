@@ -64,5 +64,4 @@ public class RestJsonUpdateForm {
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
-
 }

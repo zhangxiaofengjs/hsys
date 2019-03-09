@@ -24,6 +24,8 @@ public class RestHtmlListForm {
 	private Date dateEnd;
 
 	private boolean approve;
+	private boolean user;
+	private boolean view;
 	
 	public RestHtmlListForm() {
 		this.dateStart = HsysDate.startOfWorkMonth();
@@ -54,12 +56,28 @@ public class RestHtmlListForm {
 		this.userNo = userNo;
 	}
 
-	public boolean getApprove() {
+	public boolean isApprove() {
 		return approve;
 	}
 
 	public void setApprove(boolean approve) {
 		this.approve = approve;
+	}
+
+	public boolean isUser() {
+		return user;
+	}
+
+	public void setUser(boolean user) {
+		this.user = user;
+	}
+
+	public boolean isView() {
+		return view;
+	}
+
+	public void setView(boolean view) {
+		this.view = view;
 	}
 	
 }

@@ -15,9 +15,11 @@
 				   <input type="text" class="form-control" id="userNo" name="userNo" th:value="${deviceHtmlListForm!=null?deviceHtmlListForm.no:_}" placeholder="输入工号/设备号">
 	 			</div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='addDevice'>添加</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='updateDevice'>编辑</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id='deleteDevice'>删除</button>
+	 			<div class="form-group" sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).DEVICE_EDIT)}">
+		 			<button type="button" class="btn btn-sm btn-primary" id='addDevice'>添加</button>
+		 			<button type="button" class="btn btn-sm btn-primary" id='updateDevice'>编辑</button>
+		 			<button type="button" class="btn btn-sm btn-primary" id='deleteDevice'>删除</button>
+		 		</div>
 			</form>
 		</div>
 	</nav>

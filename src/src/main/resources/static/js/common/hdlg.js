@@ -469,7 +469,7 @@ hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax, bDepend ) {
 		field.depend = bDepend;
 	}
 	
-	if(!bSkipAjax && field.ajax) {
+	if(!bSkipAjax && self.isAjaxField(field)) {
 		self.buildAjaxField(field);
 	}
 	else {
@@ -492,16 +492,25 @@ hdlg.prototype.field = function(id) {
 	return ff;
 }
 
+hdlg.prototype.isAjaxField = function(field) {
+	if(field.hasOwnProperty("ajax") && 
+		field.ajax != undefined &&
+		field.ajax != null) {
+		return true;
+	}
+	return false;
+}
+
 hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 	var self = this;
 	
 	var strFormHtml = "";
 
 	if(checkLoadElem) {
-		if(field.ajax || field.depend) {
+		if(self.isAjaxField(field) || field.depend) {
 			//如果数据是ajax/depend（依赖后面重新做成）取得，先追加一个等待图标'
 			strFormHtml += '\
-				<div id="{0}" class="form-control hsys-no-boder-form-control">\
+				<div id="{0}" hdlg-loading="true" class="form-control hsys-no-boder-form-control">\
 					<img src="{1}" height="24px" />\
 					<span class="text-muted">加载中...</span>\
 				</div>'.
@@ -564,10 +573,10 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 	} else if(field.type == "checkboxgroup") {
 		var strChBoxGroup = "";
 		field.options.forEach(function(opt, idx) {
-			strChBoxGroup += (idx!=0?"&nbsp;":"") + '<input type="checkbox" id="{0}" name="{0}" value="{1}" {2}>{3}'.
-					format(field.id,
+			strChBoxGroup += '<input type="checkbox" id="{0}" name="{0}" value="{1}" {2}>{3}'.
+					format( field.id,
 						    opt.value,
-						    opt.value == field.value ?"checked":"",
+						    ($.isArray(field.value) ? ($.inArray(opt.value,field.value) >=0) : opt.value == field.value) ?"checked":"",
 						    opt.text);
 		});
 		strFormHtml += '<div style="padding-top:7px;">{0}</div>'.format(strChBoxGroup);
@@ -582,23 +591,31 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 		});
 		strFormHtml += '<div id={0} name={0} style="padding-top:7px;">{1}</div>'.
 		format(field.id, field.value || '');
-	}else {
+	} else {
 		var strAttrHtml = "";
 		strAttrHtml += ' type="{0}"'.format(field.type);
-		strAttrHtml += ' class="{0} {1} form-control"'.format(field.type=='file'?'hsys-no-boder-form-control':'', field.class || '');
+		strAttrHtml += ' class="{0} {1} {2}"'.format(
+				field.type=='file'?'hsys-no-boder-form-control':'',
+				field.class || '',
+				field.type != "checkbox" && field.type != "radio" ?'form-control':'');
 		strAttrHtml += ' name="{0}"'.format(field.id);
 		strAttrHtml += ' id="{0}"'.format(field.id);
-		strAttrHtml += (field.value ? ' value="{0}"'.format(field.value) : '');
-		strAttrHtml += (field.placeholder ? ' placeholder="{0}"'.format(field.placeholder) : '');
-		strAttrHtml += (field.readonly ? ' readonly' : '');
-		strAttrHtml += (field.required ? ' required' : '');
+		strAttrHtml += (field.hasOwnProperty("value") ? ' value="{0}"'.format(field.value) : '');
+		strAttrHtml += (field.hasOwnProperty("placeholder") ? ' placeholder="{0}"'.format(field.placeholder) : '');
+		strAttrHtml += (field.hasOwnProperty("readonly") ? ' readonly' : '');
+		strAttrHtml += (field.hasOwnProperty("required") ? ' required' : '');
+		strAttrHtml += (field.hasOwnProperty("checked") ? ' checked' : '');
 
 		if($.inArray(field.type, ["number", "range", "date", "datetime", "datetime-local", "month", "time", "week"]) >=0 ) {
 			strAttrHtml += (field.min ? ' min="{0}"'.format(field.min) : '');
 			strAttrHtml += (field.max ? ' max="{0}"'.format(field.max) : '');
 		}
 
-		strFormHtml += '<input {0}>'.format(strAttrHtml);
+		var strHtml = '<input {0}>'.format(strAttrHtml);
+		if(field.type == "checkbox" || field.type == "radio") {
+			strHtml = '<div style="padding-top:7px;">' + strHtml + '</div>';
+		}
+		strFormHtml += strHtml;
 	}
 	
 	return '<div>' + strFormHtml + '</div>';//外层的DIV是为了验证valid的时候添加input-group用
@@ -640,7 +657,9 @@ hdlg.prototype.doAjax = function() {
 
 //ajax取得field的信息
 hdlg.prototype.buildAjaxField = function(field) {
-	if(field.ajax == undefined) {
+	var self = this;
+	
+	if(!self.isAjaxField(field)) {
 		return;
 	}
 
@@ -676,14 +695,12 @@ hdlg.prototype.removeFieldElem = function(field) {
 	}
 	var filedElemParent = fieldElem.parent();
 	
-	if(field.type=='select') {
+	if(fieldElem.attr("hdlg-loading") == "true") {
+		//如果是 加载中...的消息图标的话，直接移除即可
+		fieldElem.remove();
+		return filedElemParent;//返回他的亲
+	} else if(field.type=='select') {
 		//bootstrap-select 会产生一些其他元素，先一并删除，否则等下refresh会产生多余元素
-		if(fieldElem.is("div")) {
-			//如果是 加载中...的消息图标的话，直接移除即可
-			fieldElem.remove();
-			return filedElemParent;//返回他的亲
-		}
-		
 		var parent = filedElemParent.parent();
 		if(filedElemParent.hasClass("bootstrap-select")) {
 			//是第二次加载已经被额外添加了select以外的其他元素，直接移除该亲元素即可
@@ -692,6 +709,12 @@ hdlg.prototype.removeFieldElem = function(field) {
 		} else {
 			alert("未想定处理");
 		}
+	} else if(field.type=='radiogroup' ||
+			field.type=='checkboxgroup') {
+		fieldElem = fieldElem.parent();
+		filedElemParent = fieldElem.parent();
+		fieldElem.remove();
+		return filedElemParent;
 	} else {
 		fieldElem.remove();
 		return filedElemParent;
@@ -904,17 +927,31 @@ function getJsonObj(o, strName) {
 	return ret;
 }
 
-hdlg.encodeFormJson = function(frm) {
+hdlg.encodeFormJson = function(dlg) {
    var o = {};
-   var a = $(frm).serializeArray();
+   var a = $("#"+dlg.formId()).serializeArray();
 
    $.each(a, function() {
 		var obj = getJsonObj(o, this.name);
 		var names = this.name.split(".");
 		var propName = names.pop();
-		   
+
 		//准备设定属性值
-		if(propName.substring(propName.length-1, propName.length) == "]") {
+		if(dlg.field(this.name).type=="checkboxgroup") {
+			//如果是checkbox组的话，序列化成数组
+			var val = obj[propName];
+			if($.isArray(val)) {
+				val.push(this.value || '');
+			} else {
+				var array = new Array();
+				if(obj.hasOwnProperty(propName)) {
+					array.push(val);
+				}
+				array.push(this.value || '');
+				obj[propName] = array;
+			}
+		}
+		else if(propName.substring(propName.length-1, propName.length) == "]") {
 			//如果是数组,值类型改为数组
 			var is = propName.indexOf("[");
 			var ie = propName.indexOf("]");
@@ -939,7 +976,9 @@ hdlg.encodeFormJson = function(frm) {
 					val.push(this.value || '');
 				} else {
 					var array = new Array();
-					array.push(val);
+					if(obj.hasOwnProperty(propName)) {
+						array.push(val);
+					}
 					array.push(this.value || '');
 					obj[propName] = array;
 				}
@@ -964,43 +1003,53 @@ hdlg.ajaxSubmitForm = function(dlgId) {
 		return;
 	}
 	var option = dlg.option;
-	var formData;
-	var contentType;
-	if(option.enctype == "multipart/form-data") {
-		formData = new FormData($("#"+dlg.formId().safeJqueryId())[0]);
-		contentType = false;
-	} else {
-		var formJson = hdlg.encodeFormJson("#"+dlg.formId());
-		//	var ff = new FormData();//FormData不好用，暂用json代替
-		formData = JSON.stringify(formJson);
-		contentType = "application/json;charset=UTF-8";
+	
+	if(option.isDownload) {
+		//下载，ajax只支持text，xml,json.html，所以下载得模拟一下
+		hsys.download({
+			"url": option.url,
+			"data": $("#"+dlg.formId()).serializeArray()
+		});
 	}
-	var args = {
-    	url : hsys.url(option.url),
-        type : 'post',
-        dataType : 'json',//接受服务端数据类型
-        contentType:contentType,
-        processData: false,
-        cache: false,
-        data: formData,
-        success : function(data) {
-        	if(data.success) {
-        		if(typeof option.closeOnSuccess == "undefined" || option.closeOnSuccess) {
-        			dlg.hide();
-        		}
-        		option.success(data, dlg);
-        	}
-        	else {
-        		option.error(data, dlg);
-        	}
-        },
-        error: function(data) {
-        	hsys.sysError();
-        }
-     };
-    
-	//提交
-	$.ajax(args);
+	else {
+		var formData;
+		var contentType;
+		if(option.enctype == "multipart/form-data") {
+			formData = new FormData($("#"+dlg.formId().safeJqueryId())[0]);
+			contentType = false;
+		} else {
+			var formJson = hdlg.encodeFormJson(dlg);
+			//	var ff = new FormData();//FormData不好用，暂用json代替
+			formData = JSON.stringify(formJson);
+			contentType = "application/json;charset=UTF-8";
+		}
+		var args = {
+	    	url : hsys.url(option.url),
+	        type : 'post',
+	        dataType : 'json',//接受服务端数据类型
+	        contentType:contentType,
+	        processData: false,
+	        cache: false,
+	        data: formData,
+	        success : function(data) {
+	        	if(data.success) {
+	        		if(typeof option.closeOnSuccess == "undefined" || option.closeOnSuccess) {
+	        			dlg.hide();
+	        		}
+	        		option.success(data, dlg);
+	        	}
+	        	else {
+	        		option.error(data, dlg);
+	        	}
+	        },
+	        error: function(data) {
+	        	hsys.sysError();
+	        }
+	     };
+	    
+		//提交
+		$.ajax(args);
+	}
 
 	dlg.afterSubmit();
 }

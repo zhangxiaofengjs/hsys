@@ -3,17 +3,17 @@
 <head th:include="common/header::header">
 </head>
 <body>
-	<ul class="nav nav-tabs">
+	<ul class="nav nav-tabs" th:if="${form.user}">
 		<li role="presentation" th:class="(${form.type=='receipts' || form.type=='receipt'? 'active' : ''})">
-			<a th:if="${form.type=='receipts' || form.type=='items'}" th:href="@{/expense/html/main?type=receipts}">报销单</a>
-			<a th:if="${form.type=='receipt'}" th:href="@{/expense/html/main?type=receipt}">报销单</a>
+			<a th:if="${form.type=='receipts' || form.type=='items'}" th:href="@{/expense/html/main?type=receipts&user=true}">报销单</a>
+			<a th:if="${form.type=='receipt'}" th:href="@{'/expense/html/main?type=receipts&user=true'}">报销单</a>
 		</li>
 		<li role="presentation" th:class="(${form.type}=='items'? 'active' : '')">
-			<a th:href="@{/expense/html/main?type=items}">报销条目</a>
+			<a th:href="@{/expense/html/main?type=items&user=true}">报销条目</a>
 		</li>
 	</ul>
 	
-<div th:replace="expense/__${form.type}__::content(${list})"></div>
+<div th:replace="expense/__${form.type}__::content()"></div>
 <div th:replace="common/footer::copyright"></div>
 </body>
 </html>

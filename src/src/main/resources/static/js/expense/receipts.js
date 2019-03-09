@@ -31,25 +31,32 @@ $(document).ready(function(){
 					],
 					"value": 0
 				},
-//				{
-//					"id":"submitDate",
-//					"label":"提交日",
-//					"type":"date",
-//					"required":true,
-//					"value":hdate.yyyy_MM_dd(new Date),
-//				},
-//				{
-//					"id":"payDate",
-//					"label":"领款日",
-//					"type":"date",
-//					"required":true,
-//					"value":hdate.yyyy_MM_dd(new Date),
-//				},
 				{
 					"id":"comment",
 					"label":"备注",
 					"type":"text",
 					"required":true,
+				},
+				{
+					"id":"payee.id",
+					"label":"领款人",
+					"type":"select",
+					"options":[],
+					"ajax":{
+						"url":"/user/json/list",
+						"success": function(response, dlg) {
+							var field = dlg.field("payee.id");
+							response.users.forEach(function(user,index){
+								field.options.push(
+									{ 
+										"text":"["+ user.no +"]" + user.name,
+										"value":user.id,
+									}
+								);
+							});
+							dlg.buildField("payee.id");
+						},
+					},
 				},
 			],
 			"url":"/expense/json/receipt/add",
@@ -63,12 +70,10 @@ $(document).ready(function(){
 	});	
 	$("#updateReceipt").click(function(){
 		var self = $(this);
-		
 		var selId = htbl.getSelectedRowId("receiptTable");
 		if(selId == null) {
 			return;
 		}
-		
 		hdlg.showForm({
 			"title":"修改报销信息",
 			"fields":[
@@ -114,6 +119,29 @@ $(document).ready(function(){
 					"required":true,
 					"depend": true,
 				},
+				{
+					"id":"payeeId",
+					"label":"使用者",
+					"type":"select",
+					"options":[],
+					"depend": true,
+					"ajax":{
+						"url":"/user/json/list",
+						"success": function(response, dlg) {
+							var field = dlg.field("payeeId");
+							response.users.forEach(function(user,index){
+								field.options.push(
+									{ 
+										"text":"["+ user.no +"]" + user.name,
+										"value":user.id,
+									}
+								);
+							});
+							dlg.buildField("payeeId");
+						},
+						
+					},
+				},
 			],
 			"ajax":{//取得信息，更新到dlg上
 				"url":"/expense/json/receipt/get",
@@ -123,10 +151,10 @@ $(document).ready(function(){
 				"success": function(response, dlg) {
 					//更新dlg的信息
 					var receipt = response.receipt;
-					
 					dlg.buildField("no", receipt.no);
 					dlg.buildField("comment", receipt.comment);
 					dlg.buildField("type", receipt.type);
+					dlg.buildField("payeeId", receipt.payee.id, false, false);
 				},
 			},
 			"url":"/expense/json/receipt/update",
@@ -163,54 +191,6 @@ $(document).ready(function(){
 					}
 				});
 			}
-		);
-	});
-	$("#submitReceipt").click(function(){
-		var self = $(this);
-		var selId = htbl.getSelectedRowId("receiptTable");
-		if(selId ==null) {
-			return;
-		}
-		hdlg.showYesNo(
-			"确定提交选中的报销单吗?",
-			function() {
-				hsys.ajax({
-					"url":"/expense/json/receipt/submit",
-					"data": {
-						"id": selId
-					},
-					"success": function() {
-						hsys.success(true);
-					},
-					"error": function(data) {
-						hsys.error(data.msg);
-					}
-				});
-			}
-		);
-	});
-	$("#approvalReceipt").click(function(){
-		var self = $(this);
-		var selId = htbl.getSelectedRowId("receiptTable");
-		if(selId ==null) {
-			return;
-		}
-		hdlg.showYesNo(
-				"确定批准选中的报销单吗?",
-				function() {
-					hsys.ajax({
-						"url":"/expense/json/receipt/approval",
-						"data": {
-							"id": selId
-						},
-						"success": function() {
-							hsys.success(true);
-						},
-						"error": function(data) {
-							hsys.error(data.msg);
-						}
-					});
-				}
 		);
 	});
 	

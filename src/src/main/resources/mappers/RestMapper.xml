@@ -7,7 +7,7 @@
         <result column="u_name" property="name"/>
         <result column="u_no" property="no"/>    
     </resultMap>
-    
+
 	<resultMap id="restResultMap" type="RestModel" >  
         <id column="r_id" property="id"/>  
         <result column="r_start" property="dateStart"/>  
@@ -39,6 +39,7 @@
 		from rest_tbl as r
 		left join user_tbl as u on u.c_id=r.c_user_id
 		left join user_tbl as appu on appu.c_id=r.c_approval_user_id
+		left join user_group_tbl as ug on ug.c_user_id=r.c_user_id
 		<where>
 			<if test="cond.userNo != null">
 				<choose>
@@ -59,6 +60,15 @@
 			<if test="cond.id != null">
 			    and r.c_id = #{id}
 			</if>
+			<if test="cond.statusMulti != null">
+			    and r.c_status in
+			    <foreach collection="cond.statusMulti" index="index" item="status" open="(" separator="," close=")">
+	                #{status}       
+		        </foreach>
+			</if>
+			<if test="cond.groupId != null">
+				and ug.c_group_id = #{cond.groupId}
+			</if>
 		</where>
 		order by r.c_date_start
 	</select>
@@ -70,6 +80,7 @@
     		c_date_end,
     		c_type,
     		c_summary,
+    		c_status,
     		c_user_id)
     	values (
     		#{len},
@@ -77,6 +88,7 @@
     		#{dateEnd},
     		#{type},
     		#{summary},
+    		#{status},
     		#{user.id}
     	)
     </insert>
@@ -99,9 +111,11 @@
 			<if test="update.summary != null">
 				c_summary = #{summary},
 			</if>
-			<if test="update.approve != null">
+			<if test="update.approvalUserId != null">
 				c_approval_user_id = #{approvalUser.id},
 				c_approval_time = #{approvalDate},
+			</if>
+			<if test="update.status != null">
 				c_status = #{status},
 			</if>
 		</set>

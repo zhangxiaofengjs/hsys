@@ -25,4 +25,6 @@ public interface UserMapper {
 	void updateRole(UserRoleModel ur);
 
 	void addRole(UserRoleModel ur);
+
+	void updatepwd(UserModel userModel);
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.hsys.business.beans.GroupTreeNodeBean;
+import com.hsys.business.beans.TreeNodeBean;
 import com.hsys.common.HsysList;
 import com.hsys.models.GroupModel;
 import com.hsys.services.GroupService;
@@ -23,15 +23,15 @@ public class GroupBusiness {
 		return groupService.queryList(new GroupModel());
 	}
 
-	public List<GroupTreeNodeBean> getChildrenGroups(GroupTreeNodeBean bean) {
+	public List<TreeNodeBean> getChildrenGroups(TreeNodeBean bean) {
 		GroupModel group = new GroupModel();
 		group.setCond(GroupModel.COND_PARENT_ID, bean.getValue());
 
-		List<GroupTreeNodeBean> list = HsysList.New(); 
+		List<TreeNodeBean> list = HsysList.New(); 
 		
 		List<GroupModel> groups = groupService.queryList(group);
 		for(GroupModel g : groups) {
-			GroupTreeNodeBean b = new GroupTreeNodeBean();
+			TreeNodeBean b = new TreeNodeBean();
 			b.setText(g.getName());
 			b.setValue(g.getId());
 			

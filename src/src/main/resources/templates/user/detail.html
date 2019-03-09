@@ -12,9 +12,9 @@
 	  		</div>
 	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/detail}" method="post">
 	 			<div class="form-group">
-				   <input type="text" class="form-control" id="no" name="no" th:value="${no!=null?no:_}" placeholder="输入工号">
+				   <input type="text" class="form-control hsys-fc-userno-width" id="no" name="no" th:value="${user.no}" placeholder="输入工号">
 	 			</div>
-	 			<button type="submit" class="btn btn-sm btn-info">查询</button>
+	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 			</form>
 		</div>
 	</nav>
@@ -46,11 +46,11 @@
 		<tbody>
 			<!-- 基本信息 -->
 			<tr>
-				<td rowspan=2>基本信息</td>
-				<td style="width:120px;">所属</td>
+				<td rowspan=3>基本信息</td>
+				<td style="width:120px;">所在部署</td>
 				<td>
 					<div id="e_group_disp_div" th:with="group=${user.group}">
-						<span th:text="${group!=null?group.name:_}" th:value="${group!=null?group.id:_}"></span>&nbsp;
+						<span th:text="${user.groupFullName}" th:value="${group!=null?group.id:_}"></span>&nbsp;
 						<a id="e_group" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
 					</div>
 				</td>
@@ -61,6 +61,15 @@
 					<div id="e_place_disp_div">
 						<span th:text="${user.place}" th:value="${user.place}"></span>&nbsp;
 						<a id="e_place" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td>所属公司</td>
+				<td>
+					<div id="e_companyName_disp_div">
+						<span th:text="${user.company != null ? user.company.name : _}" th:value="${user.company != null ? user.company.id : _}"></span>&nbsp;
+						<a id="e_companyName" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
 					</div>
 				</td>
 			</tr>
@@ -179,9 +188,20 @@
 						<th:block th:each="role : ${T(com.hsys.models.enums.ROLE).ALL}">
 							<input type="checkbox" name="e_role_value" th:id="${role}" th:checked="${T(com.hsys.business.UserBusiness).hasRole(user.roles, role)}" onclick="return false;" >
 							<th:block th:switch="${role}">
-								<span class="label label-danger" th:case="${T(com.hsys.models.enums.ROLE).ADMIN}">管理员</span>
-								<span class="label label-warning" th:case="${T(com.hsys.models.enums.ROLE).USER_EDIT}">用户编辑</span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_APPROVE}">休假批准</span>
+								<span class="label label-danger" th:case="${T(com.hsys.models.enums.ROLE).ADMIN}">管理员<br></span>
+								<span class="label label-warning" th:case="${T(com.hsys.models.enums.ROLE).USER_EDIT}">用户编辑<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE}">加班批准<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_LIST}">加班记录一览(组内)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL}">加班记录一览(所有)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_APPROVE}">请假批准<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_LIST}">请假记录一览(组内)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_LIST_ALL}">请假记录一览(所有)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_UPLOAD}">出勤记录导入<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST}">出勤记录一览(组内)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL}">出勤记录一览(所有)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST}">报销单一览(组内)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST_ALL}">报销单一览(所有)<br></span>
+								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).DEVICE_EDIT}">设备编辑</span>
 							</th:block>
 						</th:block>
 						<a id="e_role" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>

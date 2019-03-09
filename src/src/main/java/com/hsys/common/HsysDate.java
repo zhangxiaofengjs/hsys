@@ -60,6 +60,16 @@ public class HsysDate {
     	
     	return ca.getTime();
     }
+    public static Date addMonth(Date date, int months) {
+    	if(date == null) {
+    		return null;
+    	}
+    	Calendar ca = Calendar.getInstance();
+    	ca.setTime(date);
+    	ca.add(Calendar.MONTH, months);
+    	
+    	return ca.getTime();
+    }
 
     public static boolean equalsDate(Date date1, Date date2) {
     	if(date1 == null && date2 == null) {
@@ -129,9 +139,16 @@ public class HsysDate {
 	 * 当月工作开始日期,上个月的21日
 	 */
 	public static Date startOfWorkMonth() {
-		Date d = addDay(thisMonthStart(), -1);
-		
 		Calendar ca = Calendar.getInstance();
+		ca.setTime(now());
+		int day = ca.get(Calendar.DAY_OF_MONTH);
+		Date d = null;
+		if(day > 20) {
+			d = ca.getTime();
+		} else {
+			d = addDay(thisMonthStart(), -1);
+		}
+		
 		ca.setTime(d);
 		ca.set(Calendar.DAY_OF_MONTH, 21);
 		ca.set(Calendar.HOUR_OF_DAY, 0);
@@ -146,9 +163,16 @@ public class HsysDate {
 	 * 本月结束工作日，本月21号
 	 */
 	public static Date endOfWorkMonth() {
-		Date d = startOfDay(now());
-		
 		Calendar ca = Calendar.getInstance();
+		ca.setTime(now());
+		int day = ca.get(Calendar.DAY_OF_MONTH);
+		Date d = null;
+		if(day > 20) {
+			d = addMonth(thisMonthStart(), 1);
+		} else {
+			d = ca.getTime();
+		}
+
 		ca.setTime(d);
 		
 		ca.set(Calendar.DAY_OF_MONTH, 20);
@@ -172,5 +196,27 @@ public class HsysDate {
 		ca.setTime(date);
 		
 		return ca.get(Calendar.MINUTE) % 15 == 0;
+	}
+	
+	public static float hours(Date d1, Date d2) {
+		if(d1 == null || d2 == null) {
+			return 0;
+		}
+
+		float len = (float) ((d1.getTime() - d2.getTime()) / 3600000.0);
+		return Math.abs(len);
+	}
+
+	public static boolean isWeekend(Date date) {
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(date);
+		
+		switch(ca.get(Calendar.DAY_OF_WEEK)) {
+		case Calendar.SUNDAY :
+		case Calendar.SATURDAY:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

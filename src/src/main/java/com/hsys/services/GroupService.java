@@ -39,6 +39,7 @@ public class GroupService {
 	public GroupModel queryById(int id) {
 		GroupModel u = new GroupModel();
 		u.setId(id);
+		u.setCond(GroupModel.COND_ID, true);
 		List<GroupModel> us = queryList(u);
 		
 		if(us.size() == 1) {
@@ -63,5 +64,15 @@ public class GroupService {
 		} else {
 			groupMapper.updateUserGroup(userId, grpId);
 		}
+	}
+
+	public GroupModel queryParent(int id) {
+		GroupModel group = queryById(id);
+		if(group == null) {
+			return null;
+		}
+
+		GroupModel parent = group.getParent();
+		return queryById(parent.getId());
 	}
 }

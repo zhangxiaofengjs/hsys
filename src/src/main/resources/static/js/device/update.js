@@ -95,7 +95,7 @@ $(document).ready(function(){
 			hsys.ajax({
 				"url":"/user/json/initpwd",
 				"data": {
-					"id": id
+					"ids": selIds
 				},
 				"success": function() {
 					hsys.success("重置密码为[123]成功，请用户及时修改密码确保安全。", false);

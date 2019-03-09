@@ -3,13 +3,12 @@ package com.hsys.models;
 import java.util.Date;
 
 import org.apache.ibatis.type.Alias;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.hsys.common.HsysDateTimeDeserializer;
 import com.hsys.common.HsysDateTimeSerializer;
+
 @Alias("restModel")
 public class RestModel extends BaseModel {
 	public static final String COND_USER_NO = "userNo";
@@ -18,13 +17,16 @@ public class RestModel extends BaseModel {
 	public static final String COND_DATE_START ="dateStart";
 	public static final String COND_DATE_END ="dateEnd";
 	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo"; 
+	public static final String COND_STATUS_MULTI = "statusMulti";
+	public static final String COND_GROUP_ID = "groupId";
 	
 	public static final String FIELD_DATE_START = "dateStart";
 	public static final String FIELD_DATE_END = "dateEnd";
 	public static final String FIELD_TYPE = "type";
 	public static final String FIELD_SUMMARY = "summary";
 	public static final String FIELD_LEN = "len";
-	public static final String FIELD_APPROVE = "approve";
+	public static final String FIELD_STATUS = "status";
+	public static final String FIELD_APPROVAL_USER_ID = "approvalUserId";
 	
 	@JsonSerialize(using=HsysDateTimeSerializer.class)
     @JsonDeserialize(using=HsysDateTimeDeserializer.class)
@@ -38,14 +40,8 @@ public class RestModel extends BaseModel {
 	private  int status;
 	private UserModel approvalUser;
 	private Date approvalDate;
-	private int len;
-	private Date date;
-	public Date getDate() {
-		return date;
-	}
-	public void setDate(Date date) {
-		this.date = date;
-	}
+	private float len;
+	
 	public Date getDateStart() {
 		return dateStart;
 	}
@@ -57,11 +53,11 @@ public class RestModel extends BaseModel {
 	}
 	public void setDateEnd(Date dateEnd) {
 		this.dateEnd = dateEnd;
-	}
-	public int getLen() {
+	}	
+	public float getLen() {
 		return len;
 	}
-	public void setLen(int len) {
+	public void setLen(float len) {
 		this.len = len;
 	}
 	public int getType() {
@@ -100,6 +96,4 @@ public class RestModel extends BaseModel {
 	public void setApprovalDate(Date approvalDate) {
 		this.approvalDate = approvalDate;
 	}
-	
- 
 }

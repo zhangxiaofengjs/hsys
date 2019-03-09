@@ -11,15 +11,21 @@
 	  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 	  		</div>
 	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/list}" method="post">
+	 			<input type="hidden" name="view" th:value="${form.view}">
 	 			<div class="form-group">
-				   <input type="text" class="form-control" id="no" name="no" th:value="${userForm!=null?userForm.no:_}" placeholder="输入工号">
-	 			</div>
+					<input type="text" class="form-control hsys-fc-userno-width" id="no" name="no" th:value="${form.no}" placeholder="输入工号">
+					<select th:if="${not form.view}" class="form-control" id="exitState" name="exitState" th:value="${form.exitState}">  
+						<option value=0>--在职状态--</option>
+				        <option value=1 th:selected="${form.exitState==1?'selected':_}">在职</option>
+				        <option value=2 th:selected="${form.exitState==2?'selected':_}">离职</option>
+					</select>
+			    </div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
-	 			<div class="form-group">
+ 				<div class="form-group" th:if="${not form.view}" sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).USER_EDIT)}">
 		 			<button type="button" class="btn btn-sm btn-primary" id='addUser'>添加</button>
 		 			<button type="button" class="btn btn-sm btn-primary" id='initPwd'>初始化密码</button>
-		 			<button type="button" class="btn btn-sm btn-primary" id='download'>下载</button>
-		 		</div>
+	 			</div>
+	 			<button type="button" class="btn btn-sm btn-primary" id='download'>下载</button>
 			</form>
 		</div>
 	</nav>
@@ -28,22 +34,29 @@
 		<thead>
 		    <tr>
 		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+		    	<th class="hsys-table-index-column">#</th>
 				<th width=80px>工号</th>
 				<th width=100px>姓名</th>
-				<th>所属</th>
+				<th>所属公司</th>
+				<th>所在部署</th>
 				<th>邮件地址</th>
 		    </tr>
 		</thead>
 		<tbody>
-			<tr th:each="user : ${users}"
+			<tr th:each="user, itr : ${users}"
 				th:with="group=${user.group}"
 				th:rowid="${user.id}">
 				<td>
 					<input type="checkbox" name="select" th:rowid="${user.id}">
 				</td>
-				<td th:title="${user.id}"><a th:text="${user.no}" th:href="@{'/user/html/detail?no=' +${user.no}}"></a></td>
-				<td th:text="${user.name}"></td>
-				<td th:text="${group != null ? group.name : _}"></td>
+				<td th:text="${itr.index+1}"></td>
+				<td th:title="${user.id}">
+					<a th:if="${not form.view}" th:text="${user.no}" th:href="@{'/user/html/detail?no=' +${user.no}}"></a>
+					<span th:if="${form.view}" th:text="${user.no}"></span>
+				</td>
+				<td><span th:text="${user.name}"></span>&nbsp;<span th:if="${user.exitDate != null}" class="label label-default">离职</span></td>
+				<td th:text="${user.company != null ? user.company.name : _}"></td>
+				<td th:text="${user.groupFullName}"></td>
 				<td th:text="${user.mail}"></td>
 		    </tr>
 		</tbody>

@@ -10,7 +10,6 @@ import org.apache.ibatis.type.Alias;
 public class DeviceModel extends BaseModel {
 	public static final String COND_ID = "id";
 	public static final String COND_NO = "no";
-	
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
 	public static final String FIELD_USER_ID = "userId";

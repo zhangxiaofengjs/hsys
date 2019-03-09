@@ -1,12 +1,10 @@
 package com.hsys.mappers;
 
-
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
 import com.hsys.models.DeviceModel;
-
 
 /**
  * @author: qs

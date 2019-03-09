@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.RestBusiness;
 import com.hsys.business.forms.RestHtmlListForm;
+import com.hsys.business.forms.RestJsonAddForm;
 import com.hsys.business.forms.RestJsonApproveForm;
+import com.hsys.business.forms.RestJsonCancelRequestForm;
 import com.hsys.business.forms.RestJsonDeleteForm;
 import com.hsys.business.forms.RestJsonGetForm;
 import com.hsys.business.forms.RestJsonRejectForm;
@@ -32,11 +34,6 @@ public class RestController extends BaseController {
 	@RequestMapping("/html/list")
 	public String htmlList(RestHtmlListForm form, Model model) {
 		List<RestModel> list = restBusiness.getRests(form);
-		
-		if(form.getApprove()) {
-			//审核页面，检查审核权限
-			//TODO
-		}
 
 		model.addAttribute("form", form);
 		model.addAttribute("list", list);
@@ -45,9 +42,9 @@ public class RestController extends BaseController {
 	
 	@RequestMapping("/json/add")
 	@ResponseBody
-	public JsonResponse add(@RequestBody RestModel rest) {
+	public JsonResponse add(@RequestBody RestJsonAddForm form) {
 		try {
-			restBusiness.add(rest);
+			restBusiness.add(form);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}
@@ -103,6 +100,17 @@ public class RestController extends BaseController {
 	public JsonResponse approve(@RequestBody RestJsonRejectForm form) {
 		try {
 			restBusiness.reject(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+
+	@RequestMapping("/json/cancelrequest")
+	@ResponseBody
+	public JsonResponse cancelRequest(@RequestBody RestJsonCancelRequestForm form) {
+		try {
+			restBusiness.cancelRequest(form);
 			return JsonResponse.success();
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());

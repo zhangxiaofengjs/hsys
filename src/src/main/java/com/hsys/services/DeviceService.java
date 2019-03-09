@@ -30,7 +30,8 @@ public class DeviceService {
 		device.setNo(no);
 		device.setCond(DeviceModel.COND_NO, true);
 		List<DeviceModel> ds = queryList(device);
-		if(ds.size() != 0) {
+		
+		if(ds.size() == 1) {
 			return ds.get(0);
 		}
 		return null;

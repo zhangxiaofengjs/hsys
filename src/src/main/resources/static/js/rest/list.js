@@ -1,18 +1,21 @@
 $(document).ready(function(){
 	$("#addRest").click(function(){
 		var self = $(this);
+		
+		var user = $(":hidden[name='user']").val();
+
 		hdlg.showForm({
 			"title":"添加记录",
 			"fields":[
 				{
-					"id":"user.id",
+					"id":"userId",
 					"label":"申请人",
-					"type":"select",
+					"type": user ? "hidden" : "select",//用户画面无需显示用户
 					"options": [],
-					"ajax":{
+					"ajax": (user ? undefined : {
 						"url":"/user/json/list",
 						 "success": function(response, dlg) {
-							 var field = dlg.field("user.id");
+							 var field = dlg.field("userId");
 							 response.users.forEach(function(user,index){
 								 field.options.push(
 									 { 
@@ -21,9 +24,11 @@ $(document).ready(function(){
 									 }
 								 );
 							 });
-							  dlg.buildField("user.id");
+							  dlg.buildField("userId");
 						 },
-					},
+					}),
+					"value": 0,
+					"required": true,
 				},
 				{
 					"id":"dateStart",
@@ -285,6 +290,34 @@ $(document).ready(function(){
 			function() {
 				hsys.ajax({
 					"url":"/rest/json/reject",
+					"data": {
+						"ids": selIds
+					},
+					"success": function() {
+						hsys.success(true);
+					},
+					"error": function(data) {
+						hsys.error(data.msg);
+					}
+				});
+			}
+		);
+	});
+	
+	$("#cancelRest").click(function(){
+		var self = $(this);
+		var selIds = htbl.getSelectedRowId("restTable", true);
+		if(selIds == null) {
+			return;
+		}
+		
+		var id = selIds[0];
+		
+		hdlg.showYesNo(
+			"确定取消选中的请假记录吗?",
+			function() {
+				hsys.ajax({
+					"url":"/rest/json/cancelrequest",
 					"data": {
 						"ids": selIds
 					},

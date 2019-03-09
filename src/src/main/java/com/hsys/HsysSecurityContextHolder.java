@@ -39,11 +39,20 @@ public class HsysSecurityContextHolder {
 		return loginUser.getUser();
 	}
 	
-	public static boolean getLoginUserHasRole(String role) {
+	public static boolean isLoginUserHasRole(String role) {
 		HsysLoginUser loginUser = getHsysLoginUser();
 		UserModel user = loginUser.getUser();
 		
 		return UserBusiness.hasRole(user.getRoles(), role);
+	}
+	
+	public static boolean isLoginUserHasAnyRole(String... roles) {
+		for(String role : roles) {
+			if(isLoginUserHasRole(role)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public static int getLoginUserId() {

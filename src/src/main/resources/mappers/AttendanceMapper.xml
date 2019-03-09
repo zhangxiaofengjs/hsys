@@ -28,6 +28,7 @@
 			   u.c_no as u_no
 		from attendance_tbl as a
 		left join user_tbl as u on u.c_id=a.c_user_id
+		left join user_group_tbl as ug on ug.c_user_id=a.c_user_id
 		<where>
 			<if test="cond.userId != null">
 				and a.c_user_id = #{user.id}
@@ -50,6 +51,9 @@
 			</if>
 			<if test="cond.endDate != null">
 				and a.c_date <![CDATA[ <= ]]> #{cond.endDate}
+			</if>
+			<if test="cond.groupId != null">
+				and ug.c_group_id = #{cond.groupId}
 			</if>
 		</where>
 		order by a.c_user_id, a.c_date

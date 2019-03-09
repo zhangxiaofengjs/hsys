@@ -23,8 +23,12 @@ public class ToolController extends BaseController {
 	public JsonResponse upload() {
 		try {
 			LoadInitialDataBean bean = new LoadInitialDataBean();
-			bean.setUserFilePath("C:\\hsys\\init\\user.txt");
-			toolsBusiness.loadInitialData(bean);
+			bean.setUserFilePath("C:\\hsys\\init\\user.txt");			
+			bean.setAttendanceFilePath("C:\\hsys\\init\\attendance.txt");
+			bean.setRestFilePath("C:\\hsys\\init\\rest.txt");
+			bean.setExtratimeFilePath("C:\\hsys\\init\\extratime.txt");
+			bean.setExpenseFilePath("C:\\hsys\\init\\expense.txt");
+			toolsBusiness.loadInitialData(bean);			
 			return JsonResponse.success();
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());

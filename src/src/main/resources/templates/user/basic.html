@@ -4,165 +4,102 @@
 <head th:include="common/header::header">
 </head>
 <body>
+<script th:src="@{/js/user/basic.js}"></script> 
 <div class="panel panel-default">
-    <div class="panel-heading">基本信息</div>
-    <div style="padding: 10px 0 20px 10px;">
-    	<marquee behavior=scroll scrolldelay=10>
-		<h3>asdsadsdsdasd</h3>
-		</marquee>
-    </div>
-    <!-- 
-	<input type="button" id="aaa"/>
-    <div class="form-group" id="postree" style="position:absolute;left:100px;width:300px;">
-	    <input class="form-control" id="itree"/>
-	    <div id="itreetgt"></div>
-    </div> -->
+	<div class="panel-heading">
+		<h3 class="panel-title"><b>基本信息 2019年03月</b></h3>
+	</div>
+	<div class="panel-body">
+		<span class="label label-primary">所属：D3</span>&nbsp;
+	</div>
+	<table id="deviceTable" class="table table-bordered table-condensed" contenteditable="false">
+	    <tr>
+			<td width=80px rowspan=2>加班</td>
+			<td width=40px>合计</td>
+			<td colspan=2><span class="badge">6 小时</span></td>
+	    </tr>
+	    <tr>
+			<td>登记</td>
+			<td colspan=2>
+				<div style="display:none;" id="ex_msg"></div>
+				<div class="form-inline">
+				    <input class="form-control" type="time" name="et_startTime" value="18:00">&nbsp;到
+				    <input class="form-control" type="time" name="et_endTime" value="21:30">
+				    <input class="form-control" type="text" name="et_comment" style="width:10x;">
+				    <select class="form-control" id="et_meal">
+				    	<option value="0">午餐</option>
+				    	<option value="2" selected>晚餐</option>
+				    	<option value="3">无</option>
+				    </select>
+				    <button class="btn btn-primary" type="button" id="registExtraTime">登记</button>
+				    <span class="text-danger">*时间段内不要包含用餐时间</span>
+			    </div>
+			</td>
+	    </tr>
+	    <tr>
+			<td>请假</td>
+			<td>合计</td>
+			<td><span class="badge">6 小时</span></td>
+	    </tr>
+	    <tr>
+			<td rowspan=6>公休假</td>
+			<td style="padding:0px;" colspan=2>
+				<table class="table table-bordered table-condensed" style="margin-bottom:0px;">
+					<tr>
+						<td width="50%" >
+							<div>
+								<b>1月</b><br>
+								1/1调休，1/2上班
+							</div>
+						</td>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+					</tr>
+					<tr>
+						<td width="50%" class="alert alert-success">
+						1月<br>1/1调休，1/2上班
+						</td>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+					</tr>
+					<tr>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+						<td width="50%">
+						1月<br>1/1调休，1/2上班
+						</td>
+					</tr>
+				</table>
+			</td>
+	    </tr>
+	</table>
 </div>
- <script th:src="@{/js/common/htreeview.js}"></script> 
- <script>
- $(document).ready(function(){
- 	var dlg = hdlg.showForm({
-		"title":"修改密码",
-		"url": '/group/json/test',
-		"fields":[
-			{
-				"label":"no",
-				"id":"no",
-				"type":"selecttree",
-				"multiple":true,
-				"checkbox":true,
-				"nodeAjax":{
- 					"url":'/group/json/children',
- 				},
- 				"value": 1,
- 				"dispValue": "aaaa",
-				"nodes":[
-		 			{
-		 				"text":"第1层",
-		 				"value":1,
-		 				"expand":true,
-		 				"nodes":[
-		 		 			{
-		 		 				"text":"第2层",
-		 		 			},
-		 		 			{
-		 		 				"text":"第3层",
-		 		 				"checkbox":true,
-		 		 				"nodes":[
-		 		 		 			{
-		 		 		 				"text":"第4层层层层层层层层层层层188888888888888888888888888888888888888",
-		 		 		 				"checkbox":true,
-		 		 		 			},
-		 		 		 			{
-		 		 		 				"text":"第4层2",
-		 		 		 			},
-		 		 		 		]
-		 		 			},
-		 		 		]
-		 			},
-		 			{
-		 				"text":"第一层2222",
-		 				"value":"0",
-		 				"expand":false,
-		 			},
-		 			{
-		 				"text":"第一层3333",
-		 				"expand":true,
-		 				"nodes":[
-		 		 			{
-		 		 				"text":"1111-1",
-		 		 			},
-		 		 			{
-		 		 				"text":"2222-1",
-		 		 				"nodes":[
-		 		 		 			{
-		 		 		 				"text":"1111-2",
-		 		 		 			},
-		 		 		 			{
-		 		 		 				"text":"2222-2",
-		 		 		 			},
-		 		 		 		]
-		 		 			},
-		 		 		]
-		 			},
-		 		]
-			},
-			{
-				"label":"no111",
-				"id":"no111",
-				"type":"text",
-				"value":"asd"
-			}
-		],
-		"success": function(data) {
-		},
-		"error": function(data) {
-		}
-	});
- 	 	
- 	htreeview.init({
- 		"target":"itreetgtd",
- 		"pulldown": {
- 			"enable":true,
-	 		"posParent":"postreed",
-	 		"pulldownParent":"itreed",
- 			"valueParent": "itreed",
- 		},
- 		"multiple": false,
- 		"nodes":[
- 			{
- 				"text":"第1层",
- 				"value":1,
- 				"expand":true,
- 				"nodes":[
- 		 			{
- 		 				"text":"第2层",
- 		 			},
- 		 			{
- 		 				"text":"第3层",
- 		 				"checkbox":true,
- 		 				"nodes":[
- 		 		 			{
- 		 		 				"text":"第4层层层层层层层层层层层188888888888888888888888888888888888888",
- 		 		 				"checkbox":true,
- 		 		 			},
- 		 		 			{
- 		 		 				"text":"第4层2",
- 		 		 			},
- 		 		 		]
- 		 			},
- 		 		]
- 			},
- 			{
- 				"text":"第一层2222",
- 			},
- 			{
- 				"text":"第一层3333",
- 				"expand":true,
- 				"nodes":[
- 		 			{
- 		 				"text":"1111-1",
- 		 			},
- 		 			{
- 		 				"text":"2222-1",
- 		 				"nodes":[
- 		 		 			{
- 		 		 				"text":"1111-2",
- 		 		 			},
- 		 		 			{
- 		 		 				"text":"2222-2",
- 		 		 			},
- 		 		 		]
- 		 			},
- 		 		]
- 			},
- 		]
- 	});
- 	
- 	
- });
- </script> 
- <hr>
-<div id="tree1"></div>
 </body>
 </html>

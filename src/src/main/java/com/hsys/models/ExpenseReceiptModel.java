@@ -10,25 +10,30 @@ import org.apache.ibatis.type.Alias;
  */
 @Alias("expenseReceiptModel")
 public class ExpenseReceiptModel extends BaseModel {
-	public static final String COND_USER_NO = "userNo";
+	public static final String COND_PAYEE_NO = "payeeNo";
 	public static final String COND_ID = "id";
 	public static final String COND_NO = "no";
+	public static final String COND_FUZZY_PAYEE_NO = "fuzzyPayeeNo";
+	public static final String COND_PAYEE_GROUP_ID = "payeeGroupId";
+	public static final String COND_STATUS = "status";
+	public static final String COND_PROJECT_IDS = "projectIds";
+	
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
-	public static final String FIELD_USER_ID = "userId";
 	public static final String FIELD_PAYEE_ID = "payeeId";
 	public static final String FIELD_TYPE = "type";
-	
+	public static final String FIELD_PROJECT_ID = "projectId";
+	public static final String FIELD_PAY_DAYE = "payDate";
+
 	private String no;
 	private Date submitDate;
 	private Date payDate;
 	private int type;
-	private int payeeId;
+	private UserModel payee;
 	private String comment;
 	private String attachmentPath;
 	private int status;
-	private int projectId;
-	private UserModel user;
+	private ProjectModel project;
 	
 	public String getNo() {
 		return no;
@@ -52,14 +57,6 @@ public class ExpenseReceiptModel extends BaseModel {
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public UserModel getUser() {
-		return user;
-	}
-
-	public void setUser(UserModel user) {
-		this.user = user;
 	}
 
 	public Date getSubmitDate() {
@@ -86,27 +83,27 @@ public class ExpenseReceiptModel extends BaseModel {
 		this.type = type;
 	}
 
-	public int getPayeeId() {
-		return payeeId;
-	}
-
-	public void setPayeeId(int payeeId) {
-		this.payeeId = payeeId;
-	}
-
-	public int getProjectId() {
-		return projectId;
-	}
-
-	public void setProjectId(int projectId) {
-		this.projectId = projectId;
-	}
-
 	public String getAttachmentPath() {
 		return attachmentPath;
 	}
 
 	public void setAttachmentPath(String attachmentPath) {
 		this.attachmentPath = attachmentPath;
+	}
+
+	public UserModel getPayee() {
+		return payee;
+	}
+
+	public void setPayee(UserModel payee) {
+		this.payee = payee;
+	}
+
+	public ProjectModel getProject() {
+		return project;
+	}
+
+	public void setProject(ProjectModel project) {
+		this.project = project;
 	}
 }
