@@ -24,6 +24,7 @@ public class ExtraTimeModel extends BaseModel {
 	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo";
 	public static final String COND_GROUP_ID = "groupId";
 	public static final String COND_STATUS = "status";
+	public static final String COND_USER_ID = "userId";
 	
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
@@ -38,7 +39,10 @@ public class ExtraTimeModel extends BaseModel {
 	
 	public static final String ORDER_USER_NO = "userNo";
 	public static final String ORDER_DATE = "date";
-	
+
+	public static final String FIELD_APPROVAL_USER_ID = "approvalUserId";
+
+	public static final String FIELD_APPROVAL_TIME = "approvalTime";
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
 	private Date date;
@@ -57,7 +61,7 @@ public class ExtraTimeModel extends BaseModel {
 	private int userId;
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
-	private Date approvalDate;
+	private Date approvalTime;
 	private UserModel user;
 	private UserModel appUser;
 	
@@ -115,11 +119,11 @@ public class ExtraTimeModel extends BaseModel {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	public Date getApprovalDate() {
-		return approvalDate;
+	public void setApprovalTime(Date approvalTime) {
+		this.approvalTime = approvalTime;
 	}
-	public void setApprovalDate(Date approvalDate) {
-		this.approvalDate = approvalDate;
+	public Date getApprovalTime() {
+		return approvalTime;
 	}
 	public Date getStartTime() {
 		return startTime;

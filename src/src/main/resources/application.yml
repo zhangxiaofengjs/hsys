@@ -9,6 +9,8 @@ server:
     connection-timeout: 5000
     servlet:
         context-path: /hsys
+        #session:
+          #timeout: 2s
 
 spring:
     #profiles: # 环境 dev
@@ -55,11 +57,17 @@ mybatis:
     type-aliases-package: com.hsys.models,com.hsys.mappers
     configuration:
         map-underscore-to-camel-case: true
-
+# 分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    support-methods-arguments: true
+    params: count=countSql
+        
 #hsys其余设定
 hsys:
     version:
-        number: v.HSYS2019.0
+        number: hsys 1.0.0
     upload: 
         temp-folder: c:/hsys/upload/temp #临时文件夹
         attendance-folder: c:/hsys/upload/attendance #考勤信息文件夹

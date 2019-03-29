@@ -16,7 +16,7 @@ public class ExpenseItemUpdateForm {
 	
 	private int userId;
 	private int payeeId;
-	private int num;
+	private float num;
 	private int type;
 	private String comment;
 	
@@ -38,10 +38,10 @@ public class ExpenseItemUpdateForm {
 	public void setPayeeId(int payeeId) {
 		this.payeeId = payeeId;
 	}
-	public int getNum() {
+	public float getNum() {
 		return num;
 	}
-	public void setNum(int num) {
+	public void setNum(float num) {
 		this.num = num;
 	}
 	public int getType() {

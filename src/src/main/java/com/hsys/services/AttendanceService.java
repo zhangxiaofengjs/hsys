@@ -5,6 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.hsys.business.beans.HsysPageInfo;
 import com.hsys.mappers.AttendanceMapper;
 import com.hsys.models.AttendanceModel;
 
@@ -17,8 +20,13 @@ public class AttendanceService {
 	@Autowired
     private AttendanceMapper attendanceMapper;
 	
-	public List<AttendanceModel> queryList(AttendanceModel a) {
-		return attendanceMapper.queryList(a);
+	public HsysPageInfo<AttendanceModel> queryList(HsysPageInfo<AttendanceModel> page) {
+		PageHelper.startPage(page.getPageNum(), page.getPageSize(), true);
+		Page<AttendanceModel> pageResult = (Page<AttendanceModel>) attendanceMapper.queryList(page.getParam());
+
+		page.setPageInfo(pageResult);
+
+		return page;
 	}
 	
 	public void add(AttendanceModel a) {
@@ -26,7 +34,9 @@ public class AttendanceService {
 	}
 
 	public AttendanceModel queryOne(AttendanceModel a) {
-		List<AttendanceModel> us = queryList(a);
+		HsysPageInfo<AttendanceModel> pageInfo = new HsysPageInfo<AttendanceModel>();
+		pageInfo.setParam(a);
+		List<AttendanceModel> us = queryList(pageInfo);
 		if(us.size() == 1) {
 			return us.get(0);
 		}

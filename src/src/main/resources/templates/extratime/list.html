@@ -77,7 +77,7 @@
 				</td>
 				<td width=150px th:text="${user !=null ? '['+ user.no +'] ' + user.name : ''}"></td>
 				<td width=150px th:text="${appUser !=null ? '['+ appUser.no +'] ' + appUser.name : ''}"></td>
-				<td width=180px th:text="${#dates.format(extra.approvalDate, 'yyyy-MM-dd')}"></td>
+				<td width=180px th:text="${#dates.format(extra.approvalTime, 'yyyy-MM-dd')}"></td>
 		    </tr>
 		</tbody>
 	</table>

@@ -7,7 +7,7 @@ package com.hsys.mappers;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
-
+import org.apache.ibatis.annotations.Param;
 
 import com.hsys.models.RestModel;
 
@@ -22,4 +22,6 @@ public interface RestMapper {
 	void delete(RestModel rest);
 	
 	void approve(RestModel rest);
+	
+	Float restTimeTotal(RestModel restModel);
 }

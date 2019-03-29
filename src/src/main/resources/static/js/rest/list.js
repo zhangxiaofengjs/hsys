@@ -92,6 +92,7 @@ $(document).ready(function(){
 					"type":"textarea",
 					"value":"",
 					"required":true,
+					"maxlength":50,
 				},
 			],
 			"url":"/rest/json/add",
@@ -191,6 +192,7 @@ $(document).ready(function(){
 					"type":"textarea",
 					"required":true,
 					"depend": true,
+					"maxlength":50,
 				},
 			],
 			"ajax":{//取得请假信息，更新到dlg上

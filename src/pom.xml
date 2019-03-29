@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.hsys</groupId>
-  <version>r20181221</version>
+  <version>1.0.0</version>
   <name>hsys</name>
   <artifactId>hsys</artifactId>
   <url>www.hsys.com</url>
   <packaging>jar</packaging>
-  <description>公司事务管理系统</description>
+  <description>hyron公司事务管理系统</description>
 
   <!-- Maven远程仓库，用阿里云 -->
 	<repositories>
@@ -71,6 +71,11 @@
 			<groupId>org.mybatis.spring.boot</groupId>
 			<artifactId>mybatis-spring-boot-starter</artifactId>
 			<version>1.3.0</version>
+		</dependency>
+		<dependency><!-- 分页插件 -->
+		    <groupId>com.github.pagehelper</groupId>
+		    <artifactId>pagehelper-spring-boot-starter</artifactId>
+		    <version>1.2.10</version>
 		</dependency>
 		<dependency>
 			<groupId>mysql</groupId>

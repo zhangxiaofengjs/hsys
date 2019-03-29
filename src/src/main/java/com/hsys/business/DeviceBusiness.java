@@ -29,13 +29,12 @@ public class DeviceBusiness {
 	
 	public List<DeviceModel> getDevices(DeviceHtmlListForm deviceHtmlListForm) {
 		DeviceModel device = new DeviceModel();
-		if (HsysString.isNullOrEmpty(deviceHtmlListForm.getUserNo()) == false) {
+		if (!HsysString.isNullOrEmpty(deviceHtmlListForm.getNo())) {
 			UserModel user = new UserModel();
-			user.setNo(deviceHtmlListForm.getUserNo());
+			user.setNo(deviceHtmlListForm.getNo());
 			device.setUser(user);
-			device.setCond(DeviceModel.COND_USER_NO, true);
+			device.setCond(DeviceModel.COND_NO_OR_USER_NO, true);
 		}
-		device.setNo(device.getNo());
 		List<DeviceModel> list = deviceService.queryList(device);
 		return list;
 	}
@@ -62,6 +61,9 @@ public class DeviceBusiness {
 		if(device.getNo().length()>7) {
 			throw new HsysException("该设备编号过长"); 
 				}
+		if(device.getComment().length()>50) {
+			throw new HsysException("该设备说明过长"); 
+				}
 		deviceService.add(device);
 	}
 
@@ -74,10 +76,14 @@ public class DeviceBusiness {
 		if(device == null) {
 			throw new HsysException("该设备不存在。");
 		}
-		
+		//说明长度不得大于50个字
 		if(!device.getComment().equals(form.getComment())) {
+			if(form.getComment().length()<51){
 			device.setComment(form.getComment());
 			device.setUpdate(DeviceModel.FIELD_COMMENT);
+			}else {
+				throw new HsysException("请输入50字以内的声明");
+			}
 		}
 		
 		if(device.getStatus() != form.getStatus()){
@@ -85,7 +91,8 @@ public class DeviceBusiness {
 			device.setUpdate(DeviceModel.FIELD_STATUS);
 		}
 		
-		if(device.getUser().getId() != form.getUserId()){
+		if(device.getUser() == null || device.getUser().getId() != form.getUserId()){
+			device.setUser(new UserModel());
 			device.getUser().setId(form.getUserId());
 			device.setUpdate(DeviceModel.FIELD_USER_ID);
 		}

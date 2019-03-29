@@ -50,4 +50,9 @@ public class ExtraTimeService {
 		extraTimeMapper.update(extraTime);
 		
 	}
+
+	public Float extraTimeTotal(ExtraTimeModel extraTime) {
+		return extraTimeMapper.extraTimeTotal(extraTime);
+		
+	}
 }

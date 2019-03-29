@@ -9,6 +9,7 @@ $(document).ready(function(){
 					"label":"编号",
 					"type":"text",
 					"required":true,
+					"maxlength":7,
 				},
 				{
 					"id":"comment",
@@ -16,6 +17,7 @@ $(document).ready(function(){
 					"type":"text",
 					"required":true,
 					"value": "开发用PC",
+					"maxlength":50,
 				},
 				{
 					"id":"status",
@@ -46,6 +48,12 @@ $(document).ready(function(){
 						"url":"/user/json/list",
 						"success": function(response, dlg) {
 							var field = dlg.field("user.id");
+							field.options.push(
+								{ 
+									"text": "[无使用者]",
+									"value": 0,
+								}
+							);
 							response.users.forEach(function(user,index){
 								field.options.push(
 									{ 
@@ -100,6 +108,7 @@ $(document).ready(function(){
 					"type":"text",
 					"required":true,
 					"depend": true,
+					"maxlength":50,
 				},
 				{
 					"id":"status",
@@ -132,6 +141,13 @@ $(document).ready(function(){
 						"url":"/user/json/list",
 						"success": function(response, dlg) {
 							var field = dlg.field("userId");
+							
+							field.options.push(
+								{ 
+									"text": "[无使用者]",
+									"value": 0,
+								}
+							);
 							response.users.forEach(function(user,index){
 								field.options.push(
 									{ 
@@ -157,7 +173,7 @@ $(document).ready(function(){
 					dlg.buildField("no", device.no);
 					dlg.buildField("comment", device.comment);
 					dlg.buildField("status", device.status);
-					dlg.buildField("userId", device.user.id, false, false);//需要加载用户一览
+					dlg.buildField("userId", device.user != null ? device.user.id : 0, false, false);//需要加载用户一览
 				},
 			},
 			"url":"/device/json/update",

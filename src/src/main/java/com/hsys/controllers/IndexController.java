@@ -30,10 +30,10 @@ public class IndexController extends BaseController {
         return "index";
     }
 	
-	@RequestMapping("/basic")
-    public String basic(Model model) {
-        return "basic";
-    }
+	@RequestMapping("/changenotes")
+	public String changenotes(Model model) {
+		return "changenotes";
+	}
 	
 	@RequestMapping("/login")
     public String login(Model model) {

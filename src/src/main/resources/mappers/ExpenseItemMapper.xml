@@ -7,10 +7,9 @@
         <result column="u_name" property="name"/>       
         <result column="u_no" property="no"/>       
     </resultMap>
-    <resultMap id="expenseReceiptResultMap" type="expenseReceiptModel" >  
-        <id column="u_id" property="id"/>
-        <result column="u_name" property="name"/>       
-        <result column="u_no" property="no"/>       
+	<resultMap id="expenseReceiptResultMap" type="expenseReceiptModel" >  
+        <id column="r_id" property="id"/>
+        <result column="r_no" property="no"/>       
     </resultMap>
 	<resultMap id="expenseItemResultMap" type="expenseItemModel" >
 	 	<id column="i_id" property="id"/>
@@ -18,8 +17,10 @@
 		<result column="i_type" property="type"/> 
 		<result column="i_num" property="num"/> 
 		<result column="i_comment" property="comment"/> 
+		<result column="i_status" property="status"/> 
 		<association property="user" resultMap="userResultMap"/>
 		<association property="payee" resultMap="userResultMap" columnPrefix="p"/>
+		<association property="receipt" resultMap="expenseReceiptResultMap"/>
 	</resultMap> 
 	<select id="queryList" resultMap="expenseItemResultMap">
 		select 	
@@ -28,15 +29,19 @@
 				i.c_type as i_type,
 				i.c_num as i_num,
 				i.c_comment as i_comment,
+				i.c_status as i_status,
 				u.c_id as u_id,
 				u.c_no as u_no,
 				u.c_name as u_name,			   
 				p.c_id as pu_id,
 				p.c_no as pu_no,
-				p.c_name as pu_name			   
+				p.c_name as pu_name,			   
+				r.c_id as r_id,
+				r.c_no as r_no
 		from expense_item_tbl as i 
 		left join user_tbl as u on i.c_user_id=u.c_id
 		left join user_tbl as p on i.c_payee_id=p.c_id
+		left join expense_receipt_tbl as r on i.c_receipt_id=r.c_id
 		<if test="cond.payeeGroupId != null">
 			left join user_group_tbl as pg on i.c_payee_id=pg.c_user_id
 		</if>
@@ -44,8 +49,14 @@
 			<if test="cond.id != null">
 				and i.c_id = #{id}
 			</if>
+			<if test="cond.status != null">
+				and i.c_status = #{status}
+			</if>
 			<if test="cond.receiptId != null">
 				and i.c_receipt_id = #{receipt.id}
+			</if>
+			<if test="cond.receiptNo != null">
+	        	and r.c_no=#{cond.receiptNo}
 			</if>
 			<if test="cond.payeeNo != null">
 				<choose>
@@ -107,6 +118,9 @@
 			<if test="update.receiptId != null">
 				 c_receipt_id = #{receipt.id},
 			</if>
+			<if test="update.status != null">
+				 c_status = #{status},
+			</if>
 		</set>
     	<where>
 			c_id = #{id}
@@ -118,6 +132,4 @@
 			and c_id = #{id}
 		</where>
     </delete>
- 
-	
 </mapper>

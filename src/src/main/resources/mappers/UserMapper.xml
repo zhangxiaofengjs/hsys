@@ -10,6 +10,10 @@
         <id column="c_id" property="id"/>  
         <result column="c_name" property="name"/>  
     </resultMap>
+   <resultMap id="schoolResultMap" type="schoolModel" >  
+        <id column="s_id" property="id"/>  
+        <result column="s_name" property="name"/>
+    </resultMap>
 	<resultMap id="groupResultMap" type="groupModel" >  
         <id column="g_id" property="id"/>  
         <result column="g_name" property="name"/>  
@@ -19,13 +23,13 @@
         <result column="u_no" property="no"/>  
         <result column="u_name" property="name"/>  
         <result column="u_sex" property="sex"/>  
+        <result column="u_spelling" property="spelling"/>
         <result column="u_phone_number" property="phoneNumber"/>  
         <result column="u_addr" property="address"/>
         <result column="u_place" property="place"/>
         <result column="u_mail" property="mail"/>
         <result column="u_pwd" property="password"/>
         <result column="u_id_number" property="idNumber"/>
-        <result column="u_school" property="school"/>
         <result column="u_major" property="major"/>
         <result column="u_degree" property="degree"/>
         <result column="u_graduate_date" property="graduateDate"/>
@@ -33,6 +37,7 @@
         <result column="u_exit_date" property="exitDate"/>
         <association property="group" resultMap="groupResultMap"/>
         <association property="company" resultMap="companyResultMap"/>
+        <association property="school"  resultMap="schoolResultMap"/>
         <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" /> 
     </resultMap>
 
@@ -42,6 +47,7 @@
 			   u.c_name as u_name,
 			   u.c_sex as u_sex,
 			   u.c_phone_number as u_phone_number,
+			   u.c_spelling as u_spelling,
 			   u.c_mail as u_mail,
 			   u.c_address as u_addr,
 			   u.c_place as u_place,
@@ -54,7 +60,6 @@
 			   		</otherwise>
 			   </choose>
 			   u.c_id_number as u_id_number,
-			   u.c_school as u_school,
 			   u.c_major as u_major,
 			   u.c_degree as u_degree,
 			   u.c_graduate_date as u_graduate_date,
@@ -64,9 +69,12 @@
 			   g.c_name as g_name,
 			   c.c_id as c_id,
 			   c.c_name as c_name,
+			   s.c_id as s_id,
+			   s.c_name as s_name,
 			   ur.c_id as ur_id,
 			   ur.c_role as ur_role
 		from user_tbl as u
+		left join school_tbl as s on s.c_id=u.c_school_id
 		left join company_tbl as c on c.c_id=u.c_company_id
 		left join user_group_tbl as ug on ug.c_user_id=u.c_id
 		left join group_tbl as g on g.c_id=ug.c_group_id
@@ -95,6 +103,18 @@
 			<if test="cond.name != null">
 				and u.c_name = #{name}
 			</if>
+			<if test="cond.groupId != null">
+				and g.c_id = #{cond.groupId}
+			</if>
+			<if test="cond.groupIds != null">
+				and g.c_id in
+				<foreach item="groupId" collection="cond.groupIds" separator="," open="(" close=")" index="i">
+				 	#{groupId}
+				</foreach>
+			</if>
+			<if test="cond.hiddenFlag != null">
+				and u.c_hidden_flag=#{cond.hiddenFlag}
+			</if>
 			<if test="cond.exitDateNull != null">
 				and u.c_exit_date is null
 			</if>
@@ -111,11 +131,11 @@
     		c_name,
     		c_password,
     		c_sex,
+    		c_spelling,
     		c_mail,
     		c_place,
     		c_address,
     		c_id_number,
-    		c_school,
     		c_major,
     		c_degree,
     		c_graduate_date,
@@ -127,11 +147,11 @@
     		#{name},
     		#{password},
     		#{sex},
+    		#{spelling},
     		#{mail},
     		#{place},
     		#{address},
     		#{idNumber},
-    		#{school},
     		#{major},
     		#{degree},
     		#{graduateDate},
@@ -164,6 +184,9 @@
     		<if test="update.sex != null">
 				c_sex = #{sex},
 			</if>
+			<if test="update.spelling != null">
+				c_spelling = #{spelling},
+			</if>
     		<if test="update.name != null">
 				c_name = #{name},
 			</if>
@@ -195,7 +218,7 @@
 				c_id_number = #{idNumber},
 			</if>
     		<if test="update.school != null">
-				c_school = #{school},
+				c_school_id = #{school.id},
 			</if>
     		<if test="update.exitDate != null">
 				c_exit_date = #{exitDate},

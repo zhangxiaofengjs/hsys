@@ -12,7 +12,7 @@ import com.hsys.common.HsysDateSerializer;
  * @author: hancaipeng
  * @version: 2019/01/28
  */
-public class AttendanceForm {
+public class AttendanceForm extends PaginationBaseForm{
 	private String userNo;
 	
 	@JsonSerialize(using=HsysDateSerializer.class)

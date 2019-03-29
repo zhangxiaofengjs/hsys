@@ -16,7 +16,7 @@
         <result column="r_type" property="type"/>
         <result column="r_summary" property="summary"/>
         <result column="r_status" property="status"/>
-        <result column="r_approvalDate" property="approvalDate"/>
+        <result column="r_approvalTime" property="approvalTime"/>
         <association property="user" resultMap="userResultMap"/>
         <association property="approvalUser" resultMap="userResultMap" columnPrefix="app"/>  
     </resultMap>
@@ -29,7 +29,7 @@
 				r.c_type as r_type,
 				r.c_summary as r_summary,
 				r.c_status as r_status,
-				r.c_approval_time as r_approvalDate,
+				r.c_approval_time as r_approvalTime,
 				appu.c_id as appu_id,
 				appu.c_name as appu_name,
 				appu.c_no as appu_no,
@@ -113,7 +113,7 @@
 			</if>
 			<if test="update.approvalUserId != null">
 				c_approval_user_id = #{approvalUser.id},
-				c_approval_time = #{approvalDate},
+				c_approval_time = #{approvalTime},
 			</if>
 			<if test="update.status != null">
 				c_status = #{status},
@@ -130,4 +130,16 @@
 				and c_id = #{id}
 		</where>
     </delete>
+    
+    <select id="restTimeTotal" resultType="java.lang.Float">
+    	select
+    		ifnull(sum(c_len), 0.0)
+    	from rest_tbl as r
+    	<where>
+			r.c_date_start <![CDATA[>=]]> #{cond.dateStart}
+    		and r.c_date_end <![CDATA[<=]]> #{cond.dateEnd}
+			and c_user_id=#{cond.userId}
+		</where>
+    </select>
+    
 </mapper>

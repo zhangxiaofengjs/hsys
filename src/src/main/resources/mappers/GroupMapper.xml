@@ -5,12 +5,14 @@
 	<resultMap id="groupResultMap" type="groupModel" >  
         <id column="g_id" property="id"/>  
         <result column="g_name" property="name"/>
+        <result column="g_level" property="level"/>
         <association property="parent" resultMap="groupResultMap" columnPrefix="p"/>
     </resultMap>
 
 	<select id="queryList" resultMap="groupResultMap">
 		select g.c_id as g_id,
 			   g.c_name as g_name,
+			   g.c_level as g_level,
 			   g.c_parent_id as pg_id
 		from group_tbl as g
 		<if test="cond.userId != null">

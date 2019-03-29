@@ -16,6 +16,7 @@ public class GroupModel extends BaseModel {
 	public static final String COND_PARENT_ID = "parentId";
 
 	private String name;
+	private int level;
 	private GroupModel parent;
 
 	public String getName() {
@@ -32,5 +33,13 @@ public class GroupModel extends BaseModel {
 
 	public void setParent(GroupModel parentGroup) {
 		this.parent = parentGroup;
+	}
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
 	}
 }

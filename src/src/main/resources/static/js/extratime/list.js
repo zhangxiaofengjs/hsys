@@ -61,6 +61,7 @@ $(document).ready(function(){
 					"type":"text",
 					"value":"",
 					"required":true,
+					"maxlength":50,
 				},
 				{
 					"id":"userId",
@@ -97,7 +98,7 @@ $(document).ready(function(){
 						"value":2,
 						"text":"晚餐",
 					}],
-					"value":2
+					"value":[2]
 				},
 			],
 			"url":"/extratime/json/add",
@@ -191,6 +192,7 @@ $(document).ready(function(){
 					"type":"text",
 					"value":"",
 					"required":true,
+					"maxlength":50,
 				},
 				{
 					"label":"用餐",
@@ -247,17 +249,18 @@ $(document).ready(function(){
 	
 	$("#approvalExtra").click(function(){
 		var self = $(this);
-		var selId = htbl.getSelectedRowId("extraTimeTable");
-		if(selId ==null) {
+		var selIds = htbl.getSelectedRowId("extraTimeTable",true);
+		if(selIds ==null) {
 			return;
 		}
+		var id = selIds[0];
 		hdlg.showYesNo(
 				"确定批准选中的报销单吗?",
 				function() {
 					hsys.ajax({
 						"url":"/extratime/json/approval",
 						"data": {
-							"id": selId
+							"ids": selIds
 						},
 						"success": function() {
 							hsys.success(true);
@@ -301,11 +304,28 @@ $(document).ready(function(){
 	$("#downloadExtra").click(function(){
 		var startDate = $("#startDate").val();
 		var endDate = $("#endDate").val();
-		
+		var user = $("#user").val();
+		var userNo = "";
+		if($("#userNo").length != 0) {
+			userNo = $("#userNo").val();
+		}
+
 		var self = $(this);
 		hdlg.showForm({
 			"title":"下载加班记录",
 			"fields":[
+				{
+					"id":"user",
+					"type": "hidden",
+					"required":true,
+					"value": user
+				},
+				{
+					"id":"userNo",
+					"label":"工号",
+					"type": user == "true" ? "hidden" : "text",
+					"value": userNo
+				},
 				{
 					"id":"startDate",
 					"label":"开始日期",
@@ -320,14 +340,14 @@ $(document).ready(function(){
 					"required":true,
 					"value": endDate
 				},
-				{
-					"id":"bySheet",
-					"label":"按姓名分页下载",
-					"type":"checkbox",
-					"required":true,
-					"value": true,
-					"checked": "checked"
-				},
+//				{
+//					"id":"bySheet",
+//					"label":"按姓名分页下载",
+//					"type":"checkbox",
+//					"required":true,
+//					"value": true,
+//					"checked": "checked"
+//				},
 			],
 			"url": "/extratime/json/download",
 			"isDownload": true,

@@ -17,16 +17,24 @@ htreeview.init = function(opt) {
 
 htreeview.initPullDown = function(opt) {
 	var strHtml = '<div id="seltree_{0}">\
-		<button type="button" id="seltreebtn_{0}" class="form-control btn btn-default" style="text-align:left">\
+		<button type="button" id="seltreebtn_{0}" class="form-control btn btn-default" style="width:100%;text-align:left">\
 			<span id="seltreedisp_{0}"></span>\
 			<span class="caret pull-right" style="margin-top:8px;"></span>\
 		</button>\
 		<div id="seltreetgt_{0}"></div></div>'.format(opt.id);
 
-	//替换原来的元素
 	var elem = $("#" + opt.id.safeJqueryId());
+	var val = elem.val();
+	var dispText = elem.attr("dispText");
+
+	//替换原来的元素
 	elem.after(strHtml);
 	elem.remove();
+
+	//设置初始值
+	if(val != undefined && dispText != undefined) {
+		htreeview.setPullDownValue(opt.id, val, dispText);
+	}
 
 	opt.target = "seltreetgt_" + opt.id;
 	var tv = new htreeview()

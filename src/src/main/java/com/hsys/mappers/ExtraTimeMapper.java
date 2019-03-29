@@ -1,8 +1,10 @@
 package com.hsys.mappers;
 
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.hsys.models.ExtraTimeModel;
 
@@ -17,4 +19,5 @@ public interface ExtraTimeMapper {
 	void add(ExtraTimeModel extra);
 	void delete(ExtraTimeModel extra);
 	void update(ExtraTimeModel extraTime);
+	Float extraTimeTotal(ExtraTimeModel extraTime);
 }

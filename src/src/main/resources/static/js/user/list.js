@@ -1,4 +1,15 @@
 $(document).ready(function(){
+	htreeview.initPullDown({
+		"id":"groupId",
+		"css": {
+			"display": "inline-block",
+			"width": "200px",
+		},
+		"ajax":{
+			"url":'/group/json/children'
+		}
+	});
+
 	$("#addUser").click(function(){
 		var self = $(this);
 
@@ -10,12 +21,14 @@ $(document).ready(function(){
 					"label":"工号",
 					"type":"text",
 					"required":true,
+					"maxlength":8,
 				},
 				{
 					"id":"name",
 					"label":"姓名",
 					"type":"text",
 					"required":true,
+					"maxlength":8,
 				},
 				{
 					"id":"sex",

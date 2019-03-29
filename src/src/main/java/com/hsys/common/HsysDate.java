@@ -88,10 +88,9 @@ public class HsysDate {
 		return ca.getTime();
 	}
 
-	public static Date thisMonthStart() {
-		Date now = now();
+	public static Date startOfMonth(Date date) {
 		Calendar ca = Calendar.getInstance();
-    	ca.setTime(now);
+    	ca.setTime(date);
     	ca.set(Calendar.DAY_OF_MONTH, 1);
     	ca.set(Calendar.HOUR_OF_DAY, 0);
     	ca.set(Calendar.MINUTE, 0);
@@ -128,7 +127,7 @@ public class HsysDate {
 	
 	public static Date Today() {
 		Calendar ca = Calendar.getInstance();
-    	ca.set(Calendar.HOUR_OF_DAY, 0);
+		ca.set(Calendar.HOUR_OF_DAY, 0);
     	ca.set(Calendar.MINUTE, 0);
     	ca.set(Calendar.SECOND, 0);
     	ca.set(Calendar.MILLISECOND, 0);
@@ -139,14 +138,21 @@ public class HsysDate {
 	 * 当月工作开始日期,上个月的21日
 	 */
 	public static Date startOfWorkMonth() {
+    	return startOfWorkMonth(now());
+	}
+	
+	/*
+	 * 当月工作开始日期,上个月的21日
+	 */
+	public static Date startOfWorkMonth(Date date) {
 		Calendar ca = Calendar.getInstance();
-		ca.setTime(now());
+		ca.setTime(date);
 		int day = ca.get(Calendar.DAY_OF_MONTH);
 		Date d = null;
 		if(day > 20) {
 			d = ca.getTime();
 		} else {
-			d = addDay(thisMonthStart(), -1);
+			d = addDay(startOfMonth(date), -1);
 		}
 		
 		ca.setTime(d);
@@ -163,12 +169,18 @@ public class HsysDate {
 	 * 本月结束工作日，本月21号
 	 */
 	public static Date endOfWorkMonth() {
+		return endOfWorkMonth(now());
+	}
+	/*
+	 * 本月结束工作日，本月21号
+	 */
+	public static Date endOfWorkMonth(Date date) {
 		Calendar ca = Calendar.getInstance();
-		ca.setTime(now());
+		ca.setTime(date);
 		int day = ca.get(Calendar.DAY_OF_MONTH);
 		Date d = null;
 		if(day > 20) {
-			d = addMonth(thisMonthStart(), 1);
+			d = addMonth(startOfMonth(date), 1);
 		} else {
 			d = ca.getTime();
 		}

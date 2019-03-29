@@ -23,19 +23,21 @@ hdlg.showYesNo = function(text, acceptFunc, rejectFunc) {
 	var dlg = new hdlg()
 	dlg.showMsgDlg({
 		"html": '<span class="glyphicon glyphicon-question-sign"></span>&nbsp;' + text,
-		"buttons": [{
-			"id":"yes",
-			"text":"是",
-			"click":acceptFunc,
-			"closeOnClick": true,
-		},
-		{
-			"id":"no",
-			"text":"否",
-			"focus": true,
-			"click":rejectFunc,
-			"closeOnClick": true,
-		}]
+		"buttons": [
+			{
+				"id":"no",
+				"text":"否",
+				"focus": true,
+				"click":rejectFunc,
+				"closeOnClick": true,
+			},
+			{
+				"id":"yes",
+				"text":"是",
+				"click":acceptFunc,
+				"closeOnClick": true,
+			},
+		]
 	});
 }
 
@@ -244,8 +246,9 @@ hdlg.prototype.showMsgDlg = function(opt) {
 	var strBtnHtml = "";
 	if(this.option.buttons != undefined) {
 		this.option.buttons.forEach(function(btn, idx) {
-			strBtnHtml += '<button type="button" class="btn btn-primary btn-sm" id="{0}" name="{0}">{1}</button>'.
-			format(btn.id, btn.text);
+			strBtnHtml += '<button type="button" class="btn {2} btn-sm" id="{0}" name="{0}">{1}</button>'.
+			format(btn.id, btn.text,
+				btn.id=="no"?'btn-default':'btn-primary');
 		});
 	}
 
@@ -373,6 +376,9 @@ hdlg.prototype.showFormDlg = function(opt) {
 		"dlg": self
 	};
 	
+	var cancelBtn = self.getButton("cancel");
+	var okBtn = self.getButton("ok");
+	
 	var strHtml = 
 		'<div id="{0}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-backdrop="static">\
 		  <div class="modal-dialog modal-md" role="document">\
@@ -384,12 +390,15 @@ hdlg.prototype.showFormDlg = function(opt) {
 				<div class="modal-body" id="hdlg_body">{2}\
 				</div>\
 				<div class="modal-footer">\
-	    			<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">取消</button>\
-	    			<button type="button" class="btn btn-primary btn-sm" id="{0}_btn_ok" name="{0}_btn_ok" onclick="hdlg.ajaxSubmitForm(\'{0}\');">OK</button>\
+					<span class="pull-left" id="{0}_foot_msg"></span>\
+	    			<button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="{0}_btn_cancel" name="{0}_btn_cancel">{3}</button>\
+	    			<button type="button" class="btn btn-primary btn-sm" id="{0}_btn_ok" name="{0}_btn_ok" onclick="hdlg.ajaxSubmitForm(\'{0}\');">{4}</button>\
 				</div>\
 		    </div>\
 		  </div>\
-		</div>'.format(dlgId, this.option.title, strFormHtml);
+		</div>'.format(dlgId, this.option.title, strFormHtml,
+				cancelBtn != undefined && cancelBtn.text != undefined ? cancelBtn.text : '取消',
+				okBtn != undefined && okBtn.text != undefined ? okBtn.text : 'OK');
 	
 	var targetDiv;
 	var bIsCreated= false;
@@ -431,6 +440,13 @@ hdlg.prototype.showFormDlg = function(opt) {
 		}
 	});
 	
+	if(cancelBtn != undefined && cancelBtn.hasOwnProperty('click')) {
+		$("#" + dlgId + "_btn_cancel").click(function() {(cancelBtn.click)()});
+	}
+	if(okBtn != undefined && okBtn.hasOwnProperty('click')) {
+		$("#" + dlgId + "_btn_ok").click(function() {(okBtn.click)()});
+	}
+	
 	$("#" + this.id()).on('hidden.bs.modal', function(e) {
 		if(bIsCreated) {
 			targetDiv.remove();
@@ -443,6 +459,28 @@ hdlg.prototype.showFormDlg = function(opt) {
 
 hdlg.prototype.hide = function() {
 	$("#" + this.id()).modal('hide');
+};
+
+hdlg.prototype.setFootMsg = function(strHtml) {
+	$("#" + this.id() + "_foot_msg").html(strHtml);
+};
+
+hdlg.prototype.getButton = function(type) {
+	var self = this;
+	if(self.option.buttons == undefined) {
+		return null;
+	}
+	
+	for(var i = 0; i < self.option.buttons.length; i++) {
+		var btn = self.option.buttons[i];
+		if(btn.hasOwnProperty("type")) {
+			if(btn.type == type) {
+				return btn;
+			}
+		}
+	}
+	
+	return null;
 };
 
 hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax, bDepend ) {
@@ -605,6 +643,7 @@ hdlg.prototype.buildFieldHtml = function(field, checkLoadElem) {
 		strAttrHtml += (field.hasOwnProperty("readonly") ? ' readonly' : '');
 		strAttrHtml += (field.hasOwnProperty("required") ? ' required' : '');
 		strAttrHtml += (field.hasOwnProperty("checked") ? ' checked' : '');
+		strAttrHtml += (field.hasOwnProperty("maxlength") ? ' maxlength=' + field.maxlength : '');
 
 		if($.inArray(field.type, ["number", "range", "date", "datetime", "datetime-local", "month", "time", "week"]) >=0 ) {
 			strAttrHtml += (field.min ? ' min="{0}"'.format(field.min) : '');

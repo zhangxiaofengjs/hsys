@@ -45,4 +45,10 @@ public class RestServices {
 		restMapper.delete(rest);
 	}
 	
+	
+	public Float restTimeTotal(RestModel restModel) {
+		
+		return restMapper.restTimeTotal(restModel);
+		
+	}
 }

@@ -14,16 +14,26 @@
 				<input type="hidden" name="user" th:value="${form.user}">
 				<input type="hidden" name="approval" th:value="${form.approval}">
 	 			<div class="form-group">
-				   <input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo" th:if="${form.filterUser}" th:value="${form.userNo}" placeholder="领款工号">
-		 			<select class="form-control">  
-						<option value=0>未领款</option>
-				        <option value=1>已领款</option>
+				    <input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo" th:if="${form.filterUser}" th:value="${form.userNo}" placeholder="领款工号">
+				    <input type="text" class="form-control" id="receiptNo" name="receiptNo" th:value="${form.receiptNo}" placeholder="报销单号">
+		 			<select class="form-control" id="status" name="status" th:value="${form.status}">  
+				        <option value=0 th:selected="${form.status==0?'selected':_}">未领款</option>
+				        <option value=1 th:selected="${form.status==1?'selected':_}">已领款</option>
 					</select>
 	 			</div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 	 			<button type="button" class="btn btn-sm btn-primary" id='addItem'>添加</button>
 	 			<button type="button" class="btn btn-sm btn-primary" id='updateItem'>编辑</button>
 	 			<button type="button" class="btn btn-sm btn-primary" id='deleteItem'>删除</button>
+	 			<div class="form-group dropdown">
+	 				<button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+						标记&nbsp;<span class="caret"></span>
+					</button>
+		 			<ul class="dropdown-menu">
+				    	<li><a href="javascript:void(0)" id="markDarwOK">已领款</a></li>
+				    	<li><a href="javascript:void(0)" id="markDarwNG">未领款</a></li>
+					</ul>
+				</div>
 			</form>
 		</div>
 	</nav>
@@ -31,24 +41,27 @@
 		<thead>
 		    <tr>
 		    <th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+				<th width=60px>ID</th>
 				<th width=100px>种类</th>
 				<th width=100px>日期</th>
 				<th>事由</th>
 				<th width=100px>数额</th>
 				<th width=200px>报销人</th>
 				<th width=200px>领款人</th>
+				<th width=130px>报销单号</th>
 				<th width=70px>标记</th>
 		    </tr>
 		</thead>
 		<tbody>
 			<tr th:each="item : ${list}"
 				th:with="user=${item.user},
-						payee=${item.payee}">
+						payee=${item.payee},
+						receipt=${item.receipt}">
 				<td>
 					<input type="checkbox" name="select" th:rowid="${item.id}">
 				</td>		
-				<td th:switch="${item.type}"
-					>
+				<td th:text="${'#' + item.id}"></td>
+				<td th:switch="${item.type}">
 					<span th:case="0">加班</span>
 					<span th:case="1">办公用品</span>
 					<span th:case="2">小组活动</span>
@@ -62,9 +75,10 @@
 				<td th:text="${item.num}"></td>
 				<td th:text="${user !=null ? '['+ user.no +'] ' + user.name : ''}"></td>
 				<td th:text="${payee !=null ? '['+ payee.no +'] ' + payee.name : ''}"></td>
-				<td>
-					<span class="label label-default">已领款</span>
-					<button type="button" style="line-height:1.0;" class="btn btn-sm btn-primary" id=''>领款</button>
+				<td th:text="${receipt != null ? receipt.no :_}"></td>
+				<td th:switch="${item.status}">
+					<span class="label label-success" th:case="0">未领款</span>
+					<span class="label label-default" th:case="*">已领款</span>
 				</td>
 		    </tr>
 		</tbody>

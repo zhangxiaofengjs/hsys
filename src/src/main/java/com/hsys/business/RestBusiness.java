@@ -219,7 +219,7 @@ public class RestBusiness {
 			}
 			
 			rest.setApprovalUser(HsysSecurityContextHolder.getLoginUser());
-			rest.setApprovalDate(HsysDate.now());
+			rest.setApprovalTime(HsysDate.now());
 			rest.setStatus(rest.getStatus() == RestStatus.CancelRequest ? RestStatus.Cancel : RestStatus.Approval);
 			rest.setUpdate(RestModel.FIELD_APPROVAL_USER_ID);
 			rest.setUpdate(RestModel.FIELD_STATUS);
@@ -244,7 +244,7 @@ public class RestBusiness {
 			}
 			
 			rest.setApprovalUser(HsysSecurityContextHolder.getLoginUser());
-			rest.setApprovalDate(HsysDate.now());
+			rest.setApprovalTime(HsysDate.now());
 			rest.setStatus(rest.getStatus() == RestStatus.CancelRequest ? RestStatus.Approval : RestStatus.Reject);
 			rest.setUpdate(RestModel.FIELD_APPROVAL_USER_ID);
 			rest.setUpdate(RestModel.FIELD_STATUS);
@@ -266,7 +266,7 @@ public class RestBusiness {
 				throw new HsysException("已经批准的数据才能取消");
 			}
 			rest.setApprovalUser(HsysSecurityContextHolder.getLoginUser());
-			rest.setApprovalDate(HsysDate.now());
+			rest.setApprovalTime(HsysDate.now());
 			rest.setStatus(RestStatus.CancelRequest);
 			rest.setUpdate(RestModel.FIELD_APPROVAL_USER_ID);
 			rest.setUpdate(RestModel.FIELD_STATUS);

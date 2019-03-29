@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hsys.common.HsysList;
 import com.hsys.mappers.GroupMapper;
 import com.hsys.models.GroupModel;
 
@@ -67,12 +68,55 @@ public class GroupService {
 	}
 
 	public GroupModel queryParent(int id) {
+		return queryParent(id, -1);
+	}
+	
+	/*
+	 * 查找指定level的亲
+	 */
+	public GroupModel queryParent(int id, int level) {
 		GroupModel group = queryById(id);
 		if(group == null) {
 			return null;
 		}
 
 		GroupModel parent = group.getParent();
-		return queryById(parent.getId());
+		group = queryById(parent.getId());
+		if(group == null) {
+			return null;
+		}
+		
+		if(level == -1 || group.getLevel() == level) {
+			return group;
+		}
+		
+		return queryParent(group.getId(), level);
+	}
+
+	public List<GroupModel> queryChildrenById(int groupId) {
+		GroupModel group = new GroupModel();
+		group.setCond(GroupModel.COND_PARENT_ID, groupId);
+
+		List<GroupModel> rets = HsysList.New();
+		
+		List<GroupModel> groups = queryList(group);
+		if(groups != null) {
+			for(GroupModel g : groups) {
+				rets.add(g);
+				rets.addAll(queryChildrenById(g.getId()));
+			}
+		}
+		
+		return rets;
+	}
+	
+	public List<Integer> queryChildrenIdsById(int groupId) {
+		List<GroupModel> groups = queryChildrenById(groupId);
+		
+		List<Integer> groupIds = HsysList.New();
+		for(GroupModel g : groups) {
+			groupIds.add(g.getId());
+		}
+		return groupIds;
 	}
 }

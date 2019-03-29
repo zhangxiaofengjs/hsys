@@ -19,6 +19,7 @@
 				        <option value=1 th:selected="${form.exitState==1?'selected':_}">在职</option>
 				        <option value=2 th:selected="${form.exitState==2?'selected':_}">离职</option>
 					</select>
+					<input type="text" class="form-control" id="groupId" name="groupId" th:value="${form.groupId}" th:dispText="${form.groupName}"/>
 			    </div>
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
  				<div class="form-group" th:if="${not form.view}" sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).USER_EDIT)}">
@@ -37,6 +38,7 @@
 		    	<th class="hsys-table-index-column">#</th>
 				<th width=80px>工号</th>
 				<th width=100px>姓名</th>
+				<th width=250px>拼写</th>
 				<th>所属公司</th>
 				<th>所在部署</th>
 				<th>邮件地址</th>
@@ -55,6 +57,7 @@
 					<span th:if="${form.view}" th:text="${user.no}"></span>
 				</td>
 				<td><span th:text="${user.name}"></span>&nbsp;<span th:if="${user.exitDate != null}" class="label label-default">离职</span></td>
+				<td th:text="${user.spelling}"></td>
 				<td th:text="${user.company != null ? user.company.name : _}"></td>
 				<td th:text="${user.groupFullName}"></td>
 				<td th:text="${user.mail}"></td>

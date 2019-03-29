@@ -13,8 +13,8 @@ select c_date, c_start, c_end, replace(replace(c_start_comment || ' ' || c_end_c
 from access_ctrl_tbl as a
 left join user_tbl as u on u.c_id=a.c_user_id
 
-select c_date, u.c_no, c_sum, i.c_type, replace(replace(i.c_detail, CHR(10), ''), chr(13), '') as c_comment, c_receipt_id, r.c_create_date as c_submit_date, 
-r.c_type, c_pay_date, u2.c_no, c_status, replace(replace(r.c_detail, CHR(10), ''), chr(13), '') as r_comment
+select c_date, u.c_no, c_sum, i.c_type, replace(replace(i.c_detail, CHR(10), ''), chr(13), '') as c_comment, COALESCE(c_receipt_id, 0) as c_receipt_id, r.c_create_date as c_submit_date, 
+COALESCE(r.c_type, 0) as c_type, c_pay_date, u2.c_no, COALESCE(c_status, 0), replace(replace(r.c_detail, CHR(10), ''), chr(13), '') as r_comment
 from expense_reimburse_tbl as i
 left join user_tbl as u on u.c_id=i.c_user_id
 left join expense_receipt_tbl as r on r.c_id=i.c_receipt_id

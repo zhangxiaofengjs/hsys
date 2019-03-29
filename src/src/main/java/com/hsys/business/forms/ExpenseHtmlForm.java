@@ -5,10 +5,14 @@ package com.hsys.business.forms;
  * @version: 2019/01/03
  */
 public class ExpenseHtmlForm {
+	public static final int STATUS_DRAW_MONEY = 1;
+	
 	private String type;
 	private String userNo;
 	private int receiptId;
+	private String receiptNo;
 	private int id;
+	private int status;
 	private boolean isFilterUser;
 	private boolean isUser;
 	private boolean isApproval;
@@ -67,5 +71,21 @@ public class ExpenseHtmlForm {
 
 	public void setFilterUser(boolean isFilterUser) {
 		this.isFilterUser = isFilterUser;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public String getReceiptNo() {
+		return receiptNo;
+	}
+
+	public void setReceiptNo(String receiptNo) {
+		this.receiptNo = receiptNo;
 	}
 }

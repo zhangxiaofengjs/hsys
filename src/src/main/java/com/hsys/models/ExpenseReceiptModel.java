@@ -16,6 +16,7 @@ public class ExpenseReceiptModel extends BaseModel {
 	public static final String COND_FUZZY_PAYEE_NO = "fuzzyPayeeNo";
 	public static final String COND_PAYEE_GROUP_ID = "payeeGroupId";
 	public static final String COND_STATUS = "status";
+	public static final String COND_STATUSES = "statuses";
 	public static final String COND_PROJECT_IDS = "projectIds";
 	
 	public static final String FIELD_COMMENT = "comment";
@@ -24,7 +25,7 @@ public class ExpenseReceiptModel extends BaseModel {
 	public static final String FIELD_TYPE = "type";
 	public static final String FIELD_PROJECT_ID = "projectId";
 	public static final String FIELD_PAY_DAYE = "payDate";
-
+	public static final String FIELD_SUBMIT_DATE = "submitDate";
 	private String no;
 	private Date submitDate;
 	private Date payDate;

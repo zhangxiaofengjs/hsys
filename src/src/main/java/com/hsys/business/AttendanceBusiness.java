@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hsys.HsysSecurityContextHolder;
+import com.hsys.business.beans.HsysPageInfo;
 import com.hsys.business.forms.AttendanceForm;
 import com.hsys.common.HsysIO;
-import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
 import com.hsys.config.HsysConfig;
 import com.hsys.config.beans.Upload;
@@ -77,10 +77,10 @@ public class AttendanceBusiness {
 		HsysIO.move(tempPath, attendacePath);
 	}
 	
-	public List<AttendanceModel> getAttendances(AttendanceForm attendanceForm) {
+	public HsysPageInfo<AttendanceModel> getAttendances(AttendanceForm attendanceForm) {
 		//检查一览权限
 		if(!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.ATTENDANCE_LIST, ROLE.ATTENDANCE_LIST_ALL)) {
-			return HsysList.New();
+			return new HsysPageInfo<AttendanceModel>();
 		}
 		
 		AttendanceModel attendance = new AttendanceModel();
@@ -98,8 +98,14 @@ public class AttendanceBusiness {
 		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.ATTENDANCE_LIST_ALL)) {
 			attendance.setCond(RestModel.COND_GROUP_ID, HsysSecurityContextHolder.getLoginUser().getGroup().getId());
 		}
+
+		HsysPageInfo<AttendanceModel> pageInfo = new HsysPageInfo<AttendanceModel>();
+		pageInfo.setParam(attendance);
+		pageInfo.setPageInfo(attendanceForm);
+		attendanceService.queryList(pageInfo);
+
+		attendanceForm.setPageInfo(pageInfo);
 		
-		List<AttendanceModel> list = attendanceService.queryList(attendance);
-		return list;
+		return pageInfo;
 	}
 }

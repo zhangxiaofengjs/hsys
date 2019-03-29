@@ -9,12 +9,14 @@ $(document).ready(function(){
 					"label":"编号",
 					"type":"text",
 					"required":true,
+					"maxlength":7,
 				},
 				{
 					"id":"comment",
 					"label":"说明",
 					"type":"text",
 					"required":true,
+					"maxlength":50,
 				},
 				{
 					"id":"status",

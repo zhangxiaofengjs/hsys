@@ -46,7 +46,19 @@
 		<tbody>
 			<!-- 基本信息 -->
 			<tr>
-				<td rowspan=3>基本信息</td>
+				<td rowspan=4>基本信息</td>
+				
+				
+				<td style="width:120px;">拼写</td>
+				<td>
+					<div id="e_spelling_disp_div" >
+						<span th:text="${user.spelling}" th:value="${user.spelling}"></span>&nbsp;
+						<a id="e_spelling" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+					</div>
+				</td>
+			</tr>
+			
+			<tr>
 				<td style="width:120px;">所在部署</td>
 				<td>
 					<div id="e_group_disp_div" th:with="group=${user.group}">
@@ -55,6 +67,8 @@
 					</div>
 				</td>
 			</tr>
+			
+			
 			<tr>
 				<td>工作地点</td>
 				<td>
@@ -64,6 +78,8 @@
 					</div>
 				</td>
 			</tr>
+			
+			
 			<tr>
 				<td>所属公司</td>
 				<td>
@@ -122,7 +138,7 @@
 				<td>毕业院校</td>
 				<td>
 					<div id="e_school_disp_div">
-						<span th:text="${user.school}" th:value="${user.school}"></span>&nbsp;
+						<span th:text="${user.school !=null ? user.school.name: _}" th:value="${user.school != null ?  user.school.id:_}"></span>&nbsp;
 						<a id="e_school" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
 					</div>
 				</td>

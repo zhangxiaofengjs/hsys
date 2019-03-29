@@ -63,10 +63,10 @@ htbl.getSelectedRowId = function(tableId, bAllowMulti, bShowErr) {
 		return null;
 	}
 	
-//	if(bShowErr && !bAllowMulti && selectIdArr.length != 1) {
-//		hdlg.showOK("请仅选择一个要操作的对象。");
-//		return null;
-//	}
+	if(bShowErr && !bAllowMulti && selectIdArr.length != 1) {
+		hdlg.showOK("请仅选择一个要操作的对象。");
+		return null;
+	}
 
 	if(!bAllowMulti) {
 		return selectIdArr[0];

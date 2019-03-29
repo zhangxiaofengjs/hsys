@@ -71,6 +71,8 @@ public class ToolsBusiness {
 			loadExpense(expenseFile);
 		}
 	}
+	
+	@Transactional
 	private void loadExpense(String expenseFile) {
 		Map<ExpenseReceiptModel,List<ExpenseItemModel>> expense = reader.readExpense(expenseFile);
 		
@@ -93,6 +95,8 @@ public class ToolsBusiness {
 			}
 		}
 	}
+	
+	@Transactional
 	private void loadExtraTime(String extraFile) {
 		List<ExtraTimeModel> extras = reader.readExtraTime(extraFile);
 		for(ExtraTimeModel extra : extras) {
@@ -100,6 +104,8 @@ public class ToolsBusiness {
 		}
 		
 	}
+	
+	@Transactional
 	private void loadRest(String restFile) {
 		List<RestModel> rests = reader.readRest(restFile);
 		for(RestModel rest : rests) {
@@ -107,6 +113,7 @@ public class ToolsBusiness {
 		}
 		
 	}
+	
 	@Transactional
 	private void loadAttendance(String attendanceFile) {
 		List<AttendanceModel> attendances = reader.readAttendance(attendanceFile);
@@ -114,7 +121,6 @@ public class ToolsBusiness {
 			
 			attendanceService.add(attendance);
 		}
-		
 	}
 
 	@Transactional
@@ -123,6 +129,7 @@ public class ToolsBusiness {
 		for(UserModel u : users) {
 			UserModel user = userService.queryByNo(u.getNo());
 			if(user == null) {
+				u.setPassword("hoge");
 				userService.add(u);
 				
 				u.setPassword(encoder.encode("123"));
@@ -132,6 +139,7 @@ public class ToolsBusiness {
 				u.setId(user.getId());
 				
 				u.setUpdate(UserModel.FIELD_NAME);
+				u.setUpdate(UserModel.FIELD_SEPLLING);
 				u.setUpdate(UserModel.FIELD_SEX);
 				u.setUpdate(UserModel.FIELD_MAIL);
 				u.setUpdate(UserModel.FIELD_PLACE);

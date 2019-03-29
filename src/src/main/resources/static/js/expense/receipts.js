@@ -9,7 +9,8 @@ $(document).ready(function(){
 					"label":"编号",
 					"type":"text",
 					"required":true,
-					"value":'#'+ hdate.yyyyMMdd(new Date)+'-',
+					"maxlength":12,
+					"value": hdate.yyyyMMdd(new Date),
 				},
 				{
 					"id":"type",
@@ -36,7 +37,8 @@ $(document).ready(function(){
 					"label":"备注",
 					"type":"text",
 					"required":true,
-				},
+					"maxlength":50,
+				},/*
 				{
 					"id":"payee.id",
 					"label":"领款人",
@@ -57,7 +59,7 @@ $(document).ready(function(){
 							dlg.buildField("payee.id");
 						},
 					},
-				},
+				},*/
 			],
 			"url":"/expense/json/receipt/add",
 			"success": function(data, dlg) {
@@ -118,6 +120,7 @@ $(document).ready(function(){
 					"type":"text",
 					"required":true,
 					"depend": true,
+					"maxlength":50,
 				},
 				{
 					"id":"payeeId",

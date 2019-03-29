@@ -2,7 +2,7 @@ $(document).ready(function(){
   //先更新一次，10分钟更新一次通知数量
   updateIndexNoticeCount();
   setInterval(updateIndexNoticeCount,10*60*1000);//10*60*1000
-	
+
   $("a[refURL]").click(function(){
 	  var self = $(this);
 
@@ -10,10 +10,13 @@ $(document).ready(function(){
   });
   
   $("#frame_content").load(function(){
-	  var src = $("#frame_content").attr("src");
-	  if(src=="login.html") {
-		  //子画面加载了Login，Index直接跳转Login/////貌似没搞定！！！
-		  window.parent.href="/login";
+	  if($("#frame_content").contents().children().find("div[id=indexPage]").length == 1) {
+		  //检测到内侧已经失效重新login则，跳转到之前界面
+		  if(prevPageUrl != "") {
+			  $("#frame_content").attr('src', prevPageUrl);
+		  } else {
+			  document.location = hsys.url("/index");
+		  }
 	  }
   }); 
   
@@ -67,6 +70,7 @@ $(document).ready(function(){
   	});
 });
 
+var prevPageUrl = "";
 function showPage(pATag)
 {
 	var menuId = pATag.attr('id');
@@ -89,6 +93,7 @@ function showPage(pATag)
 
 	var frame = $("iframe[id='frame_content']");
 	frame.attr('src', url);
+	prevPageUrl = url;
 
 	//更新导航条
 	$("#nav_title").html("主页 > " + menuDisplay);

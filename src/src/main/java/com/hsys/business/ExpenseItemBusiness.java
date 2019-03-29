@@ -11,6 +11,7 @@ import com.hsys.business.forms.ExpenseHtmlForm;
 import com.hsys.business.forms.ExpenseItemDeleteForm;
 import com.hsys.business.forms.ExpenseItemGetForm;
 import com.hsys.business.forms.ExpenseItemUnlinkForm;
+import com.hsys.business.forms.ExpenseItemUpdateDrawStatusForm;
 import com.hsys.business.forms.ExpenseItemUpdateForm;
 import com.hsys.common.HsysDate;
 import com.hsys.common.HsysList;
@@ -55,10 +56,20 @@ public class ExpenseItemBusiness {
 		} else {
 			return HsysList.New();
 		}
+		
+		item.setStatus(form.getStatus());
+		item.setCond(ExpenseItemModel.COND_STATUS, true);
+		
+		if(!HsysString.isNullOrEmpty(form.getReceiptNo())) {
+			item.setCond(ExpenseItemModel.COND_RECEIPT_NO, form.getReceiptNo());
+		}
 		return expenseItemService.queryList(item);
 	}
 	
 	public void add(ExpenseItemModel item) {
+		item.setPayee(HsysSecurityContextHolder.getLoginUser());
+		item.setUser(HsysSecurityContextHolder.getLoginUser());
+		
 		expenseItemService.add(item);
 	}
 
@@ -145,5 +156,24 @@ public class ExpenseItemBusiness {
 		item.setId(form.getId());
 		item.setUpdate(ExpenseItemModel.FIELD_RECEIPT_ID);
 		expenseItemService.update(item);
+	}
+
+	@Transactional
+	public void updateStatus(ExpenseItemUpdateDrawStatusForm form) {
+		for(int id : form.getIds()) {
+			ExpenseItemModel item =expenseItemService.queryById(id);
+			if(item == null) {
+				continue;
+			}
+			
+			ExpenseReceiptModel receipt = item.getReceipt();
+			if(receipt == null) {
+				throw new HsysException("该报销条目[#" +item.getId() + "]还未与报销单关联。");
+			}
+			
+			item.setStatus(form.getStatus());
+			item.setUpdate(ExpenseItemModel.FIELD_STATUS);
+			expenseItemService.update(item);
+		}
 	}
 }

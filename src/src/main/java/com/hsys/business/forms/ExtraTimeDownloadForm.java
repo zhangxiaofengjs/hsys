@@ -16,6 +16,8 @@ public class ExtraTimeDownloadForm {
     @JsonDeserialize(using=HsysDateDeserializer.class)
 	private Date startDate;
 	
+	private boolean user;
+	private String userNo;
 	private boolean bySheet;
 	
 	public Date getEndDate() {
@@ -35,5 +37,17 @@ public class ExtraTimeDownloadForm {
 	}
 	public void setBySheet(boolean bySheet) {
 		this.bySheet = bySheet;
+	}
+	public boolean isUser() {
+		return user;
+	}
+	public void setUser(boolean user) {
+		this.user = user;
+	}
+	public String getUserNo() {
+		return userNo;
+	}
+	public void setUserNo(String userNo) {
+		this.userNo = userNo;
 	}
 }

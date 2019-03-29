@@ -1,7 +1,5 @@
 package com.hsys.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.hsys.business.AttendanceBusiness;
+import com.hsys.business.beans.HsysPageInfo;
 import com.hsys.business.forms.AttendanceForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.AttendanceModel;
@@ -38,7 +37,7 @@ public class AttendanceController extends BaseController {
 	
 	@RequestMapping("/html/list")
 	public String htmlList(AttendanceForm form, Model model) {
-		List<AttendanceModel> list = attendanceBusiness.getAttendances(form);
+		HsysPageInfo<AttendanceModel> list = attendanceBusiness.getAttendances(form);
 		model.addAttribute("list", list);
 		model.addAttribute("form", form);
 		return "attendance/list";

@@ -4,60 +4,148 @@
 <head th:include="common/header::header">
 </head>
 <body>
-	<script th:src="@{/js/attendance/list.js}"></script> 
-	<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
-		<div class="container-fluid">
-	  		<div class="navbar-header">
-	  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
-	  		</div>
-	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/attendance/html/list}" method="post">
-	 			<div class="form-group">
-				   <input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo" th:value="${form!=null?form.userNo:_}" placeholder="输入工号">
-	 			</div>
-	 			<div class="form-group">
-				   <input type="date" class="form-control hsys-fc-date-width" id="start" name="start" th:value="${#dates.format(form.start, 'yyyy-MM-dd')}" placeholder="开始">
-	 			</div>
-	 			<div class="form-group">
-				   到
-				   <input type="date" class="form-control" style="width:150px" id="end" name="end" th:value="${#dates.format(form.end, 'yyyy-MM-dd')}" placeholder="结束">
-	 			</div>
-	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
-	 			<button type="button" class="btn btn-sm btn-primary" id="upload" 
-	 				sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ATTENDANCE_UPLOAD)}">导入</button>
-			</form>
-		</div>
-	</nav>
-
-	<table id="attendanceTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
+	<table id="statisticTable" class="table table-bordered table-hover table-condensed" contenteditable="false">
 		<thead>
 		    <tr>
-		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
-		    	<th class="hsys-table-index-column">#</th>
-		    	<th width=50px>工号</th>
-				<th width=100px style="text-align:center;">姓名</th>
-				<th width=100px style="text-align:center;">日期</th>
-				<th width=80px style="text-align:center;">出勤</th>
-				<th width=80px style="text-align:center;">退勤</th>
-				<th>详细</th>
+		    	<th class="hsys-table-checkbox-column" rowspan=2><input type="checkbox" name="selectAll"></th>
+		    	<th width=50px rowspan=2>组</th>
+				<th width=100px rowspan=2>工号</th>
+				<th width=100px rowspan=2>姓名</th>
+				<th width=80px colspan=4 style="text-align:center;">加班(h)</th>
+				<th width=80px colspan=7 style="text-align:center;">请假(h)</th>
+		    </tr>
+		    <tr>
+		    	<th width=50px>平时</th>
+		    	<th width=50px>周末</th>
+		    	<th width=50px>节假</th>
+		    	<th width=50px>合计</th>
+		    	<th width=50px>休</th>
+		    	<th width=50px>事</th>
+		    	<th width=50px>病</th>
+		    	<th width=50px>婚</th>
+		    	<th width=50px>丧</th>
+		    	<th width=50px>公</th>
+		    	<th width=50px>合计</th>
 		    </tr>
 		</thead>
 		<tbody>
-			<tr th:each="attendance, itr : ${list}"
-				th:rowid="${attendance.id}">
-				<td>
-					<input type="checkbox" name="select" th:rowid="${attendance.id}">
-				</td>
-				<td th:text="${itr.index+1}" class="hsys-table-index-column"></td>
-				<td th:text="${attendance.user.no}"></td>
-				<td th:text="${attendance.user.name}"></td>
-				<td th:text="${#dates.format(attendance.date, 'yyyy-MM-dd')}"></td>
-				<td th:text="${#dates.format(attendance.start, 'HH:mm')}"></td>
-				<td th:text="${#dates.format(attendance.end, 'HH:mm')}"></td>
-				<td th:text="${attendance.comment}"></td>
+			<tr>
+				<td><input type="checkbox" name="select"></td>
+		    	<td>zuken</td>
+		    	<td>001</td>
+		    	<td>bac</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    </tr>
+			<tr>
+				<td><input type="checkbox" name="select"></td>
+		    	<td>zuken</td>
+		    	<td>002</td>
+		    	<td>bac</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    </tr>
+		    <tr class="alert alert-success">
+				<td><input type="checkbox" name="select"></td>
+		    	<td>zuken</td>
+		    	<td colspan=2>***小计***</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    </tr>
+		    <tr>
+				<td><input type="checkbox" name="select"></td>
+		    	<td>nttd</td>
+		    	<td>001</td>
+		    	<td>bac</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    </tr>
+			<tr>
+				<td><input type="checkbox" name="select"></td>
+		    	<td>nttd</td>
+		    	<td>002</td>
+		    	<td>bac</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    </tr>
+		    <tr class="alert alert-success">
+				<td><input type="checkbox" name="select"></td>
+		    	<td>nttd</td>
+		    	<td colspan=2>***小计***</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    </tr>
+		    <tr class="alert alert-danger">
+				<td><input type="checkbox" name="select"></td>
+		    	<td colspan=3>***合计***</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>2</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
+		    	<td>1</td>
 		    </tr>
 		</tbody>
 	</table>
-	<div th:if="${#lists.size(list) == 0}" class="alert alert-warning">当前权限以及过滤条件下没有考勤数据。</div>
 	<div th:replace="common/footer::copyright"></div>
 </body>
 </html>

@@ -14,9 +14,9 @@
 				<input type="hidden" name="approval" th:value="${form.approval}">
 	 			<div class="form-group">
 					<input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo"  th:if="${form.filterUser}" th:value="${form.userNo}" placeholder="领款工号">
-					<select class="form-control">  
-						<option value=0>未领款</option>
-				        <option value=1>已领款</option>
+					<select class="form-control" th:if="${not form.approval}" id="status" name="status" th:value="${form.status}">  
+				        <option value=0 th:selected="${form.status==0?'selected':_}">未领款</option>
+				        <option value=1 th:selected="${form.status==1?'selected':_}">已领款</option>
 					</select>
 		 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 	 			</div>

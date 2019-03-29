@@ -7,16 +7,16 @@
 <script th:src="@{/js/user/basic.js}"></script> 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h3 class="panel-title"><b>基本信息 2019年03月</b></h3>
+		<h3 class="panel-title"><b><span th:text="${'基本信息 '+bean.year+'年'+bean.month+'月'+'('+bean.date+')'}"></span></b></h3>
 	</div>
 	<div class="panel-body">
-		<span class="label label-primary">所属：D3</span>&nbsp;
+		<span class="label label-primary" th:text="${'所属：' + bean.groupName}"></span>&nbsp;
 	</div>
 	<table id="deviceTable" class="table table-bordered table-condensed" contenteditable="false">
 	    <tr>
 			<td width=80px rowspan=2>加班</td>
 			<td width=40px>合计</td>
-			<td colspan=2><span class="badge">6 小时</span></td>
+			<td colspan=2><span class="badge" th:text="${bean.extraTimeTotal+'小时'}"></span></td>
 	    </tr>
 	    <tr>
 			<td>登记</td>
@@ -25,21 +25,21 @@
 				<div class="form-inline">
 				    <input class="form-control" type="time" name="et_startTime" value="18:00">&nbsp;到
 				    <input class="form-control" type="time" name="et_endTime" value="21:30">
-				    <input class="form-control" type="text" name="et_comment" style="width:10x;">
+				    <input class="form-control" type="text" name="et_comment">
 				    <select class="form-control" id="et_meal">
 				    	<option value="0">午餐</option>
-				    	<option value="2" selected>晚餐</option>
-				    	<option value="3">无</option>
+				    	<option value="1" selected>晚餐</option>
+				    	<option value="2">无</option>
 				    </select>
 				    <button class="btn btn-primary" type="button" id="registExtraTime">登记</button>
-				    <span class="text-danger">*时间段内不要包含用餐时间</span>
+				    <span class="text-danger">*时间段内不要包含用餐时间，周末自动扣除0.5h午餐</span>
 			    </div>
 			</td>
 	    </tr>
 	    <tr>
 			<td>请假</td>
 			<td>合计</td>
-			<td><span class="badge">6 小时</span></td>
+			<td><span class="badge"  th:text="${bean.restTimeTotal+'小时'}"></span></td>
 	    </tr>
 	    <tr>
 			<td rowspan=6>公休假</td>

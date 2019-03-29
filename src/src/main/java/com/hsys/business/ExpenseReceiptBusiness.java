@@ -50,6 +50,18 @@ public class ExpenseReceiptBusiness {
 		ExpenseReceiptModel receipt = new ExpenseReceiptModel();
 		UserModel user = new UserModel();
 		if(form.isUser()) {
+			if(form.getStatus() == ExpenseHtmlForm.STATUS_DRAW_MONEY) {
+				receipt.setStatus(ReceiptStatus.Finish);
+				receipt.setCond(ExpenseReceiptModel.COND_STATUS, true);
+			} else {
+				receipt.setStatus(ReceiptStatus.Finish);
+				List<Integer> sta = HsysList.New();
+				sta.add(ReceiptStatus.Approval);
+				sta.add(ReceiptStatus.Regist);
+				sta.add(ReceiptStatus.Submit);
+				receipt.setCond(ExpenseReceiptModel.COND_STATUSES, sta);
+			}
+			
 			if(HsysSecurityContextHolder.isLoginUserHasRole(ROLE.EXPENSE_LIST_ALL)) {
 				//查看所有报销单权限的直接查询所有
 				if(!HsysString.isNullOrEmpty(form.getUserNo())) {
@@ -165,6 +177,7 @@ public class ExpenseReceiptBusiness {
 			throw new HsysException("该编号存在:%s", receiptExist.getNo()); 
 		}
 
+		receipt.setPayee(HsysSecurityContextHolder.getLoginUser());
 		expenseReceiptService.add(receipt);
 	}
 
@@ -209,7 +222,9 @@ public class ExpenseReceiptBusiness {
 			throw new HsysException("不可重复提交。"); 
 		}
 		receipt.setStatus(1);
+		receipt.setSubmitDate(HsysDate.now());
 		receipt.setUpdate(ExpenseReceiptModel.FIELD_STATUS);
+		receipt.setUpdate(ExpenseReceiptModel.FIELD_SUBMIT_DATE);
 		expenseReceiptService.update(receipt);
 	}
 
@@ -257,10 +272,11 @@ public class ExpenseReceiptBusiness {
 		ExpenseReceiptModel receiptExist = expenseReceiptService.queryById(receipt.getId());
 		if(receiptExist.getStatus() != ReceiptStatus.Approval) {
 			throw new HsysException("未批准，不可标记为已经领款。"); 
+			
 		}
 		
 		receipt.setStatus(ReceiptStatus.Finish);
-		receipt.setPayDate(HsysDate.Today());
+		receipt.setPayDate(HsysDate.now());
 		receipt.setUpdate(ExpenseReceiptModel.FIELD_STATUS);
 		receipt.setUpdate(ExpenseReceiptModel.FIELD_PAY_DAYE);
 		expenseReceiptService.update(receipt);

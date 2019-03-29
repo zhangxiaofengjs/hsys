@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.hsys.HsysApplicationContext;
 import com.hsys.HsysSecurityContextHolder;
 import com.hsys.business.forms.ExtraTimeAddForm;
+import com.hsys.business.forms.ExtraTimeApprovalForm;
 import com.hsys.business.forms.ExtraTimeDeleteForm;
 import com.hsys.business.forms.ExtraTimeDownloadForm;
 import com.hsys.business.forms.ExtraTimeGetForm;
@@ -65,6 +66,10 @@ public class ExtraTimeBusiness {
 		if (extraTime.getType() > ExtraTimeType.Holiday || extraTime.getType() < ExtraTimeType.Normal) {
 			throw new HsysException("种类超出范围");
 		}
+		
+		if(HsysString.isNullOrEmpty(extraTime.getComment())) {
+			throw new HsysException("请填写加班备注");
+		}
 	}
 	
 	public void add(ExtraTimeAddForm form) {
@@ -110,7 +115,12 @@ public class ExtraTimeBusiness {
 		extraTime.setDate(HsysDate.Today());
 		extraTime.setComment(form.getComment());
 		extraTime.setEndTime(form.getEndTime());
-		extraTime.setLength(HsysDate.hours(form.getStartTime(), form.getEndTime()));
+		float len = HsysDate.hours(form.getStartTime(), form.getEndTime());
+		if(HsysDate.isWeekend(HsysDate.Today())) {
+			//周末自动扣除半小时午餐
+			len -= 0.5;
+		}
+		extraTime.setLength(len);
 		extraTime.setStartTime(form.getStartTime());
 		if(form.getMeal() == UserBasicExtraTimeForm.MEAL_LUNCH) {
 			extraTime.setMealLunch(BoolFlag.TRUE);
@@ -132,6 +142,13 @@ public class ExtraTimeBusiness {
 	public void delete(ExtraTimeDeleteForm form) {
 		int[] ids = form.getIds();
 		for(int id : ids) {
+			ExtraTimeModel extraTimeModel = extraTimeService.queryById(id);
+			if(extraTimeModel == null) {
+				throw new HsysException("该数据不存在");
+			}
+			if(extraTimeModel.getStatus() != ExtraTimeStatus.Regist) {
+				throw new HsysException("已经批准的数据不能删除。");
+			}
 			extraTimeService.deleteById(id);
 		}
 	}
@@ -197,7 +214,10 @@ public class ExtraTimeBusiness {
 		}
 		
 		check(extraTime);
-		extraTimeService.update(extraTime);
+		
+		if(extraTime.hasUpdate()) {
+			extraTimeService.update(extraTime);
+		}
 	}
 
 	public ExtraTimeModel getExtratime(ExtraTimeGetForm form) {
@@ -208,14 +228,24 @@ public class ExtraTimeBusiness {
 		return extraTime;
 	}
 
-	public void approval(ExtraTimeModel extraTime) {
-		ExtraTimeModel extraTimeExist = extraTimeService.queryById(extraTime.getId());
-		if(extraTimeExist.getStatus() == ExtraTimeStatus.APPROVED) {
-			throw new HsysException("不可重复批准。");
+	//批准加班
+	public void approval(ExtraTimeApprovalForm form) {
+			
+		int[] ids = form.getIds();
+		
+		for(int id:ids) {
+			ExtraTimeModel extraTime = extraTimeService.queryById(id);
+			if(extraTime.getStatus() == ExtraTimeStatus.APPROVED) {
+				throw new HsysException("不可重复批准。");
+			}
+			extraTime.setAppUser(HsysSecurityContextHolder.getLoginUser());
+			extraTime.setApprovalTime(HsysDate.now()); //插入批准日期
+			extraTime.setStatus(ExtraTimeStatus.APPROVED);
+			extraTime.setUpdate(ExtraTimeModel.FIELD_APPROVAL_USER_ID);
+			extraTime.setUpdate(ExtraTimeModel.FIELD_STATUS);
+			extraTime.setUpdate(ExtraTimeModel.FIELD_APPROVAL_TIME);
+			extraTimeService.update(extraTime);
 		}
-		extraTime.setStatus(ExtraTimeStatus.APPROVED);
-		extraTime.setUpdate(ExtraTimeModel.FIELD_STATUS);
-		extraTimeService.update(extraTime);
 	}
 
 	public List<ExtraTimeModel> getExtraTimes(ExtraTimeListForm form) {
@@ -259,8 +289,8 @@ public class ExtraTimeBusiness {
 		extraTime.setCond(ExtraTimeModel.COND_START_DATE, form.getStartDate());
 		extraTime.setCond(ExtraTimeModel.COND_END_DATE, form.getEndDate());
 
-		extraTime.addSortOrder(ExtraTimeModel.ORDER_DATE, OrderFlag.ASC);
 		extraTime.addSortOrder(ExtraTimeModel.ORDER_USER_NO, OrderFlag.ASC);
+		extraTime.addSortOrder(ExtraTimeModel.ORDER_DATE, OrderFlag.ASC);
 		List<ExtraTimeModel> list = extraTimeService.queryList(extraTime);
 		return list;
 	}
@@ -273,15 +303,23 @@ public class ExtraTimeBusiness {
 				HsysDate.format(form.getStartDate(), "yyyyMMdd") + "_" +
 				HsysDate.format(form.getEndDate(), "yyyyMMdd") + ".xlsx";
 		
-		ExtraTimeModel extraTime = new ExtraTimeModel();
-		extraTime.setCond(ExtraTimeModel.COND_START_DATE, form.getStartDate());
-		extraTime.setCond(ExtraTimeModel.COND_END_DATE, form.getEndDate());
-		extraTime.addSortOrder(ExtraTimeModel.ORDER_USER_NO, OrderFlag.ASC);
-		extraTime.addSortOrder(ExtraTimeModel.ORDER_DATE, OrderFlag.ASC);
-		List<ExtraTimeModel> extraTimes = extraTimeService.queryList(extraTime);
-		
+		writer.setUserNo(null);
+		writer.setGroupId(0);
+		if(form.isUser() ||
+			!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.EXTRATIME_LIST, ROLE.EXTRATIME_LIST_ALL)) {
+			writer.setUserNo(HsysSecurityContextHolder.getLoginUser().getNo());
+		} else {
+			if(!HsysString.isNullOrEmpty(form.getUserNo())) {
+				writer.setUserNo(form.getUserNo());
+			}
+			if(!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.EXTRATIME_LIST_ALL)) {
+				writer.setGroupId(HsysSecurityContextHolder.getLoginUser().getGroup().getId());
+			}
+		}
+		writer.setStartDate(form.getStartDate());
+		writer.setEndDate(form.getEndDate());
 		writer.setTemplateFileStream(is);
-		writer.write(tempFile, extraTimes);
+		writer.write(tempFile);
 
 		is.close();
 		

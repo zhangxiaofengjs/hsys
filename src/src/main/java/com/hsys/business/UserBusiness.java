@@ -1,18 +1,16 @@
 package com.hsys.business;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.hsys.HsysSecurityContextHolder;
+import com.hsys.business.beans.UserBasicBean;
 import com.hsys.business.beans.UserDetailBean;
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
@@ -25,15 +23,19 @@ import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
 import com.hsys.exception.HsysException;
 import com.hsys.models.CompanyModel;
-import com.hsys.models.DeviceModel;
+import com.hsys.models.ExtraTimeModel;
 import com.hsys.models.GroupModel;
+import com.hsys.models.RestModel;
+import com.hsys.models.SchoolModel;
 import com.hsys.models.UserModel;
 import com.hsys.models.UserRoleModel;
+import com.hsys.models.enums.BoolFlag;
 import com.hsys.models.enums.ROLE;
 import com.hsys.security.HsysPasswordEncoder;
+import com.hsys.services.ExtraTimeService;
 import com.hsys.services.GroupService;
+import com.hsys.services.RestServices;
 import com.hsys.services.UserService;
-import com.hsys.utils.AccountValidatorUtil;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -47,6 +49,10 @@ public class UserBusiness {
 	private GroupService groupService;
 	@Autowired
 	private HsysPasswordEncoder encoder;
+	@Autowired
+	private ExtraTimeService extraTimeService;
+	@Autowired
+	private RestServices restServices;
 	
 	public List<UserDetailBean> getUsers(UserHtmlListForm form) {
 		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
@@ -54,16 +60,35 @@ public class UserBusiness {
 		}
 		
 		UserModel user = new UserModel();
-		user.setNo(form.getNo());
-		user.setCond(UserModel.COND_NO, true);
-		user.setCond(UserModel.COND_FUZZY_NO, true);
-
+		if(!HsysString.isNullOrEmpty(form.getNo())) {
+			user.setNo(form.getNo());
+			user.setCond(UserModel.COND_NO, true);
+			user.setCond(UserModel.COND_FUZZY_NO, true);
+		}
+		
 		if(form.isView() || form.getExitState() == 1) {
 			user.setCond(UserModel.COND_EXIT_DATE_NULL, true);
 		} else if(form.getExitState() == 2) {
 			user.setCond(UserModel.COND_EXIT_DATE_NOT_NULL, true);
 		}
 
+		if(form.isView()) {
+			//参考画面，不显示admin
+			user.setCond(UserModel.COND_HIDDEN_FALG, BoolFlag.FALSE);
+		}
+		
+		if(form.getGroupId() != 0) {
+			List<Integer> groupIds = groupService.queryChildrenIdsById(form.getGroupId());
+			groupIds.add(form.getGroupId());
+			user.setCond(UserModel.COND_GROUP_IDS, groupIds);
+
+			//页面需要显示名字，form再设定
+			GroupModel group = groupService.queryById(form.getGroupId());
+			if(group != null) {
+				form.setGroupName(group.getName());
+			}
+		}
+		
 		List<UserModel> list = userService.queryList(user);
 		List<UserDetailBean> listRet = HsysList.New();
 		HashMap<Integer, String> groupNameCache = new HashMap<Integer, String>();
@@ -110,16 +135,22 @@ public class UserBusiness {
 	}
 
 	public void add(UserModel user) {
+		
 		UserModel userExist = userService.queryByNo(user.getNo());
 
 		//检测工号是否已经存在
 		if(userExist != null) {
 			throw new HsysException("该工号存在:%s, %s", userExist.getNo(), userExist.getName()); 
 		}
-
-		String pwd = encoder.encode("123");
-		user.setPassword(pwd);
-		userService.add(user);
+		if (user.getName().length()<9) {
+			String pwd = encoder.encode("123");
+			user.setPassword(pwd);
+	
+			userService.add(user);
+		}else {
+			throw new HsysException("姓名长度不超过8");
+		}
+		
 	}
 	
 	//初始化密码
@@ -157,7 +188,7 @@ public class UserBusiness {
 		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
 			throw new HsysException("权限不足"); 
 		}
-		AccountValidatorUtil accountValidatorUtil = new AccountValidatorUtil();
+		
 		UserModel user = new UserModel();
 		user.setId(userUpdateForm.getId());
 		user.setCond(UserModel.COND_ID, true);
@@ -166,7 +197,7 @@ public class UserBusiness {
 		if(user == null) {
 			throw new HsysException("该工号不存在。id=" + userUpdateForm.getId()); 
 		}
-
+		
 		if("e_name".equals(userUpdateForm.getField())) {
 			user.setName(userUpdateForm.getValue());
 			user.setUpdate(UserModel.FIELD_NAME);
@@ -174,20 +205,31 @@ public class UserBusiness {
 			int sex = Integer.parseInt(userUpdateForm.getValue());
 			user.setSex(sex);
 			user.setUpdate(UserModel.FIELD_SEX);
+		}else if ("e_spelling".equals(userUpdateForm.getField())) {
+			if(userUpdateForm.getValue().length()<51) {
+				user.setSpelling(userUpdateForm.getValue());
+				user.setUpdate(UserModel.FIELD_SEPLLING);
+			}else {
+				throw new HsysException("拼写过长");
+			}
 		} else if("e_degree".equals(userUpdateForm.getField())) {
 			int degree = Integer.parseInt(userUpdateForm.getValue());
 			user.setDegree(degree);
 			user.setUpdate(UserModel.FIELD_DEGREE);	
 		} else if("e_mail".equals(userUpdateForm.getField())) {
-			if (userUpdateForm.getValue().matches(AccountValidatorUtil.REGEX_EMAIL)) {
+			if (HsysString.isEmail(userUpdateForm.getValue())&&userUpdateForm.getValue().length()<31) {
 				user.setMail(userUpdateForm.getValue());
 				user.setUpdate(UserModel.FIELD_MAIL);
 			}else {
 				throw new HsysException("邮箱格式不正确");
 			}
 		} else if("e_major".equals(userUpdateForm.getField())) {
+			if(userUpdateForm.getValue().length()<17) {
 				user.setMajor(userUpdateForm.getValue());
 				user.setUpdate(UserModel.FIELD_MAJOR);
+			}else {
+				throw new HsysException("专业长度不得超过16");
+			}
 		} else if("e_place".equals(userUpdateForm.getField())) {
 			user.setPlace(userUpdateForm.getValue());
 			user.setUpdate(UserModel.FIELD_PLACE);
@@ -198,17 +240,19 @@ public class UserBusiness {
 			user.setCompany(c);
 			user.setUpdate(UserModel.FIELD_COMPANY_NAME);
 		} else if("e_phoneNumber".equals(userUpdateForm.getField())) {
-			if(userUpdateForm.getValue().matches(AccountValidatorUtil.REGEX_MOBILE)) {
+			if(userUpdateForm.getValue().length()<24) {
 				user.setPhoneNumber(userUpdateForm.getValue());
 				user.setUpdate(UserModel.FIELD_PHONE_NUMBER);
 			}else {
-				throw new HsysException("电话号码格式不正确" ); 
+				throw new HsysException("手机号码长度不正确");
 			}
-			
-			
 		} else if("e_address".equals(userUpdateForm.getField())) {
-			user.setAddress(userUpdateForm.getValue());
-			user.setUpdate(UserModel.FIELD_ADDRESS);
+			if(userUpdateForm.getValue().length()<21) {
+				user.setAddress(userUpdateForm.getValue());
+				user.setUpdate(UserModel.FIELD_ADDRESS);	
+			}else {
+				throw new HsysException("地址长度不得超过20" ); 
+			}
 		} else if("e_idNumber".equals(userUpdateForm.getField())) {
 			if(HsysString.len(userUpdateForm.getValue()) != 18) {
 				throw new HsysException("身份证号必须是18位");
@@ -216,14 +260,15 @@ public class UserBusiness {
 			user.setIdNumber(userUpdateForm.getValue());
 			user.setUpdate(UserModel.FIELD_ID_NUMBER);
 		} else if("e_school".equals(userUpdateForm.getField())) {
-			user.setSchool(userUpdateForm.getValue());
+			int id = Integer.parseInt(userUpdateForm.getValue());
+			SchoolModel s = new SchoolModel();
+			s.setId(id);
+			user.setSchool(s);
 			user.setUpdate(UserModel.FIELD_SCHOOL);
 		} else if("e_graduateDate".equals(userUpdateForm.getField())) {
 			Date date = HsysDate.tryParse(userUpdateForm.getValue(), "yyyy-MM-dd");
 			user.setGraduateDate(date);
 			user.setUpdate(UserModel.FIELD_GRADUATE_DATE);
-			
-			
 		} else if("e_enterDate".equals(userUpdateForm.getField()) ) {
 			Date date1 = HsysDate.tryParse(userUpdateForm.getValue(), "yyyy-MM-dd");
 			user.setEnterDate(date1);
@@ -240,8 +285,6 @@ public class UserBusiness {
 			}else {
 				throw new HsysException("离职日期需在入职日期之后设定");
 			}
-			
-			
 		} else if("e_group".equals(userUpdateForm.getField())) {
 			int groupId = Integer.parseInt(userUpdateForm.getValue());
 			groupService.setUserGroup(user.getId(), groupId);
@@ -267,7 +310,6 @@ public class UserBusiness {
 		} else {
 			throw new HsysException("想定以外的更新。");
 		}
-		
 		userService.update(user);
 	}
 	
@@ -281,7 +323,6 @@ public class UserBusiness {
 		}	
 	}
 	
-
 	public void changePwd(UserJsonChangePwdForm form) {
 		UserModel user = userService.queryByNoWithPassword(form.getNo());
 		if(user == null) {
@@ -317,5 +358,38 @@ public class UserBusiness {
 	
 	public static boolean hasRole(List<UserRoleModel> roles, String role) {
 		return getRole(roles, role) != null;
+	}
+
+	public UserBasicBean getBasicInfo() {
+		Date startDate = HsysDate.startOfWorkMonth();
+		Date endDate = HsysDate.endOfWorkMonth();
+		
+		UserBasicBean bean = new UserBasicBean();
+		bean.setYear(HsysDate.format(HsysDate.Today(),"YYYY"));
+		bean.setMonth(HsysDate.format(HsysDate.Today(), "MM"));
+		bean.setDate(HsysDate.format(startDate, "MM/dd") + "～" + HsysDate.format(endDate, "MM/dd"));
+		UserModel userModel = HsysSecurityContextHolder.getLoginUser();
+		
+		ExtraTimeModel extraTimeModel = new ExtraTimeModel();
+		extraTimeModel.setCond(ExtraTimeModel.COND_USER_ID, userModel.getId());
+		extraTimeModel.setCond(ExtraTimeModel.COND_START_DATE, startDate);
+		extraTimeModel.setCond(ExtraTimeModel.COND_END_DATE, endDate);
+		
+		float totleExTime = extraTimeService.extraTimeTotal(extraTimeModel);
+		bean.setExtraTimeTotal(totleExTime);
+		
+		RestModel restModel = new RestModel();
+		restModel.setCond(RestModel.COND_USER_ID, userModel.getId());
+		restModel.setCond(RestModel.COND_DATE_START, startDate);
+		restModel.setCond(RestModel.COND_DATE_END, endDate);
+		
+		float totleReTime = restServices.restTimeTotal(restModel);
+		bean.setRestTimeTotal(totleReTime);
+
+		GroupModel group = HsysSecurityContextHolder.getLoginUser().getGroup();
+		if(group != null) {
+			bean.setGroupName(getGroupFullName(group));
+		}
+		return bean;
 	}
 }

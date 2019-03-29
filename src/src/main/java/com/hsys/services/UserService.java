@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hsys.exception.HsysException;
 import com.hsys.mappers.UserMapper;
 import com.hsys.models.UserModel;
 import com.hsys.models.UserRoleModel;
@@ -41,9 +42,12 @@ public class UserService {
 	
 	public UserModel queryByNo(String no) {
 		UserModel u = new UserModel();
+		if(no.length()<9) {
 		u.setNo(no);
 		u.setCond(UserModel.COND_NO, true);
-
+		}else {
+			throw new HsysException("工号长度不超过8");
+		}
 		return queryOne(u);
 	}
 	

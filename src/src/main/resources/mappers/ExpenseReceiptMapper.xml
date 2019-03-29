@@ -68,6 +68,12 @@
 			<if test="cond.status != null">
 				and e.c_status = #{status}
 			</if>
+			<if test="cond.statuses != null">
+				and e.c_status in
+				<foreach item="s" collection="cond.statuses" separator="," open="(" close=")" index="i">
+			    	#{s}
+			    </foreach>
+			</if>
 			<if test="cond.projectIds != null">
 				and p.c_id in
 				<foreach item="pid" collection="cond.projectIds" separator="," open="(" close=")" index="i">
@@ -107,6 +113,9 @@
 		<set>
     		<if test="update.no != null">
 				c_no = #{no},
+			</if>
+			<if test="update.submitDate != null">
+				c_submit_date = #{submitDate},
 			</if>
     		<if test="update.comment != null">
 				c_comment = #{comment},

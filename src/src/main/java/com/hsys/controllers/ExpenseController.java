@@ -18,6 +18,7 @@ import com.hsys.business.forms.ExpenseHtmlForm;
 import com.hsys.business.forms.ExpenseItemDeleteForm;
 import com.hsys.business.forms.ExpenseItemGetForm;
 import com.hsys.business.forms.ExpenseItemUnlinkForm;
+import com.hsys.business.forms.ExpenseItemUpdateDrawStatusForm;
 import com.hsys.business.forms.ExpenseItemUpdateForm;
 import com.hsys.business.forms.ExpenseReceiptDeleteForm;
 import com.hsys.business.forms.ExpenseReceiptJsonForm;
@@ -199,6 +200,17 @@ public class ExpenseController extends BaseController {
 	public JsonResponse update(@RequestBody ExpenseItemUpdateForm form) {
 		try {
 			expenseItemBusiness.update(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/item/drawstatus")
+	@ResponseBody
+	public JsonResponse update(@RequestBody ExpenseItemUpdateDrawStatusForm form) {
+		try {
+			expenseItemBusiness.updateStatus(form);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}

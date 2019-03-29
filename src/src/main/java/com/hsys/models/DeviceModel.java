@@ -10,10 +10,12 @@ import org.apache.ibatis.type.Alias;
 public class DeviceModel extends BaseModel {
 	public static final String COND_ID = "id";
 	public static final String COND_NO = "no";
+	public static final String COND_USER_NO = "userNo";
+	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo";
+	public static final String COND_NO_OR_USER_NO = "noOrUserNo";
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
 	public static final String FIELD_USER_ID = "userId";
-	public static final String COND_USER_NO = "userNo";
 	
 	private String no;
 	private String comment;

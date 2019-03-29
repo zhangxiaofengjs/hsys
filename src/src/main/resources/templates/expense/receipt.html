@@ -14,8 +14,8 @@
 		    	<th colspan="6">
 		    		<div class="pull-right">
 			    		<button type="button" class="btn btn-sm btn-primary" th:if="${receipt.status == 0 && #lists.size(items) != 0}" id='submitReceipt'>提交</button>
-		 				<button type="button" class="btn btn-sm btn-primary" th:if="${receipt.status == 1 && bean.leader}" id='approvalReceipt'>批准</button>
-		 				<button type="button" class="btn btn-sm btn-primary" th:if="${receipt.status == 1 && bean.leader}" id='rejectReceipt'>驳回</button>
+		 				<button type="button" class="btn btn-sm btn-primary" th:if="${form.approval && receipt.status == 1 && bean.leader}" id='approvalReceipt'>批准</button>
+		 				<button type="button" class="btn btn-sm btn-primary" th:if="${form.approval && receipt.status == 1 && bean.leader}" id='rejectReceipt'>驳回</button>
 		 				<button type="button" class="btn btn-sm btn-primary" th:if="${receipt.status == 2}" id='finishReceipt'>已领款</button>
 	 				</div>
 		    		<h2 class="hsys-text-center">报销单</h2>

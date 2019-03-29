@@ -15,6 +15,7 @@ $(document).ready(function(){
 			if(id == "e_group" ) {
 				editor = '<input type="selecttree" class="form-control" name="{0}_value" id="{0}_value">'.format(id);
 			} else if(id == "e_companyName" ||
+				id == "e_school" ||
 				id == "e_sex" ||
 				id == "e_degree") {
 				editor = '<select class="form-control" style="display:inline;width:200px;" name="{0}_value" id="{0}_value"></select>'.format(id);
@@ -36,18 +37,6 @@ $(document).ready(function(){
 					        <option value="数学">数学</option>\
 							<option value="物理">物理</option>\
 				        </datalist>'.format(id);
-				} else if( id == "e_school" ) {
-					editor += '<datalist id="{0}_list">\
-					        <option value="南京大学">南京大学</option>\
-							<option value="东南大学">东南大学</option>\
-							<option value="同济大学">同济大学</option>\
-							<option value="上海大学">上海大学</option>\
-							<option value="南通大学">南通大学</option>\
-							<option value="南京林业大学">南京林业大学</option>\
-							<option value="南京信息工程大学">南京信息工程大学</option>\
-							<option value="江苏科技大学">江苏科技大学</option>\
-							<option value="盐城工学院">盐城工学院</option>\
-					        </datalist>'.format(id);
 				}
 			}
 			pDispDiv.after('<div id="{0}_edit_div" class="form-inline;">\
@@ -85,11 +74,11 @@ $(document).ready(function(){
 		if(id == "e_name" ||
 			id == "e_place" ||
 			id == "e_phoneNumber" ||
+			id =="e_spelling" ||
 			id == "e_mail" ||
 			id == "e_address" ||
 			id == "e_idNumber" ||
 			id == "e_major" ||
-			id == "e_school" ||
 			id == "e_graduateDate" ||
 			id == "e_enterDate" ||
 			id == "e_exitDate" ) {
@@ -123,9 +112,13 @@ $(document).ready(function(){
 			var dispVal = $("#{0}_disp_div span".format(id)).text();
 			htreeview.setPullDownValue(id + "_value", val, dispVal);
 		} else {
+			
+			
 			var url = null;
 			if(id == "e_companyName") {
 				url = "/company/json/list";
+			}else if(id == "e_school"){
+				url = "/school/json/list";
 			}
 			else {
 				return;
@@ -141,6 +134,16 @@ $(document).ready(function(){
 						companies.forEach(function(c, idx) {
 							strHtml += '<option value="{0}" {2}>{1}</option>'.
 							format(c.id, c.name, val==c.id?"selected":"");
+						});
+						var pSelect = $("#{0}_value".format(id));
+						pSelect.children().remove();
+						pSelect.append(strHtml);
+					}else if(id == "e_school"){
+						var schools = data.schools;
+						var strHtml = "";
+						schools.forEach(function(s, idx) {
+							strHtml += '<option value="{0}" {2}>{1}</option>'.
+							format(s.id, s.name, val==s.id?"selected":"");
 						});
 						var pSelect = $("#{0}_value".format(id));
 						pSelect.children().remove();

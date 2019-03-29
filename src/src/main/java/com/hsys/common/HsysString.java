@@ -1,5 +1,7 @@
 package com.hsys.common;
 
+import java.util.regex.Pattern;
+
 import com.hsys.exception.HsysException;
 
 /**
@@ -10,6 +12,10 @@ public class HsysString {
 	private static String[] bigLetter = { "零", "壹", "贰", "叁", "肆", "伍", "陆", "柒", "捌", "玖" };
 	private static String[] unit = { "圆", "拾", "佰", "仟", "万", "拾", "佰", "仟", "亿", "拾", "佰", "仟", "万" };
 	private static String[] small = { "分", "角" };
+	/**
+     * 正则表达式：验证邮箱
+     */
+    public static final String REGEX_EMAIL = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
 
 	public static boolean isNullOrEmpty(String str) {
 		return str == null || "".equals(str);
@@ -126,4 +132,8 @@ public class HsysString {
 		return s;
 
 	}
+
+	public static boolean isEmail(String email) {
+        return Pattern.matches(REGEX_EMAIL, email);
+    }
 }

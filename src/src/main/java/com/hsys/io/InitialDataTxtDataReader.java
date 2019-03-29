@@ -22,8 +22,10 @@ import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
 import com.hsys.models.ExtraTimeModel;
 import com.hsys.models.RestModel;
+import com.hsys.models.SchoolModel;
 import com.hsys.models.UserModel;
 import com.hsys.models.enums.UserDegree;
+import com.hsys.services.SchoolService;
 import com.hsys.services.UserService;
 
 
@@ -31,6 +33,8 @@ import com.hsys.services.UserService;
 public class InitialDataTxtDataReader {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private SchoolService schoolService;
 	
 	public List<UserModel> readUsers(String filePath){
 		List<UserModel> list = HsysList.New();
@@ -41,7 +45,7 @@ public class InitialDataTxtDataReader {
 			String encoding = "UTF-8";
 			File file = new File(filePath);
 			if (!file.isFile() || !file.exists()){
-				throw new HsysException("未发现可导入的数据。");
+				throw new HsysException("readUsers未发现可导入的数据。");
 			}
 			
 			isr = new InputStreamReader(new FileInputStream(file), encoding);
@@ -55,7 +59,7 @@ public class InitialDataTxtDataReader {
 				String[] cols = lineTxt.split(";");
 				
 				if(cols.length != 13) {
-					throw new HsysException("列不足:" + rowNo);
+					throw new HsysException("readUsers列不足:" + rowNo);
 				}
 				
 				int col = 0;
@@ -67,7 +71,13 @@ public class InitialDataTxtDataReader {
 				user.setPlace(HsysString.trim(cols[col++], "\""));
 				user.setAddress(HsysString.trim(cols[col++], "\""));
 				user.setIdNumber(HsysString.trim(cols[col++], "\""));
-				user.setSchool(HsysString.trim(cols[col++], "\""));
+				
+				String schoolName = HsysString.trim(cols[col++], "\"");
+				SchoolModel s = schoolService.queryByName(schoolName);
+				if(!HsysString.isNullOrEmpty(schoolName) && s == null) {
+					throw new HsysException("readUsers学校不存在:" + schoolName);
+				}
+				user.setSchool(s);
 				user.setMajor(HsysString.trim(cols[col++], "\""));
 				String str = HsysString.trim(cols[col++], "\"");
 				if("本科(一)".equals(str)) {
@@ -89,7 +99,7 @@ public class InitialDataTxtDataReader {
 				rowNo++;
 			}
 		}catch (Exception e) {
-			throw new HsysException(e);
+			throw new HsysException("readUsers:" + e.toString());
 		} finally {
 			try {
 				if(br != null) {
@@ -112,7 +122,7 @@ public class InitialDataTxtDataReader {
 			String encoding = "UTF-8";
 			File file = new File(filePath);
 			if(!file.isFile() || !file.exists()) {
-				throw new HsysException("未发现可导入的数据");
+				throw new HsysException("readAttendance未发现可导入的数据");
 			}
 			
 			isr = new InputStreamReader(new FileInputStream(file),encoding);
@@ -126,7 +136,7 @@ public class InitialDataTxtDataReader {
 				String[] cols = lineTxt.split(";");
 				
 				if(cols.length != 5) {
-					throw new HsysException("列不足"+rowNo);
+					throw new HsysException("readAttendance列不足"+rowNo);
 				}
 				
 				int col = 0;
@@ -140,7 +150,7 @@ public class InitialDataTxtDataReader {
 				UserModel user = userService.queryByNo(no);
 				//如果c_no不存在，则跳过此条记录
 				if(user == null) {
-					throw new HsysException("第"+rowNo+"行，工号错误");
+					throw new HsysException("readAttendance第"+rowNo+"行，工号错误");
 				}
 				attendance.setUser(user);					
 				list.add(attendance);				
@@ -172,7 +182,7 @@ public class InitialDataTxtDataReader {
 			String encoding = "UTF-8";
 			File file = new File(restFile);
 			if(!file.isFile() || !file.exists()) {
-				throw new HsysException("未发现可导入的数据");
+				throw new HsysException("readRest未发现可导入的数据");
 			}
 			
 			isr = new InputStreamReader(new FileInputStream(file),encoding);
@@ -186,7 +196,7 @@ public class InitialDataTxtDataReader {
 				String[] cols = lineTxt.split(";");
 				
 				if(cols.length != 7) {
-					throw new HsysException("列不足"+rowNo);
+					throw new HsysException("readRest列不足"+rowNo);
 				}
 				
 				RestModel rest = new RestModel();
@@ -213,7 +223,7 @@ public class InitialDataTxtDataReader {
 				UserModel user = userService.queryByNo(no);
 				//如果no不存在，则跳过此条记录
 				if(user == null) {
-					throw new HsysException("第"+rowNo+"行，工号错误");
+					throw new HsysException("readRest第"+rowNo+"行，工号错误");
 				}
 				rest.setUser(user);
 				list.add(rest);				
@@ -244,7 +254,7 @@ public class InitialDataTxtDataReader {
 			String encoding = "UTF-8";
 			File file = new File(extraFile);
 			if(!file.isFile() || !file.exists()) {
-				throw new HsysException("未发现可导入的数据");
+				throw new HsysException("readExtraTime未发现可导入的数据");
 			}
 			
 			isr = new InputStreamReader(new FileInputStream(file),encoding);
@@ -258,7 +268,7 @@ public class InitialDataTxtDataReader {
 				String[] cols = lineTxt.split(";");
 				
 				if(cols.length != 10) {
-					throw new HsysException("列不足"+rowNo);
+					throw new HsysException("readExtraTime列不足"+rowNo);
 				}
 				int col = 0;
 				ExtraTimeModel extra = new ExtraTimeModel();
@@ -273,7 +283,7 @@ public class InitialDataTxtDataReader {
 				UserModel user = userService.queryByNo(no);
 				//如果no不存在，则跳过此条记录
 				if(user == null) {
-					throw new HsysException("第"+rowNo+"行，工号错误");
+					throw new HsysException("readExtraTime第"+rowNo+"行，工号错误");
 				}
 				extra.setUser(user);
 				extra.setStatus(Integer.parseInt(cols[col++]));
@@ -309,7 +319,7 @@ public class InitialDataTxtDataReader {
 			String encoding = "UTF-8";
 			File file = new File(expenseFile);
 			if(!file.isFile() || !file.exists()) {
-				throw new HsysException("未发现可导入的数据");
+				throw new HsysException("readExpense未发现可导入的数据");
 			}
 			
 			isr = new InputStreamReader(new FileInputStream(file),encoding);
@@ -323,7 +333,7 @@ public class InitialDataTxtDataReader {
 				String[] cols = lineTxt.split(";");
 				
 				if(cols.length != 12) {
-					throw new HsysException("列不足"+rowNo);
+					throw new HsysException("readExpense列不足"+rowNo);
 				}
 				
 				int col = 0;
@@ -334,7 +344,7 @@ public class InitialDataTxtDataReader {
 				UserModel user = userService.queryByNo(no);
 				//如果no不存在，则跳过此条记录
 				if(user == null) {
-					throw new HsysException("第"+rowNo+"行，工号错误");
+					throw new HsysException("readExpense第"+rowNo+"行，工号错误");
 				}				
 				expenseItemModel.setUser(user);
 				expenseItemModel.setPayee(user);
@@ -359,7 +369,7 @@ public class InitialDataTxtDataReader {
 				UserModel user2 = userService.queryByNo(no2);
 				//如果no不存在，则跳过此条记录
 				if(receiptId !=0 && user2 == null) {
-					throw new HsysException("第"+rowNo+"行，工号错误");
+					throw new HsysException("readExpense第"+rowNo+"行，工号错误");
 				}
 				expenseReceiptModel.setPayee(user);
 				expenseReceiptModel.setStatus(Integer.parseInt(cols[col++]));
@@ -387,7 +397,7 @@ public class InitialDataTxtDataReader {
 			}
 			
 		}catch(Exception e){
-			throw new HsysException("行:" + rowNo + " " + e.getMessage());
+			throw new HsysException("readExpense行:" + rowNo + " " + e.getMessage());
 		}finally {
 			try {
 				if(br != null) {

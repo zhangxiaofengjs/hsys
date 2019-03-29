@@ -18,7 +18,7 @@
         <result column="e_status" property="status"/> 
         <result column="e_meal_lunch" property="mealLunch"/>
         <result column="e_meal_supper" property="mealSupper"/>
-        <result column="e_approval_date" property="approvalDate"/>
+        <result column="e_approval_time" property="approvalTime"/>
         <association property="user" resultMap="userResultMap"/>
 		<association property="appUser" resultMap="userResultMap" columnPrefix="a"/>
         <!-- <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" />-->  
@@ -37,7 +37,7 @@
 			   e.c_meal_lunch as e_meal_lunch,
 			   e.c_meal_supper as e_meal_supper,
 			   e.c_approval_user_id as e_approval_user_id,
-			   e.c_approval_time as e_approval_date,
+			   e.c_approval_time as e_approval_time,
 			   e.c_expense_item_id as e_expense_item_id,
 			   u.c_id as u_id,
 			   u.c_no as u_no,
@@ -77,9 +77,14 @@
 			</if>
 		</where>
 		<if test="sortOrder != null and sortOrder.size() != 0">
-			order by
+			order by 
 			<foreach collection ="sortOrder" item="orderCond" index= "index" separator =",">
-                 #{orderCond.key} #{orderCond.flag}
+				<if test="orderCond.key == 'userNo'">
+					u.c_no ${orderCond.flag}
+				</if>
+				<if test="orderCond.key == 'date'">
+					e.c_date ${orderCond.flag}
+				</if>
             </foreach >
 		</if>
 	</select>
@@ -110,7 +115,7 @@
     		#{mealLunch},
     		#{mealSupper},
     		#{appUser.id},
-    		#{approvalDate}
+    		#{approvalTime}
     	)
     </insert>
     <update id="update">
@@ -143,6 +148,12 @@
 			<if test="update.mealSupper != null">
 				c_meal_supper = #{mealSupper}
 			</if>
+			<if test="update.approvalUserId != null">
+				c_approval_user_id = #{appUser.id},
+			</if>
+			<if test="update.approvalTime != null">
+				c_approval_time = #{approvalTime},
+			</if>
 		</set>
     	<where>
 			c_id = #{id}
@@ -154,4 +165,15 @@
 				and c_id = #{id}
 		</where>
     </delete>
+    
+    <select id="extraTimeTotal" resultType="java.lang.Float">
+    	select
+    		ifnull(sum(c_len), 0.0)
+    	from extra_time_tbl as e
+    	<where>
+    		e.c_date <![CDATA[>=]]> #{cond.startDate}
+    		and e.c_date <![CDATA[<=]]> #{cond.endDate}
+			and c_user_id=#{cond.userId}
+		</where>
+    </select>
 </mapper>

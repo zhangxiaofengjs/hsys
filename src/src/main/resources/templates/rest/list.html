@@ -81,7 +81,7 @@
 					<span class="label label-warning" th:case="3">取消请求中</span>
 					<span class="label label-default" th:case="4">已取消</span>
 				</td>
-				<td th:text="${approvalUser != null? '[' + approvalUser.name+'] '+#dates.format(rest.approvalDate, 'MM-dd HH:mm') : _}"></td>
+				<td th:text="${approvalUser != null? '[' + approvalUser.name+'] '+#dates.format(rest.approvalTime, 'MM-dd HH:mm') : _}"></td>
 		    </tr>
 		</tbody>
 	</table>

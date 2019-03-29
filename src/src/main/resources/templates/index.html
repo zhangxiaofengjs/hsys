@@ -22,6 +22,7 @@
    </style>
 </head>
 <body>
+	<div id="indexPage" style="display:none;"></div>
 	<script src="js/index.js"></script>
 	<div  id="main_div">
 		<div class="page-header" id='headerdiv' style="color:#fff;background-color:#436781;margin:0px;padding-bottom:0px;'">
@@ -37,7 +38,9 @@
 					<img alt="" height=100px src="icons/logo.png">
 				</h1>
 				<div style="display:inline-block;vertical-align:bottom;padding-bottom:1px;">
-					<span style="vertical-align:bottom;padding-bottom:1px;" th:text="${version != null?version.number:_}"></span>
+					<b>
+						<a style="color:#fff;vertical-align:bottom;padding-bottom:1px;" href="#" th:refURL="'changenotes'" th:text="${version != null?version.number:_}"></a>
+					</b>
 				</div>
 				<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
 					[<a href="javascript:void(0);" id="changePwd" style="color:#fff;">

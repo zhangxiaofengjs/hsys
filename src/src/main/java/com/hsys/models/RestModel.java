@@ -19,6 +19,7 @@ public class RestModel extends BaseModel {
 	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo"; 
 	public static final String COND_STATUS_MULTI = "statusMulti";
 	public static final String COND_GROUP_ID = "groupId";
+	public static final String COND_USER_ID = "userId";
 	
 	public static final String FIELD_DATE_START = "dateStart";
 	public static final String FIELD_DATE_END = "dateEnd";
@@ -39,7 +40,7 @@ public class RestModel extends BaseModel {
 	private UserModel user;
 	private  int status;
 	private UserModel approvalUser;
-	private Date approvalDate;
+	private Date approvalTime;
 	private float len;
 	
 	public Date getDateStart() {
@@ -90,10 +91,11 @@ public class RestModel extends BaseModel {
 	public void setApprovalUser(UserModel approvalUser) {
 		this.approvalUser = approvalUser;
 	}
-	public Date getApprovalDate() {
-		return approvalDate;
+
+	public void setApprovalTime(Date approvalTime) {
+		this.approvalTime = approvalTime;
 	}
-	public void setApprovalDate(Date approvalDate) {
-		this.approvalDate = approvalDate;
+	public Date getApprovalTime() {
+		return approvalTime;
 	}
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.ExtraTimeBusiness;
 import com.hsys.business.forms.ExtraTimeAddForm;
+import com.hsys.business.forms.ExtraTimeApprovalForm;
 import com.hsys.business.forms.ExtraTimeDeleteForm;
 import com.hsys.business.forms.ExtraTimeDownloadForm;
 import com.hsys.business.forms.ExtraTimeGetForm;
@@ -88,9 +89,10 @@ public class ExtraTimeController extends BaseController {
 	
 	@RequestMapping("/json/approval")
 	@ResponseBody
-	public JsonResponse approval(@RequestBody ExtraTimeModel extraTime) {
+	public JsonResponse approval(@RequestBody ExtraTimeApprovalForm form) {
 		try {
-			extraTimeBusiness.approval(extraTime);
+			//同时批准加班，先把id传过去，然后批量更新
+			extraTimeBusiness.approval(form);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}

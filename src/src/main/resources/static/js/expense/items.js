@@ -11,6 +11,7 @@ $(document).ready(function(){
 					"required":true,
 					"value": hdate.format(new Date(),"yyyy-MM-dd"),
 				},
+				/*
 				{
 					"id":"user.id",
 					"label":"报销人",
@@ -54,12 +55,20 @@ $(document).ready(function(){
 							dlg.buildField("payee.id");
 						},
 					},
+				},*/
+				{
+					"id":"comment",
+					"label":"事由",
+					"type":"text",
+					"value":"",
+					"required":true,
+					"maxlength":50,
 				},
 				{
 					"id":"num",
 					"label":"报销金额",
 					"type":"number",
-					"min":"1",
+					"min":"0.01",
 					"required":true,
 				},
 				{
@@ -97,13 +106,6 @@ $(document).ready(function(){
 						},
 					],
 					"value":0,
-				},
-				{
-					"id":"comment",
-					"label":"事由",
-					"type":"text",
-					"value":"",
-					"required":true,
 				},
 			],
 			"url":"/expense/json/item/add",
@@ -188,7 +190,7 @@ $(document).ready(function(){
 					"id":"num",
 					"label":"报销金额",
 					"type":"number",
-					"min":"1",
+					"min":"0.01",
 					"required":true,
 					"depend": true,
 				},
@@ -235,6 +237,7 @@ $(document).ready(function(){
 					"type":"text",
 					"required":true,
 					"depend": true,
+					"maxlength":50,
 				},
 			],
 			"ajax":{//取得信息，更新到dlg上
@@ -286,6 +289,61 @@ $(document).ready(function(){
 						hsys.error(data.msg);
 					}
 				});
+			}
+		);
+	});
+	
+	$("#markDarwOK").click(function(){
+		var _this = $(this);
+		var self = $(this);
+		var selIds = htbl.getSelectedRowId("itemTable", true);
+		if(selIds == null) {
+			return;
+		}
+		
+		hdlg.showYesNo(
+			"确定将选择的报销条目设定为已经领款吗?",
+			function() { 
+				hsys.ajax({
+					"url":"/expense/json/item/drawstatus",
+					"data": {
+						"ids": selIds,
+						"status": 1
+					},
+					"success": function(data) {
+						hsys.success(true);
+					},
+					"error": function(data) {
+						hsys.error(data.msg);
+					}
+				}); 
+			}
+		);
+	});
+	$("#markDarwNG").click(function(){
+		var _this = $(this);
+		var self = $(this);
+		var selIds = htbl.getSelectedRowId("itemTable", true);
+		if(selIds == null) {
+			return;
+		}
+		
+		hdlg.showYesNo(
+			"确定将选择的报销条目设定为未领款吗?",
+			function() { 
+				hsys.ajax({
+					"url":"/expense/json/item/drawstatus",
+					"data": {
+						"ids": selIds,
+						"status": 0
+					},
+					"success": function(data) {
+						hsys.success(true);
+					},
+					"error": function(data) {
+						hsys.error(data.msg);
+					}
+				}); 
 			}
 		);
 	});

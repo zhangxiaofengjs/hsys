@@ -7,10 +7,19 @@ package com.hsys.business.forms;
 public class UserHtmlListForm {
 	private String no;
 	private int exitState;
+	
+	/*
+	 * 用户的参考画面Flag
+	 */
 	private boolean view;
 
+	private int groupId;
+	private String groupName;
+	
 	public UserHtmlListForm() {
 		this.exitState = 1;
+		this.groupId = 0;
+		this.groupName = "--开发组--";
 	}
 	
 	public String getNo() {
@@ -35,5 +44,21 @@ public class UserHtmlListForm {
 
 	public void setExitState(int exitState) {
 		this.exitState = exitState;
+	}
+
+	public int getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

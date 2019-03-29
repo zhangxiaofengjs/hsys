@@ -29,12 +29,20 @@
 				and d.c_id = #{id}
 			</if>
 			<if test="cond.no != null">
-				and d.c_no = #{no}
+				<choose>
+	                <when test="cond.fuzzyNo != null">
+	                   	and d.c_no like '%${no}%'
+	                </when>
+	                <otherwise>
+	                    and d.c_no=#{no}
+	                </otherwise>
+	            </choose>
 			</if>
-			<if test="cond.userNo != null">
+			<if test="cond.noOruserNo != null">
 				and d.c_no like '%' #{user.no} '%'  or u.c_no like '%' #{user.no} '%'
 			</if>
 		</where>
+		order by d.c_no
 	</select>
 	<insert id="add" parameterType="deviceModel">
     	insert into device_tbl (

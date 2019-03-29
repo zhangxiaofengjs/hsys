@@ -22,6 +22,8 @@ public class ExpenseItemModel extends BaseModel {
 	public static final String COND_PAYEE_GROUP_ID = "payeeGroupId";
 	public static final String COND_PAYEE_NO = "payeeNo";
 	public static final String COND_FUZZY_PAYEE_NO = "fuzzyPayeeNo";
+	public static final String COND_STATUS = "status";
+	public static final String COND_RECEIPT_NO = "receiptNo";
 	
 	public static final String FIELD_DATE ="date";
 	public static final String FIELD_TYPE = "type";
@@ -30,6 +32,7 @@ public class ExpenseItemModel extends BaseModel {
 	public static final String FIELD_NUM = "num";
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_RECEIPT_ID = "receiptId";
+	public static final String FIELD_STATUS = "status";
 	
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
@@ -40,6 +43,7 @@ public class ExpenseItemModel extends BaseModel {
 	private ExpenseReceiptModel receipt;
 	private UserModel user;
 	private UserModel payee;
+	private int status;
 	
 	public Date getDate() {
 		return date;
@@ -82,5 +86,11 @@ public class ExpenseItemModel extends BaseModel {
 	}
 	public void setReceipt(ExpenseReceiptModel receipt) {
 		this.receipt = receipt;
+	}
+	public int getStatus() {
+		return status;
+	}
+	public void setStatus(int status) {
+		this.status = status;
 	}
 }

@@ -26,6 +26,7 @@ public class UserModel extends BaseModel {
 	public static final String FIELD_DEGREE = "degree";
 	public static final String FIELD_MAJOR = "major";
 	public static final String FIELD_MAIL = "mail";
+	public static final String FIELD_SEPLLING = "spelling";
 	
 	public static final String COND_FUZZY_NO = "fuzzyNo";
 	public static final String COND_ID = "id";
@@ -33,18 +34,22 @@ public class UserModel extends BaseModel {
 	public static final String COND_CONTAINS_DISABLE_ROLE = "containsDisableRole";
 	public static final String COND_EXIT_DATE_NULL = "exitDateNull";
 	public static final String COND_EXIT_DATE_NOT_NULL = "exitDateNotNull";
+	public static final String COND_HIDDEN_FALG = "hiddenFlag";
+	public static final String COND_GROUP_ID = "groupId";
+	public static final String COND_GROUP_IDS = "groupIds";
 	
 
 	private String no;
 	private String name;
 	private int sex;
 	private String mail;
+	private String spelling;
 	private String phoneNumber;
 	private String address;
 	private String place;
 	private String password;
 	private String idNumber;
-	private String school;
+	private SchoolModel school;
 	private String major;
 	private int degree;
 	private Date graduateDate;
@@ -62,11 +67,11 @@ public class UserModel extends BaseModel {
 		this.idNumber = idNumber;
 	}
 
-	public String getSchool() {
+	public SchoolModel getSchool() {
 		return school;
 	}
-
-	public void setSchool(String school) {
+	
+	public void setSchool(SchoolModel school) {
 		this.school = school;
 	}
 
@@ -196,5 +201,13 @@ public class UserModel extends BaseModel {
 
 	public void setCompany(CompanyModel company) {
 		this.company = company;
+	}
+	
+	public String getSpelling() {
+		return spelling;
+	}
+	
+	public void setSpelling(String spelling) {
+		this.spelling = spelling;
 	}
 }
