@@ -49,7 +49,6 @@ $(document).ready(function(){
 					"label":"请假时长（小时）",
 					"type":"number",
 					"min":"1",
-					"max":"8",
 					"value":"8",
 					"required":true,
 				},

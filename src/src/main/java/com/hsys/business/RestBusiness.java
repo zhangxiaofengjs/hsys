@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hsys.HsysSecurityContextHolder;
+import com.hsys.business.beans.RestListBean;
 import com.hsys.business.forms.RestHtmlListForm;
 import com.hsys.business.forms.RestJsonAddForm;
 import com.hsys.business.forms.RestJsonApproveForm;
@@ -26,7 +27,7 @@ import com.hsys.models.UserModel;
 import com.hsys.models.enums.ROLE;
 import com.hsys.models.enums.RestStatus;
 import com.hsys.models.enums.RestType;
-import com.hsys.services.RestServices;
+import com.hsys.services.RestService;
 
 /**
  * @author: hancaipeng
@@ -35,7 +36,7 @@ import com.hsys.services.RestServices;
 @Component
 public class RestBusiness {
 	@Autowired
-	private RestServices restService;
+	private RestService restService;
 
 	public List<RestModel> getRests(RestHtmlListForm form) {
 		if(form.isApprove()) {
@@ -177,13 +178,21 @@ public class RestBusiness {
 			throw new HsysException("时间只能为15的倍数");
 		}
 		
-		if (rest.getLen() > 8 || rest.getLen() < 1) {
+		if ( rest.getLen() < 1) {
 			throw new HsysException("请假时长超出范围");
 		}
 		
+		Date date0 = rest.getDateStart();
+		Date date1 = rest.getDateEnd();
+		int days = (int) ((date1.getTime() - date0.getTime()) / (1000*3600*24)); //计算两个日期的毫秒数，他们的差除以一天的毫秒数，即可得到我们想要的两个日期相差的天数。
+	
+		if( (days+1)*8 < rest.getLen()) {
+			throw new  HsysException((days+1)+"天请假时间不能超过"+(days+1)*8+"小时");
+		}
+		
 		if (rest.getType() == 0) {
-			if (rest.getLen() != 4 && rest.getLen() != 8) {
-				throw new HsysException("时长只能是四小时或八小时");
+			if (rest.getLen() %4!=0) {
+				throw new HsysException("休假时长只能是4小时的倍数");
 			}
 		}
 	}
@@ -273,4 +282,67 @@ public class RestBusiness {
 			restService.update(rest);
 		}
 	}
+	
+	
+	public RestListBean getRestListBean(RestHtmlListForm form) {
+		RestListBean bean = new RestListBean();
+		RestModel rest = new RestModel();
+		if (!HsysString.isNullOrEmpty(form.getUserNo())) {
+			UserModel user = new UserModel();
+			user.setNo(form.getUserNo());
+			rest.setUser(user);
+			rest.setCond(RestModel.COND_USER_NO, true);
+			rest.setCond(RestModel.COND_FUZZY_USER_NO, true);
+		}
+		
+		if(form.isApprove()) {
+			rest.setStatus(RestStatus.Regist);
+			rest.setCond(RestModel.FIELD_STATUS, true);
+		}
+
+		if((form.isApprove() || form.isView()) &&
+			!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_LIST_ALL)) {
+			rest.setCond(RestModel.COND_GROUP_ID,
+				HsysSecurityContextHolder.getLoginUser().getGroup().getId());
+		}
+		
+		Date d1 = form.getDateStart();
+		d1 = HsysDate.startOfDay(d1);
+		rest.setDateStart(d1);
+		rest.setCond(RestModel.COND_DATE_START, true);
+		
+		Date d2 = form.getDateEnd();
+		d2 = HsysDate.endOfDay(d2);
+		rest.setDateEnd(d2);
+		rest.setCond(RestModel.COND_DATE_END, true);
+
+		List<RestModel> list = restService.queryList(rest);
+		
+		bean.setList(list);
+		
+		for(RestModel rx : list) {
+			switch(rx.getType()) {
+			case RestType.Vacation:
+				bean.addSumVacation(rx.getLen());
+				break;
+			case RestType.Sick:
+				bean.addSumSick(rx.getLen());
+				break;
+			case RestType.Leave:
+				bean.addSumLeave(rx.getLen());
+				break;
+			case RestType.Marriage:
+				bean.addSumMarriage(rx.getLen());
+				break;
+			case RestType.Funeral:
+				bean.addSumFuneral(rx.getLen());
+				break;
+			case RestType.Public:
+				bean.addSumPublic(rx.getLen());
+				break;
+			}
+		}
+		return bean;
+	}
+
 }

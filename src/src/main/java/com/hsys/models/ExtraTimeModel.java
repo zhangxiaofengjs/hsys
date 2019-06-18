@@ -25,6 +25,7 @@ public class ExtraTimeModel extends BaseModel {
 	public static final String COND_GROUP_ID = "groupId";
 	public static final String COND_STATUS = "status";
 	public static final String COND_USER_ID = "userId";
+	public static final String COND_DATE = "date";
 	
 	public static final String FIELD_COMMENT = "comment";
 	public static final String FIELD_STATUS = "status";
@@ -43,6 +44,7 @@ public class ExtraTimeModel extends BaseModel {
 	public static final String FIELD_APPROVAL_USER_ID = "approvalUserId";
 
 	public static final String FIELD_APPROVAL_TIME = "approvalTime";
+	public static final String COND_GROUP_IDS = "groupIds";
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
 	private Date date;
@@ -64,7 +66,15 @@ public class ExtraTimeModel extends BaseModel {
 	private Date approvalTime;
 	private UserModel user;
 	private UserModel appUser;
+	private GroupModel group;
 	
+	public void setGroup(GroupModel group) {
+		this.group = group;
+	}
+	
+	public GroupModel getGroup() {
+		return group;
+	}
 	public int getStatus() {
 		return status;
 	}

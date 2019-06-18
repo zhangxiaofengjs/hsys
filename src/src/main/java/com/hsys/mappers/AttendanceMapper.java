@@ -16,8 +16,12 @@ public interface AttendanceMapper {
 
 	List<AttendanceModel> queryList(AttendanceModel group);
 
-	void add(AttendanceModel group);
+	void add(AttendanceModel a);
 
+	void addBatch(List<AttendanceModel> list);
+	
 	void update(AttendanceModel a);
+
+	void updateBatch(List<AttendanceModel> list);
 	
 }

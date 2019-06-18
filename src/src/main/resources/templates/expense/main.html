@@ -4,12 +4,12 @@
 </head>
 <body>
 	<ul class="nav nav-tabs" th:if="${form.user}">
+		<li role="presentation" th:class="(${form.type}=='items'? 'active' : '')">
+			<a th:href="@{/expense/html/main?type=items&user=true}">报销条目</a>
+		</li>
 		<li role="presentation" th:class="(${form.type=='receipts' || form.type=='receipt'? 'active' : ''})">
 			<a th:if="${form.type=='receipts' || form.type=='items'}" th:href="@{/expense/html/main?type=receipts&user=true}">报销单</a>
 			<a th:if="${form.type=='receipt'}" th:href="@{'/expense/html/main?type=receipts&user=true'}">报销单</a>
-		</li>
-		<li role="presentation" th:class="(${form.type}=='items'? 'active' : '')">
-			<a th:href="@{/expense/html/main?type=items&user=true}">报销条目</a>
 		</li>
 	</ul>
 	

@@ -19,6 +19,7 @@ public class GroupService {
     private GroupMapper groupMapper;
 	
 	public List<GroupModel> queryList(GroupModel group) {
+
 		return groupMapper.queryList(group);
 	}
 	
@@ -27,8 +28,9 @@ public class GroupService {
 	}
 	
 	public void update(GroupModel group) {
-		groupMapper.update(group);
+		groupMapper.updateGroup(group);
 	}
+	
 
 	public GroupModel queryByUserId(int id) {
 		GroupModel group = new GroupModel();
@@ -119,4 +121,36 @@ public class GroupService {
 		}
 		return groupIds;
 	}
+	
+	//通过组织名查询
+	public GroupModel queryByName(String name) {
+		GroupModel group = new GroupModel();
+		group.setName(name);
+		group.setCond(GroupModel.COND_NAME, true);
+		
+		List<GroupModel> us = queryList(group);
+		if(us.size() == 1) {
+			return us.get(0);
+		}
+		return null;
+		
+	}
+	
+	//通过id删除
+	public void deleteById(int id) {
+		GroupModel group = new GroupModel();
+		group.setId(id);
+		group.setCond(GroupModel.COND_ID, true);
+		groupMapper.delete(group);		
+	}
+	
+	//查询组织id
+	public List<GroupModel> queryByParentId(int id){
+		GroupModel groupModel = new GroupModel();
+		groupModel.setParentId(id);
+		groupModel.setCond(GroupModel.COND_PARENT_ID, id);
+		
+		return queryList(groupModel);
+	}
+	
 }

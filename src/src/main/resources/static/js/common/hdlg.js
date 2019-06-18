@@ -4,6 +4,14 @@ function hdlg() {
 
 hdlg.CACHE = {};
 
+hdlg.showMsg = function(text) {
+	var dlg = new hdlg()
+	dlg.showMsgDlg({
+		"html": '<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;' + text,
+	});
+	return dlg;
+}
+
 //hdlg.showOK("yes!!!", function(){alert("ok");});
 hdlg.showOK = function(text, okFunc) {
 	var dlg = new hdlg()
@@ -16,6 +24,7 @@ hdlg.showOK = function(text, okFunc) {
 			"closeOnClick": true,
 		}]
 	});
+	return dlg;
 }
 
 //hdlg.showYesNo("are you sure?", function(){alert("yes");}, function(){alert("no");});
@@ -258,7 +267,6 @@ hdlg.prototype.showMsgDlg = function(opt) {
 			<div class="modal-dialog modal-sm" role="document">\
 				<div class="modal-content">\
 					<div class="modal-header">\
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>\
 						<h4 class="modal-title" id="myModalLabel">提示</h4>\
 					</div>\
 					<div class="modal-body"><div style="word-break:break-all;">{1}</div></div>\
@@ -308,6 +316,9 @@ hdlg.prototype.showMsgDlg = function(opt) {
 		}
 	});
 
+	//显示时确定位置
+	this.setPos();
+	
 	$("#" + dlgId).modal();
 };
 
@@ -423,6 +434,8 @@ hdlg.prototype.showFormDlg = function(opt) {
 		if(f.ajax && !f.depend) { //需要ajax并且不依赖其他ajaxDepend的项目之间初始化
 			self.buildAjaxField(f);
 		} else {
+			//bind event
+			self.bindEvent(f);
 		}
 		
 		//bootstrap-select 搜索框必须刷新才能显示
@@ -447,6 +460,9 @@ hdlg.prototype.showFormDlg = function(opt) {
 		$("#" + dlgId + "_btn_ok").click(function() {(okBtn.click)()});
 	}
 	
+	//显示时确定位置
+	this.setPos();
+	
 	$("#" + this.id()).on('hidden.bs.modal', function(e) {
 		if(bIsCreated) {
 			targetDiv.remove();
@@ -455,6 +471,19 @@ hdlg.prototype.showFormDlg = function(opt) {
 	});
 	
 	$("#" + this.id()).modal();
+};
+
+hdlg.prototype.setPos = function() {
+	$("#" + this.id()).on('show.bs.modal', function(e) {
+		var self = $(this);
+		var modal_dialog = self.find('.modal-dialog');
+		var top = 10;
+		if(parent != null) {
+			top += $(parent.window.document).scrollTop();
+		}
+		
+		modal_dialog.css({'margin': top + 'px auto'});
+	});
 };
 
 hdlg.prototype.hide = function() {
@@ -482,6 +511,15 @@ hdlg.prototype.getButton = function(type) {
 	
 	return null;
 };
+
+hdlg.prototype.bindEvent = function(field) {
+	var self = this;
+	
+	if(field.hasOwnProperty("change")) {
+		var elem = self.elem(field.id);
+		elem.bind("change", function() { (field.change)(self); });
+	}
+}
 
 hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax, bDepend ) {
 	var self = this;
@@ -516,6 +554,7 @@ hdlg.prototype.buildField = function(fieldOrId, val, bSkipAjax, bDepend ) {
 		var fieldElmParent = self.removeFieldElem(field);
 		fieldElmParent.prepend(strFieldHtml);
 		self.refreshSelectPickField(field);
+		self.bindEvent(field);
 	}
 };
 

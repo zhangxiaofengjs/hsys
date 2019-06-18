@@ -18,20 +18,51 @@ public class SchoolService {
 	@Autowired
 	private SchoolMapper schoolMapper;
 	
-	public List<SchoolModel> queryList(SchoolModel s) {
-		return schoolMapper.queryList(s);
+	//查询所有的学校
+	public List<SchoolModel> queryList(SchoolModel school) {
+		return schoolMapper.queryList(school);
 	}
-
+	
+	//通过学校名称查询
 	public SchoolModel queryByName(String schoolName) {
-		SchoolModel s = new SchoolModel();
-		s.setName(schoolName);
-		s.setCond(SchoolModel.COND_NAME, schoolName);
-		
-		List<SchoolModel> list = queryList(s);
+		SchoolModel school = new SchoolModel();
+		school.setName(schoolName);
+		school.setCond(SchoolModel.COND_NAME, schoolName);		
+		List<SchoolModel> list = queryList(school);
 		if(HsysList.isEmpty(list)) {
 			return null;
-		}
-		
+		}		
 		return list.get(0);
+	}
+
+	//添加学校
+	public void add(SchoolModel school) {
+		schoolMapper.add(school);
+	}
+
+	//通过id删除
+	public void deleteById(int id) {
+		SchoolModel school = new SchoolModel();
+		school.setId(id);
+		school.setCond(SchoolModel.COND_ID, true);
+		schoolMapper.delete(school);		
+	}
+
+	//通过id查询
+	public SchoolModel queryById(int id) {
+		SchoolModel school = new SchoolModel();
+		school.setId(id);
+		school.setCond(SchoolModel.COND_ID, true);
+		List<SchoolModel> schoolModels = queryList(school);
+		
+		if(schoolModels.size() != 0) {
+			return schoolModels.get(0);
+		}
+		return null;
+	}
+
+	//更新学校
+	public void update(SchoolModel school) {
+		schoolMapper.update(school);	
 	}
 }

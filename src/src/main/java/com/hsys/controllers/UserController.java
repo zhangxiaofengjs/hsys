@@ -3,6 +3,7 @@ package com.hsys.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hsys.business.UserBusiness;
 import com.hsys.business.beans.UserBasicBean;
 import com.hsys.business.beans.UserDetailBean;
-import com.hsys.business.forms.UserBasicExtraTimeForm;
+import com.hsys.business.forms.AttendanceDownloadForm;
+import com.hsys.business.forms.UserDownloadForm;
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
 import com.hsys.business.forms.UserJsonChangePwdForm;
@@ -20,6 +22,7 @@ import com.hsys.business.forms.UserJsonGetForm;
 import com.hsys.business.forms.UserJsonInitPwdForm;
 import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
+import com.hsys.models.HolidayModel;
 import com.hsys.models.UserModel;
 
 /**
@@ -88,8 +91,10 @@ public class UserController extends BaseController {
 	}
 	
 	@RequestMapping("/html/basic")
-	public String htmlList(Model model) {
+	public String htmlList(HolidayModel holiday,Model model) {
 		UserBasicBean bean = userBusiness.getBasicInfo();
+		List<HolidayModel> list = userBusiness.getHoliday();
+		model.addAttribute("lists", list);
 		model.addAttribute("bean", bean);
 		return "user/basic";
 	}
@@ -104,6 +109,7 @@ public class UserController extends BaseController {
 			user.setName("不存在用户");
 		}
 		model.addAttribute("user", user);
+		model.addAttribute("form", form);
 		return "user/detail";
 	}
 	
@@ -117,4 +123,16 @@ public class UserController extends BaseController {
 			return JsonResponse.error(e.getMessage());
 		}
 	}
+	
+	@RequestMapping("/json/download")
+	@ResponseBody
+	public ResponseEntity<byte[]> download(UserDownloadForm form) {
+		try {
+			return userBusiness.download(form);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

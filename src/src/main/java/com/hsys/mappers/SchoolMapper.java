@@ -11,5 +11,11 @@ import com.hsys.models.SchoolModel;
  */
 @Mapper
 public interface SchoolMapper {
-	List<SchoolModel> queryList(SchoolModel user);
+	List<SchoolModel> queryList(SchoolModel school);
+
+	void add(SchoolModel school);
+
+	void delete(SchoolModel school);
+
+	void update(SchoolModel school);
 }

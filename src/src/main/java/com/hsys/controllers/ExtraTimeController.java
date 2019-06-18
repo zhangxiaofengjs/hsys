@@ -1,7 +1,5 @@
 package com.hsys.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.ExtraTimeBusiness;
+import com.hsys.business.beans.ExtraTimeListBean;
 import com.hsys.business.forms.ExtraTimeAddForm;
 import com.hsys.business.forms.ExtraTimeApprovalForm;
 import com.hsys.business.forms.ExtraTimeDeleteForm;
@@ -112,8 +111,8 @@ public class ExtraTimeController extends BaseController {
 	
 	@RequestMapping("/html/list")
 	public String htmlList(ExtraTimeListForm form, Model model) {
-		List<ExtraTimeModel> list = extraTimeBusiness.getExtraTimes(form);
-		model.addAttribute("extratimes", list);
+		ExtraTimeListBean bean = extraTimeBusiness.getExtraTimeListBean(form);
+		model.addAttribute("bean", bean);
 		model.addAttribute("form", form);
 		
 		return "extratime/list";

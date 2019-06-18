@@ -1,5 +1,7 @@
 package com.hsys.business.beans;
 
+import com.hsys.models.HolidayModel;
+
 public class UserBasicBean {
 	private String year;
 	private String month;
@@ -7,6 +9,8 @@ public class UserBasicBean {
 	private String groupName;
 	private Float extraTimeTotal;
 	private Float restTimeTotal;
+	
+	private HolidayModel holiday;
 	
 	public void setRestTimeTotal(Float restTimeTotal) {
 		this.restTimeTotal = restTimeTotal;
@@ -54,6 +58,12 @@ public class UserBasicBean {
 	
 	public String getMonth() {
 		return month;
+	}
+	public HolidayModel getHoliday() {
+		return holiday;
+	}
+	public void setHoliday(HolidayModel holiday) {
+		this.holiday = holiday;
 	}
 	
 	

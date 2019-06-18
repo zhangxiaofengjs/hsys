@@ -9,15 +9,20 @@ import org.apache.ibatis.type.Alias;
 @Alias("groupModel")
 public class GroupModel extends BaseModel {
 	public static final String FIELD_NAME = "name";
+	public static final String FIELD_PARENT_ID = "parentId";
+	public static final String FIELD_LEVEL= "level";
 	
 	public static final String COND_FUZZY_NAME = "fuzzyName";
 	public static final String COND_ID = "id";
 	public static final String COND_USER_ID = "userId";
 	public static final String COND_PARENT_ID = "parentId";
+	public static final String COND_NAME = "name";
+
 
 	private String name;
 	private int level;
 	private GroupModel parent;
+	private int parentId;
 
 	public String getName() {
 		return name;
@@ -42,4 +47,13 @@ public class GroupModel extends BaseModel {
 	public void setLevel(int level) {
 		this.level = level;
 	}
+	
+	public int getParentId() {
+		return parentId;
+	}
+	
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
+	}
+	
 }

@@ -8,7 +8,7 @@ public class UserJsonUpdateForm {
 	private int id;
 	private String field;
 	private String value;
-
+	private boolean view;
 	public int getId() {
 		return id;
 	}
@@ -27,4 +27,12 @@ public class UserJsonUpdateForm {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	public boolean isView() {
+		return view;
+	}
+	
+	public void setView(boolean view) {
+		this.view = view;
+	}
+	
 }

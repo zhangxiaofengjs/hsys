@@ -2,3 +2,7 @@
 src/.classpath
 tools/mysql-*
 src/target/classes/*
+src/target/maven-archiver/*
+src/target/maven-status/*
+src/target/*.jar*
+workspace

@@ -144,7 +144,7 @@ public class InitialDataTxtDataReader {
 				attendance.setDate(HsysDate.parse(HsysString.trim(cols[col++], "\""), HsysDate.DATE_PATTERN));
 				attendance.setStart(HsysDate.parse(HsysString.trim(cols[col++], "\""), HsysDate.TIME_PATTERN));
 				attendance.setEnd(HsysDate.parse(HsysString.trim(cols[col++], "\""), HsysDate.TIME_PATTERN));
-				attendance.setComment(HsysString.trim(cols[col++], "\""));
+				attendance.setCommentStart(HsysString.trim(cols[col++], "\""));
 				String no = HsysString.trim(cols[col++], "\"");
 				//根据c_no查询出对应的用户
 				UserModel user = userService.queryByNo(no);

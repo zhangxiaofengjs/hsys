@@ -1,5 +1,7 @@
 package com.hsys.business;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,11 +9,15 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.hsys.HsysApplicationContext;
 import com.hsys.HsysSecurityContextHolder;
 import com.hsys.business.beans.UserBasicBean;
 import com.hsys.business.beans.UserDetailBean;
+import com.hsys.business.forms.UserDownloadForm;
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
 import com.hsys.business.forms.UserJsonChangePwdForm;
@@ -19,12 +25,16 @@ import com.hsys.business.forms.UserJsonGetForm;
 import com.hsys.business.forms.UserJsonInitPwdForm;
 import com.hsys.business.forms.UserJsonUpdateForm;
 import com.hsys.common.HsysDate;
+import com.hsys.common.HsysIO;
 import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
+import com.hsys.config.HsysConfig;
 import com.hsys.exception.HsysException;
+import com.hsys.io.UserWriter;
 import com.hsys.models.CompanyModel;
 import com.hsys.models.ExtraTimeModel;
 import com.hsys.models.GroupModel;
+import com.hsys.models.HolidayModel;
 import com.hsys.models.RestModel;
 import com.hsys.models.SchoolModel;
 import com.hsys.models.UserModel;
@@ -34,7 +44,8 @@ import com.hsys.models.enums.ROLE;
 import com.hsys.security.HsysPasswordEncoder;
 import com.hsys.services.ExtraTimeService;
 import com.hsys.services.GroupService;
-import com.hsys.services.RestServices;
+import com.hsys.services.HolidayService;
+import com.hsys.services.RestService;
 import com.hsys.services.UserService;
 
 /**
@@ -52,10 +63,19 @@ public class UserBusiness {
 	@Autowired
 	private ExtraTimeService extraTimeService;
 	@Autowired
-	private RestServices restServices;
-	
+	private RestService restServices;
+	@Autowired
+	private HolidayService holidayService;
+	@Autowired
+	HsysConfig config;
+	@Autowired
+	UserWriter writer;
 	public List<UserDetailBean> getUsers(UserHtmlListForm form) {
 		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
+			form.setView(true);
+		}
+		
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_FULL_INFO)) {
 			form.setView(true);
 		}
 		
@@ -187,6 +207,9 @@ public class UserBusiness {
 	public void update(UserJsonUpdateForm userUpdateForm) {
 		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
 			throw new HsysException("权限不足"); 
+		}
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_FULL_INFO)) {
+			userUpdateForm.setView(true);
 		}
 		
 		UserModel user = new UserModel();
@@ -390,6 +413,33 @@ public class UserBusiness {
 		if(group != null) {
 			bean.setGroupName(getGroupFullName(group));
 		}
+		
 		return bean;
+	}
+
+	public List<HolidayModel> getHoliday() {
+		HolidayModel h = new HolidayModel();
+		List<HolidayModel> list = holidayService.queryList(h);
+		for(HolidayModel holiday : list){
+			holiday.setMonth(holiday.getDate().getMonth()+1);
+		}
+		return list;
+	}
+
+	public ResponseEntity<byte[]> download(UserDownloadForm form) throws IOException{
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_FULL_INFO)) {
+			form.setView(true);
+		}
+		Resource resource = HsysApplicationContext.getResource("classpath:/attachments/user-template.xlsx"); 
+		InputStream is = resource.getInputStream();
+		String tempFile = config.getUploadFolder().getTempFolder() + "\\" + "用户信息表.xlsx";	//生成文件名
+		writer.setUserNo(form.getNo());
+		writer.setTemplateFileStream(is);
+		writer.setView(form.isView());
+		writer.write(tempFile);
+		is.close();
+		ResponseEntity<byte[]> response = HsysIO.downloadHttpFile(tempFile);
+		HsysIO.delete(tempFile);
+		return response;
 	}
 }

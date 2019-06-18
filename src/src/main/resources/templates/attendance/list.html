@@ -24,6 +24,8 @@
 	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
 	 			<button type="button" class="btn btn-sm btn-primary" id="upload" 
 	 				sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ATTENDANCE_UPLOAD)}">导入</button>
+	 			<button type="button" class="btn btn-sm btn-primary" id="download" 
+	 				sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ATTENDANCE_UPLOAD)}">下载</button>
 			</form>
 		</div>
 	</nav>
@@ -52,7 +54,7 @@
 				<td th:text="${#dates.format(attendance.date, 'yyyy-MM-dd')}"></td>
 				<td th:text="${#dates.format(attendance.start, 'HH:mm')}"></td>
 				<td th:text="${#dates.format(attendance.end, 'HH:mm')}"></td>
-				<td th:text="${attendance.comment}"></td>
+				<td th:text="${attendance.commentStart + ',' + attendance.commentEnd}"></td>
 		    </tr>
 		</tbody>
 	</table>

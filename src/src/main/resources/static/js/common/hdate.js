@@ -39,3 +39,9 @@ hdate.yyyyMMdd = function(date) {
 hdate.yyyy_MM_dd = function(date) {
 	return hdate.format(date, "yyyy-MM-dd");
 };
+
+hdate.span = function(date1, date2, f) {
+	var s = new Date(date2).getTime() - new Date(date1).getTime();
+	if(f == "h")
+	  return (s / 3600000).toFixed(2); 
+};

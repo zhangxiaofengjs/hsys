@@ -22,6 +22,7 @@ import com.hsys.business.forms.ExpenseItemUpdateDrawStatusForm;
 import com.hsys.business.forms.ExpenseItemUpdateForm;
 import com.hsys.business.forms.ExpenseReceiptDeleteForm;
 import com.hsys.business.forms.ExpenseReceiptJsonForm;
+import com.hsys.business.forms.ExpenseReceiptSetCommentForm;
 import com.hsys.business.forms.ExpenseReceiptSetProjectForm;
 import com.hsys.business.forms.ExpenseReceiptUpdateForm;
 import com.hsys.common.HsysList;
@@ -45,7 +46,7 @@ public class ExpenseController extends BaseController {
 	@RequestMapping("/html/main")
     public String listMain(ExpenseHtmlForm form, Model model) {
 		if(form.getType() == null) {
-			form.setType("receipts");
+			form.setType("items");
 		}
 		if("receipts".equals(form.getType())) {
 			List<ExpenseReceiptModel> list = expenseReceiptBusiness.getReceipts(form);
@@ -164,9 +165,20 @@ public class ExpenseController extends BaseController {
 	
 	@RequestMapping("/json/receipt/setproject")
 	@ResponseBody
-	public JsonResponse Setproject(@RequestBody ExpenseReceiptSetProjectForm form) {
+	public JsonResponse setProject(@RequestBody ExpenseReceiptSetProjectForm form) {
 		try {
-			expenseReceiptBusiness.Setproject(form);
+			expenseReceiptBusiness.SetProject(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/receipt/setcomment")
+	@ResponseBody
+	public JsonResponse setComment(@RequestBody ExpenseReceiptSetCommentForm form) {
+		try {
+			expenseReceiptBusiness.SetComment(form);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}

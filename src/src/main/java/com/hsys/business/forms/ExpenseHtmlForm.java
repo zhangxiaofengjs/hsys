@@ -1,5 +1,7 @@
 package com.hsys.business.forms;
 
+import com.hsys.HsysSecurityContextHolder;
+
 /**
  * @author: zhangxiaofengjs@163.com
  * @version: 2019/01/03
@@ -17,6 +19,10 @@ public class ExpenseHtmlForm {
 	private boolean isUser;
 	private boolean isApproval;
 
+	public ExpenseHtmlForm() {
+		this.userNo = HsysSecurityContextHolder.getLoginUser().getNo();
+	}
+	
 	public int getId() {
 		return id;
 	}

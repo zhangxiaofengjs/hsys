@@ -7,6 +7,10 @@
         <result column="u_name" property="name"/>       
         <result column="u_no" property="no"/>       
     </resultMap>
+	<resultMap id="groupResultMap" type="groupModel" >  
+        <id column="g_id" property="id"/>  
+        <result column="g_name" property="name"/>  
+    </resultMap>
 	<resultMap id="extraResultMap" type="ExtraTimeModel" >    
         <result column="e_id" property="id"/>  
         <result column="e_date" property="date"/>  
@@ -19,6 +23,7 @@
         <result column="e_meal_lunch" property="mealLunch"/>
         <result column="e_meal_supper" property="mealSupper"/>
         <result column="e_approval_time" property="approvalTime"/>
+		<association property="group" resultMap="groupResultMap"/>
         <association property="user" resultMap="userResultMap"/>
 		<association property="appUser" resultMap="userResultMap" columnPrefix="a"/>
         <!-- <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" />-->  
@@ -44,17 +49,23 @@
 			   u.c_name as u_name,
 			   a.c_id as au_id,
 			   a.c_no as au_no,
-			   a.c_name as au_name
+			   a.c_name as au_name,
+			   g.c_id as g_id,
+			   g.c_name as g_name
 		from extra_time_tbl as e
 		left join user_tbl as u on e.c_user_id=u.c_id
 		left join user_tbl as a on e.c_approval_user_id=a.c_id
 		left join user_group_tbl as ug on ug.c_user_id=e.c_user_id
+		left join group_tbl as g on g.c_id=ug.c_group_id
 		<where>
 			<if test="cond.id != null">
 				and e.c_id = #{id}
 			</if>
 			<if test="cond.status != null">
 				and e.c_status = #{status}
+			</if>
+			<if test="cond.userId != null">
+				and e.c_user_id = #{cond.userId}
 			</if>
 			<if test="cond.userNo != null">
 				<choose>
@@ -66,6 +77,9 @@
 	                </otherwise>
 	            </choose>
 			</if>
+			<if test="cond.date != null">
+				and e.c_date = #{date}
+			</if>
 			<if test="cond.startDate != null">
 				and e.c_date <![CDATA[>=]]> #{cond.startDate}
 			</if>
@@ -74,6 +88,12 @@
 			</if>
 			<if test="cond.groupId != null">
 				and ug.c_group_id = #{cond.groupId}
+			</if>
+			<if test="cond.groupIds != null">
+				and g.c_id in
+				<foreach item="groupId" collection="cond.groupIds" separator="," open="(" close=")" index="i">
+				 	#{groupId}
+				</foreach>
 			</if>
 		</where>
 		<if test="sortOrder != null and sortOrder.size() != 0">

@@ -39,6 +39,18 @@
 
 	<table id="restTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
 		<thead>
+			<tr class="alert alert-warning">
+		    	<th colspan=2>合计</th>
+		    	<td colspan=9>
+		    		休假:<span th:text="${bean.sumVacation}"></span>h&nbsp;
+		    		病假:<span th:text="${bean.sumSick}"></span>h&nbsp;
+		    		事假:<span th:text="${bean.sumLeave}"></span>h&nbsp;
+		    		婚假:<span th:text="${bean.sumMarriage}"></span>h&nbsp;
+		    		丧假:<span th:text="${bean.sumFuneral}"></span>h&nbsp;
+		    		公假:<span th:text="${bean.sumPublic}"></span>h&nbsp;
+		    		<b>总计:<span th:text="${bean.sumVacation + bean.sumSick + bean.sumLeave+ bean.sumMarriage+ bean.sumFuneral+ bean.sumPublic}"></span>h<b>
+		    	</td>
+		    </tr>	
 		    <tr>
 		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
 				<th class="hsys-table-index-column">#</th>

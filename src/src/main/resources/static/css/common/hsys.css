@@ -63,6 +63,10 @@
 	width:150px !important;
 }
 
+.hsys-small-btn {
+	line-height:1.0;
+}
+
 @keyframes fade {
     from {
         opacity: 1.0;

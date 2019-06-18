@@ -13,7 +13,8 @@
         <result column="a_start" property="start"/>  
         <result column="a_end" property="end"/>  
         <result column="a_date" property="date"/>  
-        <result column="a_comment" property="comment"/>  
+        <result column="a_comment_start" property="commentStart"/>  
+        <result column="a_comment_end" property="commentEnd"/>  
         <association property="user" resultMap="userResultMap"/> 
     </resultMap>
 
@@ -22,7 +23,8 @@
 			   a.c_start as a_start,
 			   a.c_end as a_end,
 			   a.c_date as a_date,
-			   a.c_comment as a_comment,
+			   a.c_comment_start as a_comment_start,
+			   a.c_comment_end as a_comment_end,
 			   u.c_id as u_id,
 			   u.c_name as u_name,
 			   u.c_no as u_no
@@ -56,7 +58,17 @@
 				and ug.c_group_id = #{cond.groupId}
 			</if>
 		</where>
-		order by a.c_user_id, a.c_date
+		<if test="sortOrder != null and sortOrder.size() != 0">
+			order by 
+			<foreach collection ="sortOrder" item="orderCond" index= "index" separator =",">
+				<if test="orderCond.key == 'userNo'">
+					u.c_no ${orderCond.flag}
+				</if>
+				<if test="orderCond.key == 'date'">
+					a.c_date ${orderCond.flag}
+				</if>
+            </foreach >
+		</if>
 	</select>
 
 	<insert id="add" parameterType="attendanceModel">
@@ -65,17 +77,39 @@
     		c_start,
     		c_end,
     		c_date,
-    		c_comment)
+    		c_comment_start,
+    		c_comment_end)
     	values (
     		#{user.id},
     		#{start},
     		#{end},
     		#{date},
-    		#{comment}
+    		#{commentStart},
+    		#{commentEnd}
     	)
       	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
       		select LAST_INSERT_ID() as id
       	</selectKey>
+    </insert>
+    
+    <insert id="addBatch" parameterType="java.util.List">
+    	<foreach collection ="list" item="att" index="index" open="" close="" separator=";">
+	    	insert into attendance_tbl (
+	    		c_user_id,
+	    		c_start,
+	    		c_end,
+	    		c_date,
+	    		c_comment_start,
+	    		c_comment_end)
+	    	values (
+	    		#{att.user.id},
+	    		#{att.start},
+	    		#{att.end},
+	    		#{att.date},
+	    		#{att.commentStart},
+	    		#{att.commentEnd}
+	    	)
+	    </foreach>
     </insert>
     
 	<update id="update">
@@ -87,17 +121,39 @@
     		<if test="update.end != null">
 				c_end = #{end},
 			</if>
-    		<if test="update.comment != null">
-				c_comment = #{comment},
+    		<if test="update.commentStart != null">
+				c_comment_start = #{commentStart},
+			</if>
+    		<if test="update.commentEnd != null">
+				c_comment_end = #{commentEnd},
 			</if>
 		</set>
     	<where>
-			<if test="cond.userId != null">
-				and c_user_id = #{user.id}
-			</if>
-			<if test="cond.date != null">
-				and c_date = #{date}
-			</if>
+			c_user_id = #{user.id}
+			and c_date = #{date}
 		</where>
+    </update>
+	<update id="updateBatch" parameterType="java.util.List">
+		<foreach collection ="list" item="att" index="index" open="" close="" separator=";">
+	    	update attendance_tbl
+			<set>
+	    		<if test="att.update.start != null">
+					c_start = #{att.start},
+				</if>
+	    		<if test="att.update.end != null">
+					c_end = #{att.end},
+				</if>
+	    		<if test="att.update.commentStart != null">
+					c_comment_start = #{att.commentStart},
+				</if>
+	    		<if test="att.update.commentEnd != null">
+					c_comment_end = #{att.commentEnd},
+				</if>
+			</set>
+	    	<where>
+					c_user_id = #{att.user.id}
+					and c_date = #{att.date}
+			</where>
+		</foreach>
     </update>
 </mapper>

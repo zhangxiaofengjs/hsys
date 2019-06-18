@@ -31,6 +31,9 @@ public class AttendanceRawDataReader {
 	@Autowired
 	private UserService userService;
 	
+	private Date startDate;
+	private Date endDate;
+	
 	private HashMap<String, UserModel> cachedUsers = new HashMap<String, UserModel>();
 
 	public List<AttendanceModel> read(String filePath) {
@@ -40,7 +43,7 @@ public class AttendanceRawDataReader {
 		InputStream is = null;
 		try {
 			is = new FileInputStream(filePath);  
-		             
+
 			Workbook wb = WorkbookFactory.create(is);
 			Sheet sheet = wb.getSheetAt(0);
 			if(sheet == null) {
@@ -72,6 +75,19 @@ public class AttendanceRawDataReader {
 					throw new HsysException("未想定的日期格式:" + strDate);
 				}
 				
+				if(getStartDate() == null) {
+					setStartDate(date);
+				}
+				if(getEndDate() == null) {
+					setEndDate(date);
+				}
+				if(date.before(getStartDate())) {
+					setStartDate(date);
+				}
+				if(date.after(getEndDate())) {
+					setEndDate(date);
+				}
+				
 				//上午上班
 				String strStart = ExcelUtils.getCellValue(row.getCell(5), HsysDate.TIME_PATTERN);
 				Date start = null;
@@ -93,13 +109,14 @@ public class AttendanceRawDataReader {
 				}
 				
 				//描述
-				String comment = ExcelUtils.getCellValue(row.getCell(6)) + ","
-							+ ExcelUtils.getCellValue(row.getCell(8));
+				String comment1 =  ExcelUtils.getCellValue(row.getCell(6));
+				String comment2 =  ExcelUtils.getCellValue(row.getCell(8));
 
 				AttendanceModel a = new AttendanceModel();
 				a.setUser(user);
 				a.setDate(date);
-				a.setComment(comment);
+				a.setCommentStart(comment1);
+				a.setCommentEnd(comment2);
 				a.setStart(start);
 				a.setEnd(end);
 				list.add(a);
@@ -129,5 +146,21 @@ public class AttendanceRawDataReader {
 		cachedUsers.put(no, user);
 		
 		return user;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 }

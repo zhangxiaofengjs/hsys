@@ -6,7 +6,7 @@ package com.hsys.business.forms;
  */
 public class UserHtmlDetailForm {
 	private String no;
-
+	private boolean view;
 	public String getNo() {
 		return no;
 	}
@@ -14,4 +14,12 @@ public class UserHtmlDetailForm {
 	public void setNo(String no) {
 		this.no = no;
 	}
+	public boolean isView() {
+		return view;
+	}
+	
+	public void setView(boolean view) {
+		this.view = view;
+	}
+	
 }

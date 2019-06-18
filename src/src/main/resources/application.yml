@@ -42,6 +42,20 @@ spring:
         cache: false #turn off when in developing or cant refresh immdiately
         servlet:
             content-type: text/html
+    #邮箱配置
+    mail:
+      host: 192.168.7.100
+      username: admin@hinfo.com
+      password: admin
+      default-encoding: UTF-8
+      properties: 
+        mail:
+          smtp:
+            port: 587
+            auth: true
+            starttls:
+              enable: false
+              required: false
 
 #log配置
 logging: 
@@ -67,7 +81,7 @@ pagehelper:
 #hsys其余设定
 hsys:
     version:
-        number: hsys 1.0.0
+        number: hsys 1.5
     upload: 
         temp-folder: c:/hsys/upload/temp #临时文件夹
         attendance-folder: c:/hsys/upload/attendance #考勤信息文件夹

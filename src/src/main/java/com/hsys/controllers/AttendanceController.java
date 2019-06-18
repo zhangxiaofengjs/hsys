@@ -1,6 +1,7 @@
 package com.hsys.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hsys.business.AttendanceBusiness;
 import com.hsys.business.beans.HsysPageInfo;
+import com.hsys.business.forms.AttendanceDownloadForm;
 import com.hsys.business.forms.AttendanceForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.AttendanceModel;
@@ -33,6 +35,17 @@ public class AttendanceController extends BaseController {
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}
+	}
+	
+	@RequestMapping("/json/download")
+	@ResponseBody
+	public ResponseEntity<byte[]> download(AttendanceDownloadForm form) {
+		try {
+			return attendanceBusiness.download(form);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@RequestMapping("/html/list")

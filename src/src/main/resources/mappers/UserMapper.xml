@@ -121,6 +121,12 @@
 			<if test="cond.exitDateNotNull != null">
 				and u.c_exit_date is not null
 			</if>
+			<if test="cond.companyId != null">
+				and u.c_company_id = #{cond.companyId}
+			</if>
+			<if test="cond.schoolId != null">
+				and u.c_school_id = #{cond.schoolId}
+			</if>
 		</where>
 		order by u.c_no
 	</select>

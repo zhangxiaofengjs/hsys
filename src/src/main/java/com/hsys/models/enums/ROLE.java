@@ -3,6 +3,7 @@ package com.hsys.models.enums;
 public interface ROLE {
 	public final static String ADMIN = "admin";
 	public final static String USER_EDIT = "user_edit";
+	public final static String USER_FULL_INFO = "user_full_info";
 	public final static String REST_APPROVE = "rest_approve";
 	public final static String REST_LIST = "rest_list";
 	public final static String REST_LIST_ALL = "rest_list_all";
@@ -19,6 +20,7 @@ public interface ROLE {
 	public final static String[] ALL = new String[] {
 		ADMIN,
 		USER_EDIT,
+		USER_FULL_INFO,
 		EXTRATIME_APPROVE,
 		EXTRATIME_LIST,
 		EXTRATIME_LIST_ALL,

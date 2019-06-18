@@ -1,7 +1,7 @@
 $(document).ready(function(){
   //先更新一次，10分钟更新一次通知数量
-  updateIndexNoticeCount();
-  setInterval(updateIndexNoticeCount,10*60*1000);//10*60*1000
+  //updateIndexNoticeCount();
+  //setInterval(updateIndexNoticeCount,10*60*1000);//10*60*1000
 
   $("a[refURL]").click(function(){
 	  var self = $(this);
@@ -18,6 +18,7 @@ $(document).ready(function(){
 			  document.location = hsys.url("/index");
 		  }
 	  }
+	  SetWinHeight(this);
   }); 
   
   $("#changePwd").click(function(){
@@ -118,14 +119,20 @@ function updateIndexNoticeCount() {
 
 function initContentHeight(h, framWin) 
 {
-	if(h<$(document).height()) {
-		h = $(document).height();
+	if(h<window.screen.availHeight) {
+		//h = $(document).height();
+		h = window.screen.availHeight;//最小高度設定爲屏幕的高度
 	}
-var div = window.parent.document.getElementById('main_div'); 
-div.style.height=h+"px";//window.document.body.scrollHeight||window.document.body.offsetHeight+5;
+	var div = window.parent.document.getElementById('main_div'); 
+	div.style.height=(h+30)+"px";//window.document.body.scrollHeight||window.document.body.offsetHeight+5;
 
 	framWin.style.height=(h-30) + "px";//注意减去右侧标题栏高度
 } 
+
+function resizeWinHeight()//給子頁面調用
+{
+	SetWinHeight($("#frame_content")[0]);
+}
 
 function SetWinHeight(obj) 
 { 
@@ -138,13 +145,15 @@ function SetWinHeight(obj)
         try{ 
 			var bheight=win.contentWindow.document.body.scrollHeight; 
 			var dheight=win.contentWindow.document.documentElement.scrollHeight; 
-			    height=Math.max(bheight,dheight); 
-			}catch(ex){} 
-			win.style.height = height + "px"; 
+			height=Math.max(bheight,dheight); 
+		}catch(ex){
+			
+		} 
+		win.style.height = height + "px"; 
      } 
      else if(win.Document && win.Document.body.scrollHeight)//ie  6 
      { 
-      win.style.height = win.Document.body.scrollHeight; 
+     	win.style.height = win.Document.body.scrollHeight; 
      } 
    }
    initContentHeight(height, win); //加上右边标题

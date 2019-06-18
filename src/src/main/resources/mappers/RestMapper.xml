@@ -51,6 +51,12 @@
 	                </otherwise>
 	            </choose>
 			</if>
+			<if test="cond.userId != null">
+				and r.c_user_id = #{cond.userId}
+			</if>
+			<if test="cond.date != null">
+				and r.c_date_start &lt;= #{cond.date} and r.c_date_end &gt;= #{cond.date}
+			</if>
 			<if test="cond.dateStart != null">
 				and r.c_date_start &gt;= #{dateStart}
 			</if>

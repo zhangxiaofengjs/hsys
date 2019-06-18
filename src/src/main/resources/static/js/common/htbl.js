@@ -74,6 +74,15 @@ htbl.getSelectedRowId = function(tableId, bAllowMulti, bShowErr) {
 		return selectIdArr;
 	}
 }
+
+htbl.checkboxClicked = function(tableId, clickFunc) {
+	$("#{0} input[name^='select']".format(tableId)).click(function(){
+		(clickFunc)();
+	});
+	$("#{0} input[name^='selectAll']".format(tableId)).click(function(){
+		(clickFunc)();
+	});
+}
 //data={
 //	"headers":[
 //		{

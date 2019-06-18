@@ -4,17 +4,56 @@
 	<resultMap id="schoolResultMap" type="schoolModel" >  
         <id column="s_id" property="id"/>  
         <result column="s_name" property="name"/>
+		<result column="s_province" property="province"/>
     </resultMap>
 
 	<select id="queryList" resultMap="schoolResultMap">
 		select s.c_id as s_id,
-			   s.c_name as s_name
+			   s.c_name as s_name,
+			   s.c_province as s_province
 		from school_tbl as s
 		<where>
-			<if test="cond.name != null">
-				and s.c_name = #{cond.name}
+			<if test="cond.id != null">
+				s.c_id = #{id}
 			</if>
+			<if test="cond.name != null">
+				s.c_name = #{cond.name}
+			</if>			
 		</where>
 		order by s.c_name
 	</select>
+
+	<insert id = "add" parameterType="schoolModel">
+		insert into school_tbl (
+    		c_name,
+    		c_province
+    		)
+    	values (
+    		#{name},
+    		#{province}
+    	)
+	</insert>
+	
+	 <delete id="delete">
+    	delete from school_tbl
+    	<where>
+				and c_id = #{id}
+		</where>
+    </delete>
+	
+	<update id="update">
+    	update school_tbl
+		<set>
+    		<if test="update.name != null">
+				c_name = #{name},
+			</if>
+    		<if test="update.province != null">
+				c_province = #{province},
+			</if>
+		</set>
+    	<where>
+			c_id = #{id}
+		</where>
+    </update>
+
 </mapper>

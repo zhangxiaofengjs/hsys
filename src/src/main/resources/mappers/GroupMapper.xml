@@ -13,8 +13,10 @@
 		select g.c_id as g_id,
 			   g.c_name as g_name,
 			   g.c_level as g_level,
-			   g.c_parent_id as pg_id
+			   g.c_parent_id as pg_id,
+			   pg.c_name as pg_name
 		from group_tbl as g
+		left join group_tbl as pg on g.c_parent_id = pg.c_id
 		<if test="cond.userId != null">
 			left join user_group_tbl as ug on ug.c_group_id=g.c_id
 		</if>
@@ -41,6 +43,19 @@
 		</where>
 		order by g.c_name
 	</select>
+
+	<insert id="add" parameterType="groupModel">
+    	insert into group_tbl (
+    		c_name,
+    		c_parent_id,
+    		c_level)
+    	values (
+    		#{name},
+    		#{parentId},
+    		#{level}
+    	)
+    </insert>
+
 <!-- 
 	<insert id="add" parameterType="userModel">
     	insert into user_tbl (
@@ -93,4 +108,28 @@
 			c_id = #{id}
 		</where>
     </update> -->
+    	
+	<delete id="delete">
+    	delete from group_tbl
+    	<where>
+			c_id = #{id}
+		</where>
+    </delete>
+    
+    <update id= "updateGroup">
+    	update group_tbl  
+    	<set>
+    		<if test ="update.name != null">
+				c_name = #{name},
+			</if>
+			<if test ="update.parentId !=null">
+				c_parent_id = #{parentId},
+				c_level = #{level}
+			</if>
+				
+		</set>
+		<where>
+			c_id = #{id}
+		</where>
+    </update>
 </mapper>

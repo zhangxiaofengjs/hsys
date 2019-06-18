@@ -37,7 +37,10 @@ public class UserModel extends BaseModel {
 	public static final String COND_HIDDEN_FALG = "hiddenFlag";
 	public static final String COND_GROUP_ID = "groupId";
 	public static final String COND_GROUP_IDS = "groupIds";
-	
+	public static final String COND_USER_NO = "userNo";
+	public static final String ORDER_USER_NO = "userNo";
+	public static final String COND_COMPANY_ID = "companyId";
+	public static final String COND_SCHOOL_ID = "schoolId";
 
 	private String no;
 	private String name;
@@ -58,6 +61,7 @@ public class UserModel extends BaseModel {
 	private GroupModel group;
 	private CompanyModel company;
 	private List<UserRoleModel> roles;
+	private int companyId;
 	
 	public String getIdNumber() {
 		return idNumber;
@@ -210,4 +214,13 @@ public class UserModel extends BaseModel {
 	public void setSpelling(String spelling) {
 		this.spelling = spelling;
 	}
+	
+	public int getCompanyId() {
+		return companyId;
+	}
+	
+	public void setCompanyId(int companyId) {
+		this.companyId = companyId;
+	}
+	
 }

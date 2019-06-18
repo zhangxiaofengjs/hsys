@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.hsys.HsysApplicationContext;
 import com.hsys.HsysSecurityContextHolder;
+import com.hsys.business.beans.ExtraTimeListBean;
 import com.hsys.business.forms.ExtraTimeAddForm;
 import com.hsys.business.forms.ExtraTimeApprovalForm;
 import com.hsys.business.forms.ExtraTimeDeleteForm;
@@ -22,12 +23,12 @@ import com.hsys.business.forms.ExtraTimeUpdateForm;
 import com.hsys.business.forms.UserBasicExtraTimeForm;
 import com.hsys.common.HsysDate;
 import com.hsys.common.HsysIO;
-import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
 import com.hsys.config.HsysConfig;
 import com.hsys.exception.HsysException;
 import com.hsys.io.ExtraTimeWriter;
 import com.hsys.models.ExtraTimeModel;
+import com.hsys.models.GroupModel;
 import com.hsys.models.UserModel;
 import com.hsys.models.enums.BoolFlag;
 import com.hsys.models.enums.ExtraTimeStatus;
@@ -35,6 +36,7 @@ import com.hsys.models.enums.ExtraTimeType;
 import com.hsys.models.enums.OrderFlag;
 import com.hsys.models.enums.ROLE;
 import com.hsys.services.ExtraTimeService;
+import com.hsys.services.GroupService;
 
 @Component
 public class ExtraTimeBusiness {
@@ -44,7 +46,8 @@ public class ExtraTimeBusiness {
 	private ExtraTimeWriter writer;
 	@Autowired
 	HsysConfig config;
-	
+	@Autowired
+	private GroupService groupService;
 	private void check(ExtraTimeModel extraTime) {
 		Date date = new Date();
 		if(extraTime.getDate().compareTo(date) == 1) {
@@ -164,23 +167,26 @@ public class ExtraTimeBusiness {
 		}
 		
 		int[] meals = form.getMeal();
-		if(meals == null) {
-			extraTime.setMealLunch(BoolFlag.FALSE);
-			extraTime.setMealSupper(BoolFlag.FALSE);
-			extraTime.setUpdate(ExtraTimeModel.FIELD_MEAL_LUNCH);
-			extraTime.setUpdate(ExtraTimeModel.FIELD_MEAL_SUPPER);
-		} else {			
+		int bLunch = BoolFlag.FALSE;
+		int bSupper = BoolFlag.FALSE;
+		if(meals != null) {
 			for(int meal : meals) {
-				if(meal == ExtraTimeUpdateForm.MEAL_LUNCH &&
-					extraTime.getMealLunch() == BoolFlag.FALSE) {
-					extraTime.setMealLunch(BoolFlag.TRUE);
-					extraTime.setUpdate(ExtraTimeModel.FIELD_MEAL_LUNCH);
-				} else if(meal == ExtraTimeUpdateForm.MEAL_SUPPER &&
-					extraTime.getMealSupper() == BoolFlag.FALSE) {
-					extraTime.setMealSupper(BoolFlag.TRUE);
-					extraTime.setUpdate(ExtraTimeModel.FIELD_MEAL_SUPPER);
+				if(meal == ExtraTimeUpdateForm.MEAL_LUNCH) {
+					bLunch = BoolFlag.TRUE;
+				}
+				if(meal == ExtraTimeUpdateForm.MEAL_SUPPER) {
+					bSupper = BoolFlag.TRUE;
 				}
 			}
+		}
+
+		if( bLunch != extraTime.getMealLunch()) {
+			extraTime.setMealLunch(bLunch);
+			extraTime.setUpdate(ExtraTimeModel.FIELD_MEAL_LUNCH);
+		}
+		if( bSupper != extraTime.getMealSupper()) {
+			extraTime.setMealSupper(bSupper);
+			extraTime.setUpdate(ExtraTimeModel.FIELD_MEAL_SUPPER);
 		}
 
 		if(extraTime.getLength() != form.getLength()) {
@@ -248,22 +254,24 @@ public class ExtraTimeBusiness {
 		}
 	}
 
-	public List<ExtraTimeModel> getExtraTimes(ExtraTimeListForm form) {
+	public ExtraTimeListBean getExtraTimeListBean(ExtraTimeListForm form) {
+		ExtraTimeListBean bean = new ExtraTimeListBean();
+		
 		if(form.isUser()) {
 			form.setUserNo(HsysSecurityContextHolder.getLoginUser().getNo());
 		}
 		else if(form.isView()) {
 			//没权限
 			if(!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.EXTRATIME_LIST_ALL, ROLE.EXTRATIME_LIST)) {
-				return HsysList.New();
+				return bean;
 			}
 		}
 		else if(form.isApprove()) {
 			if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.EXTRATIME_APPROVE)) {
-				return HsysList.New();
+				return bean;
 			}
 		} else {
-			return HsysList.New();
+			return bean;
 		}
 		
 		ExtraTimeModel extraTime = new ExtraTimeModel();
@@ -285,14 +293,41 @@ public class ExtraTimeBusiness {
 				extraTime.setCond(ExtraTimeModel.COND_GROUP_ID,
 				HsysSecurityContextHolder.getLoginUser().getGroup().getId());
 		}
+		
+		if(form.getGroupId() != 0) {
+			List<Integer> groupIds = groupService.queryChildrenIdsById(form.getGroupId());
+			groupIds.add(form.getGroupId());
+			extraTime.setCond(ExtraTimeModel.COND_GROUP_IDS, groupIds);
 
+			//页面需要显示名字，form再设定
+			GroupModel group = groupService.queryById(form.getGroupId());
+			if(group != null) {
+				form.setGroupName(group.getName());
+			}
+		}
 		extraTime.setCond(ExtraTimeModel.COND_START_DATE, form.getStartDate());
 		extraTime.setCond(ExtraTimeModel.COND_END_DATE, form.getEndDate());
 
 		extraTime.addSortOrder(ExtraTimeModel.ORDER_USER_NO, OrderFlag.ASC);
 		extraTime.addSortOrder(ExtraTimeModel.ORDER_DATE, OrderFlag.ASC);
 		List<ExtraTimeModel> list = extraTimeService.queryList(extraTime);
-		return list;
+		
+		bean.setList(list);
+		
+		for(ExtraTimeModel ex : list) {
+			switch(ex.getType()) {
+			case ExtraTimeType.Normal:
+				bean.addSumNormal(ex.getLength());
+				break;
+			case ExtraTimeType.Holiday:
+				bean.addSumHoliday(ex.getLength());
+				break;
+			case ExtraTimeType.Weekend:
+				bean.addSumWeekend(ex.getLength());
+				break;
+			}
+		}
+		return bean;
 	}
 
 	public ResponseEntity<byte[]> download(ExtraTimeDownloadForm form) throws IOException {

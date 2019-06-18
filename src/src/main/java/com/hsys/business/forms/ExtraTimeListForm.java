@@ -16,7 +16,8 @@ public class ExtraTimeListForm {
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
 	private Date endDate;
-
+	private int groupId;
+	private String groupName;
 	private boolean user;
 	private boolean view;
 	private boolean approve;
@@ -24,6 +25,8 @@ public class ExtraTimeListForm {
 	public ExtraTimeListForm() {
 		this.startDate = HsysDate.startOfWorkMonth();
 		this.endDate = HsysDate.endOfWorkMonth();
+		this.groupId = 0;
+		this.groupName = "--开发组--";
 	}
 	
 	public String getUserNo() {
@@ -72,5 +75,20 @@ public class ExtraTimeListForm {
 
 	public void setApprove(boolean approve) {
 		this.approve = approve;
+	}
+	public int getGroupId() {
+		return groupId;
+	}
+	
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
 	}
 }

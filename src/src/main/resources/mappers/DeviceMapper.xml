@@ -38,7 +38,7 @@
 	                </otherwise>
 	            </choose>
 			</if>
-			<if test="cond.noOruserNo != null">
+			<if test="cond.noOrUserNo != null">
 				and d.c_no like '%' #{user.no} '%'  or u.c_no like '%' #{user.no} '%'
 			</if>
 		</where>

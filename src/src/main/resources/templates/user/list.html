@@ -27,6 +27,7 @@
 		 			<button type="button" class="btn btn-sm btn-primary" id='initPwd'>初始化密码</button>
 	 			</div>
 	 			<button type="button" class="btn btn-sm btn-primary" id='download'>下载</button>
+	 			
 			</form>
 		</div>
 	</nav>
@@ -54,7 +55,8 @@
 				<td th:text="${itr.index+1}"></td>
 				<td th:title="${user.id}">
 					<a th:if="${not form.view}" th:text="${user.no}" th:href="@{'/user/html/detail?no=' +${user.no}}"></a>
-					<span th:if="${form.view}" th:text="${user.no}"></span>
+					<a th:if="${form.view}" th:text="${user.no}" th:href="@{/user/html/detail(no=${user.no},view=${form.view})}" sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).USER_FULL_INFO)}"></a>
+					<span th:if="${form.view}" th:text="${user.no}" sec:authorize="${!hasAnyAuthority(T(com.hsys.models.enums.ROLE).USER_FULL_INFO)}"></span>
 				</td>
 				<td><span th:text="${user.name}"></span>&nbsp;<span th:if="${user.exitDate != null}" class="label label-default">离职</span></td>
 				<td th:text="${user.spelling}"></td>

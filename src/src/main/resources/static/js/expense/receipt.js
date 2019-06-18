@@ -104,7 +104,7 @@ $(document).ready(function(){
 							response.items.forEach(function(item,index){
 								field.options.push(
 									{ 
-										"text":"["+ item.date +"]" + " 报销人  " + item.user.name + " 报销金额  " +item.num,
+										"text":"["+ item.date +"]" + " 报销人  " + item.user.no + " " + item.user.name + " 报销金额  " +item.num,
 										"value":item.id,
 									}
 								);
@@ -116,7 +116,7 @@ $(document).ready(function(){
 			],
 			"url":"/expense/json/item/link",
 			"success": function(data, dlg) {
-				hsys.success(true);
+				hsys.refresh();
 			},
 			"error": function(data) {
 				hsys.error(data.msg);
@@ -186,7 +186,36 @@ $(document).ready(function(){
 			],
 			"url":"/expense/json/receipt/setproject",
 			"success": function(data, dlg) {
-				hsys.success(true);
+				hsys.refresh();
+			},
+			"error": function(data) {
+				hsys.error(data.msg);
+			}
+		});
+	});
+	
+	$("#setComment").click(function(){
+		var self = $(this);
+		hdlg.showForm({
+			"title":"设定备注",
+			"fields":[
+				{
+					"id":"id",
+					"label":"编号",
+					"required":true,
+					"type":"hidden",
+					"value": $("#receiptId").val(),
+				},
+				{
+					"id":"comment",
+					"label":"备注",
+					"type":"text",
+					"value": $("#r_comment").val(),
+				},
+			],
+			"url":"/expense/json/receipt/setcomment",
+			"success": function(data, dlg) {
+				hsys.refresh();
 			},
 			"error": function(data) {
 				hsys.error(data.msg);

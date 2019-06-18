@@ -20,7 +20,9 @@ import com.hsys.exception.HsysException;
 import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
 import com.hsys.models.UserModel;
+import com.hsys.models.enums.OrderFlag;
 import com.hsys.models.enums.ROLE;
+import com.hsys.models.enums.ReceiptStatus;
 import com.hsys.services.ExpenseItemService;
 
 @Component
@@ -63,6 +65,9 @@ public class ExpenseItemBusiness {
 		if(!HsysString.isNullOrEmpty(form.getReceiptNo())) {
 			item.setCond(ExpenseItemModel.COND_RECEIPT_NO, form.getReceiptNo());
 		}
+		
+		item.addSortOrder(ExpenseItemModel.ORDER_USER_NO, OrderFlag.ASC);
+		item.addSortOrder(ExpenseItemModel.ORDER_DATE, OrderFlag.ASC);
 		return expenseItemService.queryList(item);
 	}
 	
@@ -77,29 +82,53 @@ public class ExpenseItemBusiness {
 	public void delete(ExpenseItemDeleteForm form) {
 		int[] ids = form.getIds();
 		for(int id : ids) {
+			ExpenseItemModel item = expenseItemService.queryById(id);
+			if(item == null) {
+				continue;
+			}
+			
+			ExpenseReceiptModel receipt = item.getReceipt();
+			if(receipt != null && receipt.getStatus() != ReceiptStatus.Regist) {
+				throw new HsysException("该报销条目(#"+item.getId() + ")关联的报销单已经处理中，不可删除。");
+			}
 			expenseItemService.deleteById(id);
 		}
 	}
 
 	public void update(ExpenseItemUpdateForm form) {
-		ExpenseItemModel item =expenseItemService.queryById(form.getId());
+		ExpenseItemModel item = expenseItemService.queryById(form.getId());
 		if(!HsysDate.equalsDate(item.getDate(), form.getDate())){
 			item.setDate(form.getDate());
 			item.setUpdate(ExpenseItemModel.FIELD_DATE);
 		}
-		if(item.getUser().getId() != form.getUserId()){
-			item.getUser().setId(form.getUserId());
-			item.setUpdate(ExpenseItemModel.FIELD_USER_ID);
-		}
-		if(item.getPayee().getId() != form.getPayeeId()){
-			item.getPayee().setId(form.getPayeeId());
-			item.setUpdate(ExpenseItemModel.FIELD_PAYEE_ID);
-		}
+//		if(item.getUser().getId() != form.getUserId()){
+//			if(item.getUser().getId() != HsysSecurityContextHolder.getLoginUserId()) {
+//				throw new HsysException("登录者非变更前的报销人，不能变更报销人。"); 
+//			}
+//			item.getUser().setId(form.getUserId());
+//			item.setUpdate(ExpenseItemModel.FIELD_USER_ID);
+//		}
+//		if(item.getPayee().getId() != form.getPayeeId()){
+//			if(item.getPayee().getId() != HsysSecurityContextHolder.getLoginUserId()) {
+//				throw new HsysException("登录者非变更前的领款人，不能变更领款人。"); 
+//			}
+//			item.getPayee().setId(form.getPayeeId());
+//			item.setUpdate(ExpenseItemModel.FIELD_PAYEE_ID);
+//		}
+		
+		ExpenseReceiptModel receipt = item.getReceipt();
+		
 		if(item.getNum() != form.getNum()){
+			if(receipt != null && receipt.getStatus() != ReceiptStatus.Regist) {
+				throw new HsysException("该报销条目关联的报销单已经处理中，不可变更。");
+			}
 			item.setNum(form.getNum());
 			item.setUpdate(ExpenseItemModel.FIELD_NUM);
 		}
 		if(item.getType() != form.getType()){
+			if(receipt != null && receipt.getStatus() != ReceiptStatus.Regist) {
+				throw new HsysException("该报销条目关联的报销单已经处理中，不可变更。");
+			}
 			item.setType(form.getType());
 			item.setUpdate(ExpenseItemModel.FIELD_TYPE);
 		}
@@ -141,6 +170,10 @@ public class ExpenseItemBusiness {
 		receipt.setId(0);
 		item.setReceipt(receipt);
 		item.setCond(ExpenseItemModel.COND_RECEIPT_ID, true);
+		
+		item.addSortOrder(ExpenseItemModel.ORDER_USER_NO, OrderFlag.ASC);
+		item.addSortOrder(ExpenseItemModel.ORDER_DATE, OrderFlag.ASC);
+		
 		List<ExpenseItemModel> items = expenseItemService.queryList(item);
 		if(items == null) {
 			throw new HsysException("不存在未关联的报销条目。");

@@ -231,4 +231,32 @@ public class HsysDate {
 			return false;
 		}
 	}
+
+	public static String getWeekStr(Date date) {
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(date);
+		
+		switch(ca.get(Calendar.DAY_OF_WEEK)) {
+		case Calendar.SUNDAY :
+			return "日";
+		case Calendar.SATURDAY:
+			return "六";
+		case Calendar.FRIDAY:
+			return "五";
+		case Calendar.THURSDAY:
+			return "四";
+		case Calendar.WEDNESDAY:
+			return "三";
+		case Calendar.TUESDAY:
+			return "二";
+		case Calendar.MONDAY:
+			return "一";
+		default:
+			return "";
+		}
+	}
+
+	public static Date getDate(Date date) {
+		return startOfDay(date);
+	}
 }

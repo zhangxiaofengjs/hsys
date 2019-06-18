@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.hsys.annotations.HsysMail;
 import com.hsys.mappers.ExtraTimeMapper;
 import com.hsys.models.DeviceModel;
 import com.hsys.models.ExtraTimeModel;
@@ -34,8 +36,8 @@ public class ExtraTimeService {
 	}
 	
 
+	@HsysMail(name="加班记录添加")
 	public void add(ExtraTimeModel extra) {
-		
 		extraTimeMapper.add(extra);		
 	}
 
@@ -48,7 +50,6 @@ public class ExtraTimeService {
 
 	public void update(ExtraTimeModel extraTime) {
 		extraTimeMapper.update(extraTime);
-		
 	}
 
 	public Float extraTimeTotal(ExtraTimeModel extraTime) {

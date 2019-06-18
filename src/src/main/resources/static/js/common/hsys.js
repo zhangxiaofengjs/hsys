@@ -55,17 +55,73 @@ hsys.ajax = function(option) {
 	$.ajax(args);
 };
 
-hsys.refresh = function(url) {
-	if(url == undefined || url == "" || url == null) {
-		document.location.reload();
-	} else {
-		document.location = hsys.url(url);
+hsys.queryArgs = function(url) {
+	var args = {};
+	var name,value; 
+	var num=url.indexOf("?")
+	if(num<0) {
+		return args;
 	}
+
+	url=url.substr(num+1); //取得所有参数
+
+	var arr=url.split("&"); //各个参数放到数组里
+	for(var i=0;i < arr.length;i++){ 
+		num=arr[i].indexOf("="); 
+		if(num>0){ 
+			name=arr[i].substring(0,num);
+			value=arr[i].substr(num+1);
+			args[name]=value;
+		} 
+    }
+	
+	return args;
+} 
+
+hsys.refresh = function(url, args) {
+	var strUrl = "";
+	if(url == undefined || url == "" || url == null) {
+		//document.location.reload();
+		strUrl = document.location.href;
+	} else {
+		strUrl = hsys.url(url);
+	}
+
+	var queryArgs = hsys.queryArgs(strUrl);
+
+	var strQuery = "";
+	if(!$.isEmptyObject(args)) {
+		for(var key in args) {
+			strQuery += "&" + key + "=" + args[key];
+			
+			if(!$.isEmptyObject(queryArgs) && queryArgs.hasOwnProperty(key)) {
+				queryArgs.removeProperty(key);
+			}
+		}
+	}
+
+	if(!$.isEmptyObject(queryArgs)) {
+		for(var key in queryArgs) {
+			strQuery += "&" + key + "=" + queryArgs[key];
+		}
+	}
+	
+	if(strQuery.length > 0) {
+		strQuery = strQuery.substr(1);
+	}
+	
+	var idx = strUrl.indexOf("?");
+	if(idx > 0) {
+		strUrl = strUrl.substr(0, idx + 1); //取得所有参数
+	} else {
+		strUrl += "?";
+	}
+	document.location = strUrl + strQuery;
 }
 
-hsys.success = function(bRefresh) {
+hsys.success = function(bRefresh, args) {
 	hdlg.showOK("操作成功。",
-			bRefresh?function(){hsys.refresh();}:null);
+			bRefresh?function(){hsys.refresh(null, args);}:null);
 }
 
 hsys.error = function(msg, bRefresh) {

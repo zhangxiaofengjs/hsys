@@ -20,9 +20,12 @@ public class HsysPageInfo<E> extends ArrayList<E> {
 	private int pages;
 	//每页条数
 	private int pageSize;
-	
+	//是否page计数
+	private boolean isCount;
+		
 	public HsysPageInfo() {
 		super();
+		isCount = true;
 	}
 
 	public E getParam() {
@@ -103,5 +106,13 @@ public class HsysPageInfo<E> extends ArrayList<E> {
 
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
+	}
+
+	public boolean isCount() {
+		return isCount;
+	}
+
+	public void setCount(boolean isCount) {
+		this.isCount = isCount;
 	}
 }

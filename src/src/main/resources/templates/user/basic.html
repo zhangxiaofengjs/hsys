@@ -41,59 +41,178 @@
 			<td>合计</td>
 			<td><span class="badge"  th:text="${bean.restTimeTotal+'小时'}"></span></td>
 	    </tr>
-	    <tr>
+	    <tr >
 			<td rowspan=6>公休假</td>
 			<td style="padding:0px;" colspan=2>
-				<table class="table table-bordered table-condensed" style="margin-bottom:0px;">
+				<div class="form-inline">
+					<input class="form-control" type="month" width=30%>
+				</div>
+				<table class="table table-bordered table-condensed" style="margin-bottom:0px;" >
 					<tr>
-						<td width="50%" >
+						<td width="50%" th:class="${bean.month=='01' ? 'alert alert-success' : ''}">
 							<div>
 								<b>1月</b><br>
-								1/1调休，1/2上班
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==1 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==1 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
 							</div>
 						</td>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
+						<td width="50%" th:class="${bean.month=='02' ? 'alert alert-success' : ''}">
+							<div>
+								<b>2月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==2 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==2 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr><td width="50%"  th:class="${bean.month=='03' ? 'alert alert-success' : ''}">
+							<div>
+								<b>3月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==3 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==3 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
+						</td>
+						<td width="50%" th:class="${bean.month=='04' ? 'alert alert-success' : ''}">
+							<div>
+								<b>4月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==4 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==4 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
 						</td>
 					</tr>
 					<tr>
-						<td width="50%" class="alert alert-success">
-						1月<br>1/1调休，1/2上班
+						<td width="50%" th:class="${bean.month=='05' ? 'alert alert-success' : ''}">
+							<div>
+								<b>5月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==5 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==5 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
 						</td>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
-						</td>
-					</tr>
-					<tr>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
-						</td>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
-						</td>
-					</tr>
-					<tr>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
-						</td>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
-						</td>
-					</tr>
-					<tr>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
-						</td>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
+						<td width="50%" th:class="${bean.month=='06' ? 'alert alert-success' : ''}">
+							<div>
+								<b>6月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==6 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==6 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
 						</td>
 					</tr>
 					<tr>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
+						<td width="50%" th:class="${bean.month=='07' ? 'alert alert-success' : ''}">
+							<div>
+								<b>7月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==7 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==7 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
 						</td>
-						<td width="50%">
-						1月<br>1/1调休，1/2上班
+						<td width="50%" th:class="${bean.month=='08' ? 'alert alert-success' : ''}">
+							<div>
+								<b>8月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==8 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==8 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%" th:class="${bean.month=='09' ? 'alert alert-success' : ''}">
+							<div>
+								<b>9月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==9 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==9 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
+						</td>
+						<td width="50%" th:class="${bean.month=='10' ? 'alert alert-success' : ''}">
+							<div>
+								<b>10月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==10 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==10 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="50%" th:class="${bean.month=='11' ? 'alert alert-success' : ''}">
+							<div>
+								<b>11月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==11 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==11 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
+						</td>
+						<td width="50%" th:class="${bean.month=='12' ? 'alert alert-success' : ''}">
+							<div>
+								<b>12月</b><br>
+								<div th:each="list : ${lists}">
+								<p th:text="${list.month==12 ? #dates.format(list.date,'yyyy-MM-dd')+' '+list.comment : ''}"></p>
+								<p th:switch="${list.month==12 ?list.type : ''}">
+									<span th:case=0>(正常休息)</span>
+									<span th:case=1>(调休)</span>
+									<span th:case=2>(出勤)</span>
+								</p>
+								</div>
+							</div>
 						</td>
 					</tr>
 				</table>

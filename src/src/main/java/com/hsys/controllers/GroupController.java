@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.GroupBusiness;
 import com.hsys.business.beans.TreeNodeBean;
+import com.hsys.business.forms.DeviceJsonUpdateForm;
+import com.hsys.business.forms.GroupJsonDeleteForm;
+import com.hsys.business.forms.GroupJsonGetForm;
+import com.hsys.business.forms.GroupJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
+import com.hsys.models.DeviceModel;
 import com.hsys.models.GroupModel;
 
 /**
@@ -43,5 +48,49 @@ public class GroupController extends BaseController {
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
 		}
+	}
+	
+	@RequestMapping("/json/add")
+	@ResponseBody
+	public JsonResponse addGroup(@RequestBody GroupModel group) {
+		try {
+			groupBusiness.add(group);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/get")
+	@ResponseBody
+	public JsonResponse get(@RequestBody GroupJsonGetForm form) {
+		try {
+			GroupModel group = groupBusiness.getGroup(form);
+			return JsonResponse.success().put("group", group);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/delete")
+	@ResponseBody
+	public JsonResponse deleteGroup(@RequestBody GroupJsonDeleteForm form) {
+		try {
+			groupBusiness.delete(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/update")
+	@ResponseBody
+	public JsonResponse update(@RequestBody GroupJsonUpdateForm form) {
+		try {
+			groupBusiness.update(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
 	}
 }

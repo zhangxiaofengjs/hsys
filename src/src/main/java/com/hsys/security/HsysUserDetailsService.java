@@ -24,15 +24,15 @@ public class HsysUserDetailsService implements UserDetailsService {
 		}
 		UserModel user = null;
 		if(iAccount != 0) {
-			//只输入了数字则自动补全前面部分
-			String strAccount = "NT" + String.format("%03d", iAccount);
-			user = userService.queryByNoWithPassword(strAccount);
+			//上海
+			user = userService.queryByNoWithPassword(account);
 			if(user == null) {
-				strAccount = "JS" + String.format("%d", iAccount);
+				//只输入了数字则自动补全前面部分
+				String strAccount = "NT" + String.format("%03d", iAccount);
 				user = userService.queryByNoWithPassword(strAccount);
 			}
 			if(user == null) {
-				strAccount = "SH" + String.format("%d", iAccount);
+				String strAccount = "JS" + String.format("%d", iAccount);
 				user = userService.queryByNoWithPassword(strAccount);
 			}
 		} else {

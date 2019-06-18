@@ -9,7 +9,7 @@ import com.hsys.mappers.RestMapper;
 import com.hsys.models.RestModel;
 
 @Service
-public class RestServices {
+public class RestService {
 	@Autowired
 	private RestMapper restMapper;
 	

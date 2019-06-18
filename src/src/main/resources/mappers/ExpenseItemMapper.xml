@@ -10,6 +10,7 @@
 	<resultMap id="expenseReceiptResultMap" type="expenseReceiptModel" >  
         <id column="r_id" property="id"/>
         <result column="r_no" property="no"/>       
+        <result column="r_status" property="status"/>       
     </resultMap>
 	<resultMap id="expenseItemResultMap" type="expenseItemModel" >
 	 	<id column="i_id" property="id"/>
@@ -37,7 +38,8 @@
 				p.c_no as pu_no,
 				p.c_name as pu_name,			   
 				r.c_id as r_id,
-				r.c_no as r_no
+				r.c_no as r_no,
+				r.c_status as r_status
 		from expense_item_tbl as i 
 		left join user_tbl as u on i.c_user_id=u.c_id
 		left join user_tbl as p on i.c_payee_id=p.c_id
@@ -72,6 +74,17 @@
 				and pg.c_group_id = #{cond.payeeGroupId}
 			</if>
 		</where>
+		<if test="sortOrder != null and sortOrder.size() != 0">
+			order by 
+			<foreach collection ="sortOrder" item="orderCond" index= "index" separator =",">
+				<if test="orderCond.key == 'userNo'">
+					u.c_no ${orderCond.flag}
+				</if>
+				<if test="orderCond.key == 'date'">
+					i.c_date ${orderCond.flag}
+				</if>
+            </foreach >
+		</if>
 	</select>
 	<insert id="add" parameterType="expenseItemModel">
     	insert into expense_item_tbl (

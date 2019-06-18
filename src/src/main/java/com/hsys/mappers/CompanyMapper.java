@@ -13,5 +13,12 @@ import com.hsys.models.CompanyModel;
  */
 @Mapper
 public interface CompanyMapper {
-	List<CompanyModel> queryList(CompanyModel user);
+	//表示
+	List<CompanyModel> queryList(CompanyModel c);
+	//追加
+	void add(CompanyModel c);
+	//編集
+	void update(CompanyModel c);
+	//削除
+	void delete(CompanyModel c);
 }

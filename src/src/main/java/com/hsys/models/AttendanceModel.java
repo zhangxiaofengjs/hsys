@@ -19,12 +19,15 @@ public class AttendanceModel extends BaseModel {
 	
 	public static final String FIELD_START = "start";
 	public static final String FIELD_END = "end";
-	public static final String FIELD_COMMENT = "comment";
+	public static final String FIELD_COMMENT_START = "commentStart";
+	public static final String FIELD_COMMENT_END = "commentEnd";
+	
+	public static final String ORDER_USER_NO = "userNo";
+	public static final String ORDER_DATE = "date";
 	
 	private Date date;
 	private Date start;
 	private Date end;
-	private String comment;
 	private UserModel user;
 	private String commentStart;
 	private String commentEnd;
@@ -64,11 +67,5 @@ public class AttendanceModel extends BaseModel {
 	}
 	public void setUser(UserModel user) {
 		this.user = user;
-	}
-	public String getComment() {
-		return comment;
-	}
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 }

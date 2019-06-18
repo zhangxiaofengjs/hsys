@@ -16,7 +16,7 @@
 			    		<button type="button" class="btn btn-sm btn-primary" th:if="${receipt.status == 0 && #lists.size(items) != 0}" id='submitReceipt'>提交</button>
 		 				<button type="button" class="btn btn-sm btn-primary" th:if="${form.approval && receipt.status == 1 && bean.leader}" id='approvalReceipt'>批准</button>
 		 				<button type="button" class="btn btn-sm btn-primary" th:if="${form.approval && receipt.status == 1 && bean.leader}" id='rejectReceipt'>驳回</button>
-		 				<button type="button" class="btn btn-sm btn-primary" th:if="${receipt.status == 2}" id='finishReceipt'>已领款</button>
+		 				<button type="button" class="btn btn-sm btn-primary" th:if="${!form.approval && receipt.status == 2}" id='finishReceipt'>已领款</button>
 	 				</div>
 		    		<h2 class="hsys-text-center">报销单</h2>
 		    	</th>
@@ -62,10 +62,13 @@
 		    </tr>
 		    <tr>
 		    	<th colspan="1" style="vertical-align:top;height:50px;">备注</th>
-		    	<td colspan="5" th:text="${receipt.comment}"></td>
+		    	<td colspan="5">
+		    		<span id="r_comment" th:text="${receipt.comment}"></span>
+		    		<a id="setComment" class="hsys-a-pointer" th:if="${receipt.status == 0 || receipt.status == 1}"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+		    	</td>
 		    </tr>
 		     <tr>
-		    	<th colspan="6" class="hsys-text-left">
+		    	<th colspan="6" class="hsys-text-left alert alert-warning">
 		    		明细表:
 		    		<div class="pull-right">
 				    	<button type="button" style="line-height:1.0;" class="btn btn-sm btn-primary" th:if="${receipt.status == 0}" id='linkItem'>关联</button>
@@ -110,7 +113,7 @@
 				</td>
 			</tr>
 			<tr>
-				<th colspan="6" class="hsys-text-left">
+				<th colspan="6" class="hsys-text-left alert alert-warning">
 		    		按领款人合计表：
 			   </th>
 			</tr>

@@ -88,4 +88,37 @@ $(document).ready(function(){
 			}
 		);
 	});
+	
+	$("#download").click(function(){
+		var userNo = $("#no").val();
+		var self = $(this);
+		var dlg = hdlg.showForm({
+			"title":"下载员工信息",
+			"fields":[
+				{
+					"id":"no",
+					"label":"工号",
+					"type": "text",
+					"value": userNo,	
+				},
+				{
+					"id":"view",
+					"type":"hidden",
+					"value":$("input[name='view']").val(),
+				},
+		
+			],
+			"buttons":[
+				{
+					"type":"ok",
+					"click": function() {
+						dlg.setFootMsg("<img src='{0}'><span class='hsys-blink' style='background-color:#fff'><b>&nbsp;数据在几秒内会下载完毕，请留意...</b></span>".format(hsys.url("/icons/progress-pet.gif")));
+					}
+				}
+			],
+			"url": "/user/json/download",
+			"isDownload": true,
+		});
+	});
+	
 });

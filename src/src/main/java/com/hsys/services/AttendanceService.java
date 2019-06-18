@@ -21,7 +21,7 @@ public class AttendanceService {
     private AttendanceMapper attendanceMapper;
 	
 	public HsysPageInfo<AttendanceModel> queryList(HsysPageInfo<AttendanceModel> page) {
-		PageHelper.startPage(page.getPageNum(), page.getPageSize(), true);
+		PageHelper.startPage(page.getPageNum(), page.getPageSize(), page.isCount());
 		Page<AttendanceModel> pageResult = (Page<AttendanceModel>) attendanceMapper.queryList(page.getParam());
 
 		page.setPageInfo(pageResult);
@@ -29,14 +29,20 @@ public class AttendanceService {
 		return page;
 	}
 	
+
+	public List<AttendanceModel> queryList(AttendanceModel att) {
+		HsysPageInfo<AttendanceModel> pageInfo = new HsysPageInfo<AttendanceModel>();
+		pageInfo.setParam(att);
+		pageInfo.setCount(false);//无需计数查询总数
+		return queryList(pageInfo);
+	}
+	
 	public void add(AttendanceModel a) {
 		attendanceMapper.add(a);
 	}
 
 	public AttendanceModel queryOne(AttendanceModel a) {
-		HsysPageInfo<AttendanceModel> pageInfo = new HsysPageInfo<AttendanceModel>();
-		pageInfo.setParam(a);
-		List<AttendanceModel> us = queryList(pageInfo);
+		List<AttendanceModel> us = queryList(a);
 		if(us.size() == 1) {
 			return us.get(0);
 		}
@@ -45,5 +51,13 @@ public class AttendanceService {
 
 	public void update(AttendanceModel a) {
 		attendanceMapper.update(a);
+	}
+	
+	public void update(List<AttendanceModel> list) {
+		attendanceMapper.updateBatch(list);
+	}
+
+	public void add(List<AttendanceModel> list) {
+		attendanceMapper.addBatch(list);
 	}
 }

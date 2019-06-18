@@ -21,7 +21,7 @@ import com.hsys.services.AttendanceService;
 import com.hsys.services.ExpenseItemService;
 import com.hsys.services.ExpenseReceiptService;
 import com.hsys.services.ExtraTimeService;
-import com.hsys.services.RestServices;
+import com.hsys.services.RestService;
 import com.hsys.services.UserService;
 
 /**
@@ -35,7 +35,7 @@ public class ToolsBusiness {
 	@Autowired
 	private AttendanceService attendanceService;
 	@Autowired
-	private RestServices restService;
+	private RestService restService;
 	@Autowired
 	private InitialDataTxtDataReader reader;
 	@Autowired

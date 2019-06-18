@@ -13,6 +13,7 @@ import com.hsys.business.beans.ReceiptDetailBean;
 import com.hsys.business.forms.ExpenseHtmlForm;
 import com.hsys.business.forms.ExpenseReceiptDeleteForm;
 import com.hsys.business.forms.ExpenseReceiptJsonForm;
+import com.hsys.business.forms.ExpenseReceiptSetCommentForm;
 import com.hsys.business.forms.ExpenseReceiptSetProjectForm;
 import com.hsys.business.forms.ExpenseReceiptUpdateForm;
 import com.hsys.common.HsysString;
@@ -25,6 +26,7 @@ import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
 import com.hsys.models.ProjectModel;
 import com.hsys.models.UserModel;
+import com.hsys.models.enums.OrderFlag;
 import com.hsys.models.enums.ROLE;
 import com.hsys.models.enums.ReceiptStatus;
 import com.hsys.services.ExpenseItemService;
@@ -128,9 +130,13 @@ public class ExpenseReceiptBusiness {
 		ExpenseItemModel item = new ExpenseItemModel();
 		item.setReceipt(receipt);
 		item.setCond(ExpenseItemModel.COND_RECEIPT_ID, true);
+		
+		item.addSortOrder(ExpenseItemModel.ORDER_USER_NO, OrderFlag.ASC);
+		item.addSortOrder(ExpenseItemModel.ORDER_DATE, OrderFlag.ASC);
 		List<ExpenseItemModel> items = expenseItemService.queryList(item);
 		bean.setItems(items);
 
+		//合计算出
 		List<ReceiptDetailBean.UserNumBean> uBeans = HsysList.New();
 		float num = 0;
 		for(ExpenseItemModel i : items) {
@@ -186,8 +192,10 @@ public class ExpenseReceiptBusiness {
 		if(receipt == null) {
 			throw new HsysException("该报销单目不存在。");
 		}
-		if(receipt.getStatus()!= ReceiptStatus.Regist) {
-			throw new HsysException("已提交不可更改。"); 
+		
+		boolean isNotRegisting = false;
+		if(receipt.getStatus() != ReceiptStatus.Regist) {
+			isNotRegisting = true;
 		}
 		
 		if(receipt.getComment() != form.getComment()) {
@@ -196,11 +204,21 @@ public class ExpenseReceiptBusiness {
 		}
 			
 		if(receipt.getType() != form.getType()){
+			if(isNotRegisting) {
+				throw new HsysException("已提交不可更改。"); 
+			}
 			receipt.setType(form.getType());
 			receipt.setUpdate(ExpenseReceiptModel.FIELD_TYPE);
 		}
 		
 		if(receipt.getPayee().getId() != form.getPayeeId()){
+			if(isNotRegisting) {
+				throw new HsysException("已提交不可更改。"); 
+			}
+
+			if(receipt.getPayee().getId() != HsysSecurityContextHolder.getLoginUserId()) {
+				throw new HsysException("登录者非变更前的领款人，不能变更领款人。"); 
+			}
 			UserModel user = new UserModel();
 			user.setId(form.getPayeeId());
 			receipt.setPayee(user);
@@ -292,7 +310,7 @@ public class ExpenseReceiptBusiness {
 		return HsysIO.downloadHttpFile(filePath);
 	}
 
-	public void Setproject(ExpenseReceiptSetProjectForm form) {
+	public void SetProject(ExpenseReceiptSetProjectForm form) {
 		ExpenseReceiptModel receipt = expenseReceiptService.queryById(form.getId());
 		if(receipt == null) {
 			throw new HsysException("不存在的报销单"); 
@@ -307,6 +325,22 @@ public class ExpenseReceiptBusiness {
 		p.setId(form.getProjectId());
 		receipt.setProject(p);
 		receipt.setUpdate(ExpenseReceiptModel.FIELD_PROJECT_ID);
+		expenseReceiptService.update(receipt);
+	}
+
+	public void SetComment(ExpenseReceiptSetCommentForm form) {
+		ExpenseReceiptModel receipt = expenseReceiptService.queryById(form.getId());
+		if(receipt == null) {
+			throw new HsysException("不存在的报销单"); 
+		}
+
+		if(receipt.getStatus() == ReceiptStatus.Approval ||
+			receipt.getStatus() == ReceiptStatus.Finish) {
+			throw new HsysException("会计处理中不能修改备注"); 
+		}
+		
+		receipt.setComment(form.getComment());
+		receipt.setUpdate(ExpenseReceiptModel.FIELD_COMMENT);
 		expenseReceiptService.update(receipt);
 	}
 }

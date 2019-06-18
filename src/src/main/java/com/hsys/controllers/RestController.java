@@ -2,6 +2,7 @@ package com.hsys.controllers;
 
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.RestBusiness;
+import com.hsys.business.beans.RestListBean;
 import com.hsys.business.forms.RestHtmlListForm;
 import com.hsys.business.forms.RestJsonAddForm;
 import com.hsys.business.forms.RestJsonApproveForm;
@@ -34,7 +36,8 @@ public class RestController extends BaseController {
 	@RequestMapping("/html/list")
 	public String htmlList(RestHtmlListForm form, Model model) {
 		List<RestModel> list = restBusiness.getRests(form);
-
+		RestListBean bean = restBusiness.getRestListBean(form);
+		model.addAttribute("bean", bean);
 		model.addAttribute("form", form);
 		model.addAttribute("list", list);
 		return "rest/list";

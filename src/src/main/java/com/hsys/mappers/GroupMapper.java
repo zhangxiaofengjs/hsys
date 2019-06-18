@@ -18,9 +18,11 @@ public interface GroupMapper {
 
 	void add(GroupModel group);
 
-	void update(GroupModel group);
+	void updateGroup(GroupModel group);
 
 	void addUserGroup(@Param("userId") int userId, @Param("groupId")int grpId);
 	
 	void updateUserGroup(@Param("userId") int userId, @Param("groupId")int grpId);
+	
+	void delete(GroupModel group);
 }

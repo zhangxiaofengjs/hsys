@@ -1,4 +1,24 @@
 $(document).ready(function(){
+	htreeview.initPullDown({
+		"id":"groupId",
+		"css": {
+			"display": "inline-block",
+			"width": "200px",
+		},
+		"ajax":{
+			"url":'/group/json/children'
+		}
+	});
+	
+	
+	function calcLen(dlg) {
+		var start = "2019-04-15 " + dlg.elem("startTime").val() + ":00";
+		var end = "2019-04-15 " + dlg.elem("endTime").val() + ":00";
+		var s = hdate.span(start, end, "h");
+		dlg.elem("length").val(s);
+	}
+	
+	
 	$("#addExtra").click(function(){
 		var self = $(this);
 		var user = $(":hidden[name='user']").val();
@@ -14,17 +34,19 @@ $(document).ready(function(){
 				},
 				{
 					"id":"startTime",
-					"label":"开始时间",
+					"label":'<span style="color:red;">实际</span><span>开始时间</span>',
 					"type":"time",
 					"required":true,
 					"value": hdate.format(new Date(),"18:00"),
+					"change": calcLen,
 				},
 				{
 					"id":"endTime",
-					"label":"结束时间",
+					"label":'<span style="color:red;">实际</span><span>结束时间</span>',
 					"type":"time",
 					"required":true,
 					"value": hdate.format(new Date(),"21:00"),
+					"change": calcLen,
 				},
 				{
 					"id":"type",
@@ -92,11 +114,11 @@ $(document).ready(function(){
 					"type":"checkboxgroup",
 					"options":[{
 						"value":1,
-						"text":"午餐",
+						"text":"午餐&nbsp;",
 					},
 					{
 						"value":2,
-						"text":"晚餐",
+						"text":"晚餐&nbsp;",
 					}],
 					"value":[2]
 				},
@@ -149,6 +171,7 @@ $(document).ready(function(){
 					"type":"time",
 					"required":true,
 					"value": hdate.format(new Date(),"HH:mm"),
+					"change": calcLen,
 				},
 				{
 					"id":"endTime",
@@ -156,6 +179,7 @@ $(document).ready(function(){
 					"type":"time",
 					"required":true,
 					"value": hdate.format(new Date(),"HH:mm"),
+					"change": calcLen,
 				},
 				{
 					"id":"type",
@@ -255,8 +279,9 @@ $(document).ready(function(){
 		}
 		var id = selIds[0];
 		hdlg.showYesNo(
-				"确定批准选中的报销单吗?",
+				"确定批准选中的加班记录吗?",
 				function() {
+					var dlg = hdlg.showMsg("正在处理中，请稍候...");
 					hsys.ajax({
 						"url":"/extratime/json/approval",
 						"data": {
@@ -266,6 +291,7 @@ $(document).ready(function(){
 							hsys.success(true);
 						},
 						"error": function(data) {
+							dlg.close();
 							hsys.error(data.msg);
 						}
 					});

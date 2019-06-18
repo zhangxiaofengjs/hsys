@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:include="common/header::header">
+</head>
+<body>
+	<script th:src="@{/js/definition/list.js}"></script>
+	<script th:src="@{/js/definition/group/list.js}"></script>
+	<script th:src="@{/js/definition/school/list.js}"></script>
+	<script th:src="@{/js/definition/company/list.js}"></script>
+	<script th:src="@{/js/definition/project/list.js}"></script>
+	<div class="bg-warning" style="padding:5px;border-top:2px solid #ddd;" data-toggle="collapse" data-target="#groupTableDiv">
+		<a class="hsys-a-pointer"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;<b>分组定义</b></a>
+	</div>
+	<div id="groupTableDiv" th:class="${'collapse' + (form.groupExpand?' in':'')}">
+		<input type="hidden" name="groupTableExpand" id="groupTableExpand" th:value="${form.groupExpand}">
+		<table id="groupTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
+			<thead>
+				<tr>
+					<td colspan="4">
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='addGroup' >添加</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='editGroup' >编辑</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='deleteGroup' >删除</button>
+					</td>
+				</tr>
+			    <tr>
+			    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+					<th>组名</th>
+					<th>上层组织</th>
+			    </tr>
+			</thead>
+			<tbody>
+				<tr th:each="group : ${groups}" >
+					<td><input type="checkbox" name="select" th:rowid="${group.id}"></td>
+			    	<td th:text="${group.name }"></td>
+			    	<td th:text="${group.parent.name}"></td>
+			    </tr>
+			</tbody>
+		</table>
+	</div>
+
+	<div class="bg-warning" style="padding:5px;border-top:2px solid #ddd;" data-toggle="collapse" data-target="#projectTableDiv">
+		<a class="hsys-a-pointer"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;<b>项目定义</b></a>
+	</div>
+	<div id="projectTableDiv" th:class="${'collapse' + (form.projectExpand?' in':'')}">
+		<input type="hidden" name="projectTableExpand" id="projectTableExpand" th:value="${form.projectExpand}">
+		<table id="projectTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
+			<thead>
+				<tr>
+					<td colspan="5">
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='addProject'>添加</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='updateProject'>编辑</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='deleteProject'>删除</button>
+					</td>
+				</tr>
+			    <tr>
+			    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+					<th width="20%">项目编号</th>
+					<th width="30%">项目名</th>
+					<th width="10%">项目经费</th>
+					<th>项目负责者</th>
+			    </tr>
+			</thead>
+			<tbody>
+				<tr th:each="project : ${projects}">
+					<td>
+						<input type="checkbox" name="select" th:rowid="${project.id}">
+					</td>
+					<td th:text="${project.no}"></td>
+					<td th:text="${project.name}"></td>
+					<td th:text="${project.funds}"></td>
+					<td>
+						<span th:each="user : ${project.users}">
+							<span class="label label-primary" >
+								<span th:text="${user.name}"></span>
+								<a id="delete" class="hsys-a-pointer" th:rowid="${project.id}" th:itemid="${user.id}"><img width="14px" th:src="@{/icons/delete.png}" /></a>
+							</span>&nbsp;
+						</span>
+						<a id="add" class="hsys-a-pointer" th:rowid="${project.id}"><img width="16px" th:src="@{/icons/add.png}" /></a>
+					</td>
+			    </tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="bg-warning" style="padding:5px;border-top:2px solid #ddd;" data-toggle="collapse" data-target="#companyTableDiv">
+		<a class="hsys-a-pointer"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;<b>公司定义</b></a>
+	</div>
+	<div id="companyTableDiv" th:class="${'collapse' + (form.companyExpand?' in':'')}">
+		<input type="hidden" name="companyTableExpand" id="companyTableExpand" th:value="${form.companyExpand}">
+		<table id="companyTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
+			<thead>
+				<tr>
+					<td colspan="4">
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='addCompany'>添加</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='updateCompany'>编辑</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='deleteCompany'>删除</button>
+					</td>
+				</tr>
+			    <tr>
+			    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+					<th width="20%">公司名</th>
+					<th width="20%">电话</th>
+					<th>地址</th>
+			    </tr>
+			</thead>
+			<tbody>
+				<tr th:each="company : ${companies}">
+					<td>
+						<input type="checkbox" name="select" th:rowid="${company.id}">
+					</td>
+					<td th:text="${company.name}"></td>
+					<td th:text="${company.phoneNum}"></td>
+					<td th:text="${company.address}"></td>
+			    </tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="bg-warning" style="padding:5px;border-top:2px solid #ddd;" data-toggle="collapse" data-target="#schoolTableDiv">
+		<a class="hsys-a-pointer"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span>&nbsp;<b>学校名称</b></a>
+	</div>
+	<div id="schoolTableDiv" th:class="${'collapse' + (form.schoolExpand?' in':'')}">
+		<input type="hidden" name="schoolTableExpand" id="schoolTableExpand" th:value="${form.schoolExpand}">
+		<table id="schoolTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false" >
+			<thead>
+			    <tr>
+					<td colspan="4">
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='schoolAdd'>添加</button>					
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='schoolEdit'>编辑</button>
+						<button type="button" class="btn btn-sm btn-primary hsys-small-btn" id='schoolDelete'>删除</button>
+					</td>
+				</tr>
+				 <tr>
+			    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+					<th>学校名称</th>
+			    </tr>
+			</thead>
+			<tbody>
+				<tr th:each="school : ${schools}" >
+					<td><input type="checkbox" name="select" th:rowid="${school.id}"></td>
+			    	<td th:text="${school.name }"></td>
+			    </tr>
+			</tbody>
+		</table>
+	</div>
+	<div th:replace="common/footer::copyright"></div>
+</body>
+</html>

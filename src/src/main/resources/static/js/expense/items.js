@@ -1,4 +1,26 @@
 $(document).ready(function(){
+	function sum(bCheckSelect) {
+		var chkBoxes = $("#itemTable :checkbox[name='select']");
+		
+		var sum = 0;
+		
+		chkBoxes.each(function() {
+			if(!bCheckSelect || bCheckSelect && $(this).prop('checked') ) {
+				sum += parseFloat($(this).attr("len"));
+			}
+		});
+		
+		return sum;
+	}
+
+	$("#sumTotal").html("¥" + sum(false).toFixed(2));
+
+	//页面合计
+	htbl.checkboxClicked("itemTable", function() {
+		var s = sum(true);
+		$("#sumSelect").html("¥" + s.toFixed(2));
+	});
+	
 	$("#addItem").click(function(){
 		var self = $(this);
 		hdlg.showForm({
@@ -142,50 +164,50 @@ $(document).ready(function(){
 					"required":true,
 					"depend": true,
 				},
-				{
-					"id":"userId",
-					"label":"报销人",
-					"type":"select",
-					"options":[],
-					"depend": true,
-					"ajax":{
-						"url":"/user/json/list",
-						"success": function(response, dlg) {
-							var field = dlg.field("userId");
-							response.users.forEach(function(user,index){
-								field.options.push(
-									{ 
-										"text":"["+ user.no +"]" + user.name,
-										"value":user.id,
-									}
-								);
-							});
-							dlg.buildField("userId");
-						},
-					},
-				},
-				{
-					"id":"payeeId",
-					"label":"领款人",
-					"type":"select",
-					"options":[],
-					"depend": true,
-					"ajax":{
-						"url":"/user/json/list",
-						"success": function(response, dlg) {
-							var field = dlg.field("payeeId");
-							response.users.forEach(function(user,index){
-								field.options.push(
-										{ 
-											"text":"["+ user.no +"]" + user.name,
-											"value":user.id,
-										}
-								);
-							});
-							dlg.buildField("payeeId");
-						},
-					},
-				},
+//				{
+//					"id":"userId",
+//					"label":"报销人",
+//					"type":"select",
+//					"options":[],
+//					"depend": true,
+//					"ajax":{
+//						"url":"/user/json/list",
+//						"success": function(response, dlg) {
+//							var field = dlg.field("userId");
+//							response.users.forEach(function(user,index){
+//								field.options.push(
+//									{ 
+//										"text":"["+ user.no +"]" + user.name,
+//										"value":user.id,
+//									}
+//								);
+//							});
+//							dlg.buildField("userId");
+//						},
+//					},
+//				},
+//				{
+//					"id":"payeeId",
+//					"label":"领款人",
+//					"type":"select",
+//					"options":[],
+//					"depend": true,
+//					"ajax":{
+//						"url":"/user/json/list",
+//						"success": function(response, dlg) {
+//							var field = dlg.field("payeeId");
+//							response.users.forEach(function(user,index){
+//								field.options.push(
+//										{ 
+//											"text":"["+ user.no +"]" + user.name,
+//											"value":user.id,
+//										}
+//								);
+//							});
+//							dlg.buildField("payeeId");
+//						},
+//					},
+//				},
 				{
 					"id":"num",
 					"label":"报销金额",
@@ -250,8 +272,8 @@ $(document).ready(function(){
 					var item = response.item;
 					
 					dlg.buildField("date", item.date);
-					dlg.buildField("userId", item.user.id, false, false);
-					dlg.buildField("payeeId", item.payee.id, false, false);
+//					dlg.buildField("userId", item.user.id, false, false);
+//					dlg.buildField("payeeId", item.payee.id, false, false);
 					dlg.buildField("num", item.num);
 					dlg.buildField("type", item.type);
 					dlg.buildField("comment", item.comment);

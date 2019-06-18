@@ -37,10 +37,15 @@
 			</form>
 		</div>
 	</nav>
+	
 	<table id="itemTable" class="table table-striped table-bordered table-hover table-condensed" contenteditable="false">
 		<thead>
+		 	<tr class="alert alert-warning">
+		    	<th colspan=2>合计</th>
+		    	<th colspan=8><span id="sumTotal"></span>(总计)&nbsp;<span id="sumSelect">¥0.00</span>(选择)</th>
+		    </tr>
 		    <tr>
-		    <th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
+		    	<th class="hsys-table-checkbox-column"><input type="checkbox" name="selectAll"></th>
 				<th width=60px>ID</th>
 				<th width=100px>种类</th>
 				<th width=100px>日期</th>
@@ -58,7 +63,7 @@
 						payee=${item.payee},
 						receipt=${item.receipt}">
 				<td>
-					<input type="checkbox" name="select" th:rowid="${item.id}">
+					<input type="checkbox" name="select" th:rowid="${item.id}" th:len="${item.num}">
 				</td>		
 				<td th:text="${'#' + item.id}"></td>
 				<td th:switch="${item.type}">

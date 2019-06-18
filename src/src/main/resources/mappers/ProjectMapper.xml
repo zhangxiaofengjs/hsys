@@ -6,22 +6,32 @@
         <id column="p_id" property="id"/>  
         <result column="p_no" property="no"/>
         <result column="p_name" property="name"/>
+        <result column="p_funds" property="funds"/>
     </resultMap>
 	<resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>  
         <result column="u_no" property="no"/>
         <result column="u_name" property="name"/>
     </resultMap>
+    <resultMap id="projectLeaderResultMap" type="projectLeaderModel" >  
+        <id column="pl_id" property="id"/>  
+        <result column="pl_project_id" property="projectId"/>
+        <result column="pl_leader_id" property="leaderId"/>
+    </resultMap>
 
 	<select id="queryList" resultMap="projectResultMap">
 		select p.c_id as p_id,
 			   p.c_no as p_no,
-			   p.c_name as p_name
+			   p.c_name as p_name,
+			   p.c_funds as p_funds
 		from project_tbl as p
 		<if test="cond.leaderId != null">
 			left join project_leader_tbl as pl on pl.c_project_id=p.c_id
 		</if>
 		<where>
+			<if test="cond.id != null">
+				and p.c_id = #{id}
+			</if>
 			<if test="cond.no != null">
 				and p.c_no = #{no}
 			</if>
@@ -42,10 +52,78 @@
 			<if test="cond.id != null">
 				and pl.c_id = #{id}
 			</if>
+			<if test="cond.no != null">
+				and pl.c_no = #{no}
+			</if>
 			<if test="cond.leaderId != null">
 				and pl.c_leader_id = #{cond.leaderId}
+			</if>
+			<if test="cond.projectId != null">
+				and pl.c_project_id = #{cond.projectId}
 			</if>
 		</where>
 		order by u.c_no
 	</select>
+	
+	<insert id="addLeader" parameterType="projectLeaderModel">
+    	insert into project_leader_tbl (
+    		c_project_id,
+    		c_leader_id
+    		)
+    	values (
+    		#{projectId},
+    		#{leaderId}
+    	)
+    </insert>
+    
+    <insert id="addProject" parameterType="projectModel">
+    	insert into project_tbl (
+    		c_no,
+    		c_name,
+    		c_funds
+    		)
+    	values (
+    		#{no},
+    		#{name},
+    		#{funds}
+    	)
+    </insert>
+    
+    <delete id="deleteLeader">
+    	delete from project_leader_tbl
+    	<where>
+			c_project_id = #{projectId}
+			and c_leader_id = #{leaderId}
+		</where>
+    </delete>
+    
+    <delete id="deleteProjects">
+    	delete from project_tbl
+    	<where>
+			c_id = #{id}
+		</where>
+		;
+		delete from project_leader_tbl
+		<where>
+			c_project_id = #{id}
+		</where>
+    </delete>
+    
+    <update id="update">
+    	update project_tbl
+		<set>
+    		<if test="update.no != null">
+				c_no = #{no},
+			</if>
+    		<if test="update.name != null">
+				c_name = #{name},
+			</if>
+    		<if test="update.funds != null">
+				c_funds = #{funds}
+			</if>
+		</set>
+    	<where>
+			c_id = #{id}
+		</where>
+    </update>
 </mapper>

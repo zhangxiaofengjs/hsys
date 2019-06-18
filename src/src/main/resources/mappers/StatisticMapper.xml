@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hsys.mappers.StatisticMapper">
+    <resultMap id="statisticResultMap" type="StatisticModel">
+    	<result column="g_name" property="groupName"/>
+    	<result column="u_no" property="userNo"/>
+    	<result column="u_name" property="userName"/>
+    	<result column="e_normol" property="etNormal"/>
+    	<result column="e_weekend" property="etWeekend"/>
+    	<result column="e_holiday" property="etHoliday"/>
+    	<result column="e_sum" property="etSum"/>
+    	<result column="r_vacation" property="rtVacation"/>
+    	<result column="r_sick" property="rtSick"/>
+    	<result column="r_leave" property="rtLeave"/>
+    	<result column="r_marriage" property="rtMarriage"/>
+    	<result column="r_funeral" property="rtFuneral"/>
+    	<result column="r_public" property="rtPublics"/>
+    	<result column="r_sum" property="rtSum"/>
+    </resultMap>
+    
+    <sql id="sum_extra_time">
+    	select e.c_user_id as e_user_id,
+			   sum(c_len) as len
+		from extra_time_tbl as e 
+		<where>
+			<if test="cond.status != null">
+				 e.c_status = #{cond.status} and
+			</if> 
+			e.c_type=${ref_type} and 
+			e.c_date <![CDATA[>=]]> #{cond.startDate} and 
+			e.c_date <![CDATA[<=]]> #{cond.endDate}
+		</where>
+		group by e.c_user_id
+    </sql>
+	
+	<sql id="sum_rest_time">
+    	select r.c_user_id as r_user_id,
+			   sum(c_len) as len
+		from rest_tbl as r 
+		<where>
+			<if test="cond.status != null">
+				 r.c_status = #{cond.status} and
+			</if> 
+			r.c_type=${ref_type} and 
+			r.c_date_start <![CDATA[>=]]> #{cond.dateStart} and 
+			r.c_date_end <![CDATA[<=]]> #{cond.dateEnd}
+		</where>
+		group by r.c_user_id
+    </sql>
+	
+	 <sql id ="queryListCommon"  >
+		select 	ifnull(g.c_name,'其他组') as g_name,
+				u.c_no as u_no,
+				u.c_name as u_name,
+				en.len as e_normol,
+				ew.len as e_weekend,
+				eh.len as e_holiday,
+				ifnull(en.len,0.0)+ifnull(ew.len,0.0)+ifnull(eh.len,0.0) as e_sum,
+				rv.len as r_vacation,
+				rs.len as r_sick,
+				rl.len as  r_leave,
+				rm.len as  r_marriage,
+				rf.len as r_funeral,
+				rp.len as r_public,
+				ifnull(rv.len,0.0)+ifnull(rs.len,0.0)+ifnull(rl.len,0.0)+ifnull(rm.len,0.0)+ifnull(rf.len,0.0)+ifnull(rp.len,0.0)  as r_sum
+		from user_tbl u
+		left join 
+			(<include refid="sum_extra_time">
+			 	<property name="ref_type" value="0"/>
+			 </include>) as en on en.e_user_id=u.c_id
+		left join
+			(<include refid="sum_extra_time">
+			 	<property name="ref_type" value="1"/>
+			 </include>) as ew on ew.e_user_id =u.c_id
+		left join
+			(<include refid="sum_extra_time">
+			 	<property name="ref_type" value="2"/>
+			 </include>) as eh on eh.e_user_id =u.c_id
+		left join
+			(<include refid="sum_rest_time">
+			 	<property name="ref_type" value="0"/>
+			 </include>) as rv on rv.r_user_id =u.c_id
+		left join
+			(<include refid="sum_rest_time">
+			 	<property name="ref_type" value="1"/>
+			 </include>) as rs on rs.r_user_id =u.c_id
+		left join
+			(<include refid="sum_rest_time">
+			 	<property name="ref_type" value="2"/>
+			 </include>) as rl on rl.r_user_id =u.c_id
+		left join
+			(<include refid="sum_rest_time">
+			 	<property name="ref_type" value="3"/>
+			 </include>) as rm on rm.r_user_id =u.c_id
+		left join
+			(<include refid="sum_rest_time">
+			 	<property name="ref_type" value="4"/>
+			 </include>) as rf on rf.r_user_id =u.c_id
+		left join
+			(<include refid="sum_rest_time">
+			 	<property name="ref_type" value="5"/>
+			 </include>) as rp on rp.r_user_id =u.c_id
+		left join user_group_tbl as ug on ug.c_user_id=u.c_id
+		left join group_tbl as g on g.c_id=ug.c_group_id
+		<where> 
+			u.c_hidden_flag = 0 and c_exit_date is null OR (c_exit_date is not null and 
+			(ifnull(en.len,0.0)+ifnull(ew.len,0.0)+ifnull(eh.len,0.0)+
+			ifnull(rv.len,0.0)+ifnull(rs.len,0.0)+ifnull(rl.len,0.0)+ifnull(rm.len,0.0)+ifnull(rf.len,0.0)+ifnull(rp.len,0.0)) !=0.0)
+		</where>
+		order by g.c_name
+    </sql>
+	
+     <select id ="queryList" resultMap="statisticResultMap" >
+		<include refid="queryListCommon">
+		</include>
+    </select>
+    
+	<select id="SumTotalList" resultMap="statisticResultMap" >
+	select 
+		ifnull(sum(cin.e_normol), 0.0) e_normol,
+		ifnull(sum(cin.e_weekend),0.0) e_weekend,
+		ifnull(sum(cin.e_holiday),0.0) e_holiday,
+		ifnull(sum(cin.e_sum),0.0) e_sum,
+		ifnull(sum(cin.r_vacation),0.0) r_vacation,
+		ifnull(sum(cin.r_sick),0.0) r_sick,
+		ifnull(sum(cin.r_leave),0.0) r_leave,
+		ifnull(sum(cin.r_marriage),0.0) r_marriage,
+		ifnull(sum(cin.r_funeral),0.0) r_funeral,
+		ifnull(sum(cin.r_public),0.0) r_public,
+		ifnull(sum(cin.r_sum),0.0) r_sum
+	from (<include refid="queryListCommon">		 	
+		</include>) as cin
+	</select>
+	
+    <select id="GetGroupStatisticsList"  resultMap="statisticResultMap"  >
+	select cin.g_name g_name ,
+		ifnull(sum(cin.e_normol), 0.0) e_normol,
+		ifnull(sum(cin.e_weekend),0.0) e_weekend,
+		ifnull(sum(cin.e_holiday),0.0) e_holiday,
+		ifnull(sum(cin.e_sum),0.0) e_sum,
+		ifnull(sum(cin.r_vacation),0.0) r_vacation,
+		ifnull(sum(cin.r_sick),0.0) r_sick,
+		ifnull(sum(cin.r_leave),0.0) r_leave,
+		ifnull(sum(cin.r_marriage),0.0) r_marriage,
+		ifnull(sum(cin.r_funeral),0.0) r_funeral,
+		ifnull(sum(cin.r_public),0.0) r_public,
+		ifnull(sum(cin.r_sum),0.0) r_sum
+	from (<include refid="queryListCommon">
+		</include>) as cin 
+	group by cin.g_name
+    </select>
+    
+	
+</mapper>

@@ -36,7 +36,7 @@ $(document).ready(function(){
 					"id":"comment",
 					"label":"备注",
 					"type":"text",
-					"required":true,
+					//"required":true,
 					"maxlength":50,
 				},/*
 				{
@@ -124,7 +124,7 @@ $(document).ready(function(){
 				},
 				{
 					"id":"payeeId",
-					"label":"使用者",
+					"label":"领款人",
 					"type":"select",
 					"options":[],
 					"depend": true,

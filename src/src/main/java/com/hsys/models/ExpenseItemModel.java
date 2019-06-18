@@ -34,6 +34,9 @@ public class ExpenseItemModel extends BaseModel {
 	public static final String FIELD_RECEIPT_ID = "receiptId";
 	public static final String FIELD_STATUS = "status";
 	
+	public static final String ORDER_USER_NO = "userNo";
+	public static final String ORDER_DATE = "date";
+	
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
 	private Date date;

@@ -4,13 +4,37 @@
 <head th:include="common/header::header">
 </head>
 <body>
+	<script th:src="@{/js/statistic/list.js}"></script> 
+	<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
+		<div class="container-fluid">
+	  		<div class="navbar-header">
+	  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
+	  		</div>
+	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/statistic/html/list}" method="post">
+	 			<div class="form-group">
+				    <input type="date" class="form-control hsys-fc-date-width" name="start" id="start" th:value="${#dates.format(form.start, 'yyyy-MM-dd')}" >
+	 			  	 到
+				    <input type="date" class="form-control hsys-fc-date-width" name="end" id="end" th:value="${#dates.format(form.end, 'yyyy-MM-dd')}">
+				    <select th:if="${not form.view}" class="form-control" id="sumType" name="sumType" th:value="${form.sumType}">   
+						<option value=0  th:selected="${form.sumType==0?'selected':_}">按组合计</option>
+				        <option value=1 th:selected="${form.sumType==1?'selected':_}">按人员合计</option>
+					</select>
+					<input class="checkbox" type="checkbox" id="approveType_chkbox" name="approveType_chkbox" th:checked="${form.approveType == 0}">包含未批准项目
+					<input type="hidden" id="approveType" name="approveType" th:value="${form.approveType}">
+	 			</div>
+	 			<div class="form-group">
+	 			    <button type="submit" class="btn btn-sm btn-primary">查询</button>
+		 		</div>
+			</form>
+		</div>
+	</nav>
 	<table id="statisticTable" class="table table-bordered table-hover table-condensed" contenteditable="false">
 		<thead>
-		    <tr>
+		    <tr >
 		    	<th class="hsys-table-checkbox-column" rowspan=2><input type="checkbox" name="selectAll"></th>
 		    	<th width=50px rowspan=2>组</th>
-				<th width=100px rowspan=2>工号</th>
-				<th width=100px rowspan=2>姓名</th>
+				<th width=100px rowspan=2 th:if="${form.sumType==1}">工号</th>
+				<th width=100px rowspan=2 th:if="${form.sumType==1}">姓名</th>
 				<th width=80px colspan=4 style="text-align:center;">加班(h)</th>
 				<th width=80px colspan=7 style="text-align:center;">请假(h)</th>
 		    </tr>
@@ -18,131 +42,38 @@
 		    	<th width=50px>平时</th>
 		    	<th width=50px>周末</th>
 		    	<th width=50px>节假</th>
-		    	<th width=50px>合计</th>
+		    	<th width=50px class= "alert-warning">合计</th>
 		    	<th width=50px>休</th>
 		    	<th width=50px>事</th>
 		    	<th width=50px>病</th>
 		    	<th width=50px>婚</th>
 		    	<th width=50px>丧</th>
 		    	<th width=50px>公</th>
-		    	<th width=50px>合计</th>
+		    	<th width=50px class= "alert-warning">合计</th>
 		    </tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td><input type="checkbox" name="select"></td>
-		    	<td>zuken</td>
-		    	<td>001</td>
-		    	<td>bac</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    </tr>
-			<tr>
-				<td><input type="checkbox" name="select"></td>
-		    	<td>zuken</td>
-		    	<td>002</td>
-		    	<td>bac</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    </tr>
-		    <tr class="alert alert-success">
-				<td><input type="checkbox" name="select"></td>
-		    	<td>zuken</td>
-		    	<td colspan=2>***小计***</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    </tr>
-		    <tr>
-				<td><input type="checkbox" name="select"></td>
-		    	<td>nttd</td>
-		    	<td>001</td>
-		    	<td>bac</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    </tr>
-			<tr>
-				<td><input type="checkbox" name="select"></td>
-		    	<td>nttd</td>
-		    	<td>002</td>
-		    	<td>bac</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    </tr>
-		    <tr class="alert alert-success">
-				<td><input type="checkbox" name="select"></td>
-		    	<td>nttd</td>
-		    	<td colspan=2>***小计***</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    </tr>
-		    <tr class="alert alert-danger">
-				<td><input type="checkbox" name="select"></td>
-		    	<td colspan=3>***合计***</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>2</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
-		    	<td>1</td>
+			<tr th:each="statistic,itr : ${list}"
+				th:rowid="${statistic.id}"
+				th:with = "isTotalRow=${itr.index + 1 == #lists.size(list)}"
+				th:class="${isTotalRow ? 'alert-warning' : ''}"
+				th:style="${isTotalRow ? 'font-weight:bold;' : ''}"
+				>
+				<td><input type="checkbox" name="select" th:rowid="${statistic.id}"></td>
+		    	<td th:text="${isTotalRow ? '***合计***' : statistic.groupName}" ></td>
+		    	<td th:text="${statistic.userNo}" th:if="${form.sumType==1}" ></td>
+		    	<td th:text="${statistic.userName}" th:if="${form.sumType==1}" ></td>
+		    	<td th:text="${statistic.etNormal != 0 ? statistic.etNormal : ''}"></td>
+		    	<td th:text="${statistic.etWeekend != 0 ? statistic.etWeekend : ''}"></td>
+		    	<td th:text="${statistic.etHoliday != 0 ? statistic.etHoliday : ''}"></td>
+		    	<td th:text="${statistic.etSum != 0 ? statistic.etSum : ''}" class= "alert-warning"></td>
+		    	<td th:text="${statistic.rtVacation != 0 ? statistic.rtVacation : ''}"></td>
+		    	<td th:text="${statistic.rtLeave != 0 ? statistic.rtLeave : ''}"></td>
+		    	<td th:text="${statistic.rtSick != 0 ? statistic.rtSick : ''}"></td>
+		    	<td th:text="${statistic.rtMarriage != 0 ? statistic.rtMarriage : ''}"></td>
+		    	<td th:text="${statistic.rtFuneral != 0 ? statistic.rtFuneral : ''}"></td>
+		    	<td th:text="${statistic.rtPublics != 0 ? statistic.rtPublics : ''}"></td>
+		    	<td th:text="${statistic.rtSum != 0 ? statistic.rtSum : ''}" class= "alert-warning"></td>
 		    </tr>
 		</tbody>
 	</table>
