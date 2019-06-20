@@ -5,7 +5,6 @@ package com.hsys.business.forms;
  * @version: 2019/01/03
  */
 public class UserJsonChangePwdForm {
-	private String no;
 	private String password;
 	private String password2;
 	private String password3;
@@ -28,11 +27,4 @@ public class UserJsonChangePwdForm {
 	public void setPassword3(String password3) {
 		this.password3 = password3;
 	}
-	public String getNo() {
-		return no;
-	}
-	public void setNo(String no) {
-		this.no = no;
-	}
-	
 }

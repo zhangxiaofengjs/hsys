@@ -6,6 +6,7 @@ $(document).ready(function(){
 		var checked = self.prop("checked");
 
 		var tbl = self.closest("table");
+		var selectStyle = "hsys-select-row";
 		
 		if(self.attr("name")=="selectAll") {
 			//全选
@@ -22,17 +23,17 @@ $(document).ready(function(){
 			rows.each(function() {
 				if($(this).find(":checkbox").attr("name") == "select") {
 					if(checked) {
-						$(this).addClass("info");
+						$(this).addClass(selectStyle);
 					} else {
-						$(this).removeClass("info");
+						$(this).removeClass(selectStyle);
 					}
 				}
 			});
 		} else {
 			if(checked) {
-				self.closest("tr").addClass("info");
+				self.closest("tr").addClass(selectStyle);
 			} else {
-				self.closest("tr").removeClass("info");
+				self.closest("tr").removeClass(selectStyle);
 			}
 		}
 	});

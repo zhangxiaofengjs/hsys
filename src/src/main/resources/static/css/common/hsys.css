@@ -1,5 +1,21 @@
 @charset "UTF-8";
 
+.hsys-menu {
+	width:250px;
+	height:100%;
+	position:absolute;
+	float:left;
+	border-right:3px solid #989494;
+}
+
+.hsys-content {
+	min-width:400px;
+	position:relative;
+	min-height:800px;
+	background:#fff;
+	margin-left:250px;
+}
+
 .hsys-table-checkbox-column {
 	width:15px;
 }
@@ -53,6 +69,11 @@
 
 .hsys-red-bg {
 	background-color:#ca0c16;
+}
+
+.hsys-select-row {
+	color:#FFFFFF;
+	background-color:#337ab7 !important;
 }
 
 .hsys-fc-userno-width {

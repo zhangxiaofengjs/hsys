@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hsys.business.UserBusiness;
 import com.hsys.business.beans.UserBasicBean;
 import com.hsys.business.beans.UserDetailBean;
-import com.hsys.business.forms.AttendanceDownloadForm;
 import com.hsys.business.forms.UserDownloadForm;
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;

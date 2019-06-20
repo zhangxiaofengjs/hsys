@@ -1,316 +1,324 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-<head th:include="common/header::header">
+<head th:replace="common/header::header">
 </head>
 <body>
-	<script th:src="@{/js/user/detail.js}"></script> 
-	<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
-		<div class="container-fluid">
-	  		<div class="navbar-header">
-	  			<a th:href="@{/user/html/list}"><span class="navbar-brand glyphicon glyphicon-list" aria-hidden="true"></span></a>
-	  		</div>
-	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/detail}" method="post">
-	 			<div class="form-group">
-				   <input type="text" class="form-control hsys-fc-userno-width" id="no" name="no" th:value="${user.no}" placeholder="输入工号">
-	 			</div>
-	 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
-			</form>
+	<div th:replace="common/page::head"></div>
+	<div th:replace="common/page::menu"></div>
+	<div class="hsys-content">
+		<div class="container-fluid" style="padding-left:0px;">
+			<div class="row-fluid">
+				<script th:src="@{/js/user/detail.js}"></script> 
+				<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
+					<div class="container-fluid">
+				  		<div class="navbar-header">
+				  			<a th:href="@{/user/html/list}"><span class="navbar-brand glyphicon glyphicon-list" aria-hidden="true"></span></a>
+				  		</div>
+				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/detail}" method="post">
+				 			<div class="form-group">
+							   <input type="text" class="form-control hsys-fc-userno-width" id="no" name="no" th:value="${user.no}" placeholder="输入工号">
+				 			</div>
+				 			<button type="submit" class="btn btn-sm btn-primary">查询</button>
+						</form>
+					</div>
+				</nav>
+			
+				<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" >
+					<thead>
+						<tr>
+							<th style="width:120px;" >工号姓名 </th>
+							<th colspan=2>
+								<div id="e_sex_disp_div" style="display:inline-block;" th:switch="${user.sex}">
+				    				<th:block th:case="0">
+				    					<span style="display:none;" th:value="${user.sex}"></span>
+				    					<a th:if="${not form.view}" id="e_sex" class="hsys-a-pointer"><img th:src='@{/icons/male.png}' width=16px /></a>
+				    				</th:block>
+						  			<th:block th:case="1">
+						  				<span style="display:none;" th:value="${user.sex}"></span>
+						  				<a th:if="${not form.view}" id="e_sex" class="hsys-a-pointer"><img th:src='@{/icons/female.png}' width=16px /></a>
+						  			</th:block>
+					  			</div>
+					  			<span th:text="${user.no}"></span>&nbsp;
+								<div id="e_name_disp_div" style="display:inline-block;">
+									<span th:text="${user.name}" th:value="${user.name}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_name" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+					  			<input type="hidden" name="e_user_id" th:value="${user.id}">
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 基本信息 -->
+						<tr>
+							<td rowspan=4>基本信息</td>
+							<td style="width:90px;">拼写</td>
+							<td>
+								<div id="e_spelling_disp_div" >
+									<span th:text="${user.spelling}" th:value="${user.spelling}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_spelling" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						
+						<tr>
+							<td>所在部署</td>
+							<td>
+								<div id="e_group_disp_div" th:with="group=${user.group}">
+									<span th:text="${user.groupFullName}" th:value="${group!=null?group.id:_}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_group" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						
+						
+						<tr>
+							<td>工作地点</td>
+							<td>
+								<div id="e_place_disp_div">
+									<span th:text="${user.place}" th:value="${user.place}"></span>&nbsp;
+									<a  th:if="${not form.view}" id="e_place" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						
+						
+						<tr>
+							<td>所属公司</td>
+							<td>
+								<div id="e_companyName_disp_div">
+									<span th:text="${user.company != null ? user.company.name : _}" th:value="${user.company != null ? user.company.id : _}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_companyName" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<!--
+						<tr>
+							<td>QM</td>
+							<td>000</td>
+						</tr> -->
+						<!-- 联系信息 -->
+						<tr>
+							<td rowspan=3>联系信息</td>
+							<td>手机</td>
+							<td>
+								<div id="e_phoneNumber_disp_div">
+									<span th:text="${user.phoneNumber}" th:value="${user.phoneNumber}"></span>&nbsp;
+									<a  th:if="${not form.view}" id="e_phoneNumber" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>邮件</td>
+							<td>
+								<div id="e_mail_disp_div">
+									<span th:text="${user.mail}" th:value="${user.mail}"></span>&nbsp;
+									<a  th:if="${not form.view}" id="e_mail" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>地址</td>
+							<td>
+								<div id="e_address_disp_div">
+									<span th:text="${user.address}" th:value="${user.address}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_address" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<!-- 其他信息 -->
+						<tr>
+							<td rowspan=7>其他信息</td>
+							<td>身份证号</td>
+							<td>
+								<div id="e_idNumber_disp_div">
+									<span th:text="${user.idNumber}" th:value="${user.idNumber}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_idNumber" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>毕业院校</td>
+							<td>
+								<div id="e_school_disp_div">
+									<span th:text="${user.school !=null ? user.school.name: _}" th:value="${user.school != null ?  user.school.id:_}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_school" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>学历</td>
+							<td>
+								<div id="e_degree_disp_div">
+									<th:block th:switch="${user.degree}">
+				    					<span th:case="0" th:value="${user.degree}">大专</span>
+				    					<span th:case="1" th:value="${user.degree}">本科3</span>
+				    					<span th:case="2" th:value="${user.degree}">本科2</span>
+				    					<span th:case="3" th:value="${user.degree}">本科1</span>
+				    					<span th:case="4" th:value="${user.degree}">硕士</span>
+				    					<span th:case="5" th:value="${user.degree}">博士</span>
+				    					<span th:case="*" th:value="${user.degree}">其他</span>
+						  			</th:block>
+									<a th:if="${not form.view}" id="e_degree" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>主修专业</td>
+							<td>
+								<div id="e_major_disp_div">
+									<span th:text="${user.major}" th:value="${user.major}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_major" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>毕业年份</td>
+							<td>
+								<div id="e_graduateDate_disp_div">
+									<span th:text="${#dates.format(user.graduateDate, 'yyyy-MM-dd')}" th:value="${#dates.format(user.graduateDate, 'yyyy-MM-dd')}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_graduateDate" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>入职日期</td>
+							<td>
+								<div id="e_enterDate_disp_div">
+									<span th:text="${#dates.format(user.enterDate, 'yyyy-MM-dd')}" th:value="${#dates.format(user.enterDate, 'yyyy-MM-dd')}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_enterDate" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>离职日期</td>
+							<td>
+								<div id="e_exitDate_disp_div">
+									<span th:text="${#dates.format(user.exitDate, 'yyyy-MM-dd')}" th:value="${#dates.format(user.exitDate, 'yyyy-MM-dd')}"></span>&nbsp;
+									<a th:if="${not form.view}" id="e_exitDate" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+						<!-- 履历信息 -->
+						<tr>
+							<td rowspan=1>履历信息</td>
+							<td colspan=2 style="padding:0px;">
+								<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" style="margin-bottom:0px;">
+									<thead>
+										<tr>
+											<th style="width:20px;">#</th>
+											<th style="width:200px;">
+												期间
+												<a class="hsys-a-pointer" href="javascript:void(0);">
+									      			<img width="16px" th:src="@{/icons/add.png}" />
+									      		</a>
+											</th>
+											<th>公司</th>
+											<th style="width:120px;">职位</th>
+											<th>备注</th>
+											<th colspan=2>编辑</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td>2019/08/08 ~ 2019/08/08</td>
+											<td>海隆</td>
+											<td>老板</td>
+											<td>没啥好说的</td>
+											<td>
+												<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+											</td>
+											<td>
+												<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/delete.png}' width=12px /></a>
+											</td>
+										</tr>
+										<tr>
+											<td>2</td>
+											<td>2019/08/08 ~ 2019/08/08</td>
+											<td>海隆</td>
+											<td>老板</td>
+											<td>没啥好说的</td>
+											<td style="width:20px;">
+												<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+											</td>
+											<td style="width:20px;">
+												<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/delete.png}' width=12px /></a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<!-- 社内岗位变更 -->
+						<tr>
+							<td rowspan=1>社内岗位变更</td>
+							<td colspan=2 style="padding:0px;">
+								<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" style="margin-bottom:0px;">
+									<thead>
+										<tr>
+											<th style="width:20px;">#</th>
+											<th style="width:200px;">
+												日期
+											</th>
+											<th>原岗位</th>
+											<th style="width:120px;">调入岗位</th>
+											<th>备注</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td>2019/08/08</td>
+											<td>D503 PLM组</td>
+											<td>D603</td>
+											<td>没啥好说的</td>
+										</tr>
+										<tr>
+											<td>2</td>
+											<td>2019/08/08</td>
+											<td>D503 PLM组</td>
+											<td>D603</td>
+											<td>没啥好说的</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<!-- 权限信息 -->
+						<tr>
+							<td rowspan=1>权限信息</td>
+							<td colspan=2>
+								<div id="e_role_disp_div">
+									<th:block th:each="role : ${T(com.hsys.models.enums.ROLE).ALL}">
+										<input type="checkbox" name="e_role_value" th:id="${role}" th:checked="${T(com.hsys.business.UserBusiness).hasRole(user.roles, role)}" onclick="return false;" >
+										<th:block th:switch="${role}">
+											<span class="label label-danger" th:case="${T(com.hsys.models.enums.ROLE).ADMIN}">管理员<br></span>
+											<span class="label label-warning" th:case="${T(com.hsys.models.enums.ROLE).USER_EDIT}">用户编辑<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).USER_FULL_INFO }">查看用户所有信息<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE}">加班批准<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_LIST}">加班记录一览(组内)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL}">加班记录一览(所有)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_APPROVE}">请假批准<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_LIST}">请假记录一览(组内)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_LIST_ALL}">请假记录一览(所有)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_UPLOAD}">出勤记录导入<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST}">出勤记录一览(组内)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL}">出勤记录一览(所有)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST}">报销单一览(组内)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST_ALL}">报销单一览(所有)<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).DEVICE_EDIT}">设备编辑</span>
+										</th:block>
+									</th:block>
+									<a th:if="${not form.view}" id="e_role" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div th:replace="common/footer::footer"></div>
+			</div>
 		</div>
-	</nav>
-
-	<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" >
-		<thead>
-			<tr>
-				<th style="width:120px;" >工号姓名 </th>
-				<th colspan=2>
-					<div id="e_sex_disp_div" style="display:inline-block;" th:switch="${user.sex}">
-	    				<th:block th:case="0">
-	    					<span style="display:none;" th:value="${user.sex}"></span>
-	    					<a th:if="${not form.view}" id="e_sex" class="hsys-a-pointer"><img th:src='@{/icons/male.png}' width=16px /></a>
-	    				</th:block>
-			  			<th:block th:case="1">
-			  				<span style="display:none;" th:value="${user.sex}"></span>
-			  				<a th:if="${not form.view}" id="e_sex" class="hsys-a-pointer"><img th:src='@{/icons/female.png}' width=16px /></a>
-			  			</th:block>
-		  			</div>
-		  			<span th:text="${user.no}"></span>&nbsp;
-					<div id="e_name_disp_div" style="display:inline-block;">
-						<span th:text="${user.name}" th:value="${user.name}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_name" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-		  			<input type="hidden" name="e_user_id" th:value="${user.id}">
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			<!-- 基本信息 -->
-			<tr>
-				<td rowspan=4>基本信息</td>
-				<td style="width:90px;">拼写</td>
-				<td>
-					<div id="e_spelling_disp_div" >
-						<span th:text="${user.spelling}" th:value="${user.spelling}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_spelling" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			
-			<tr>
-				<td>所在部署</td>
-				<td>
-					<div id="e_group_disp_div" th:with="group=${user.group}">
-						<span th:text="${user.groupFullName}" th:value="${group!=null?group.id:_}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_group" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			
-			
-			<tr>
-				<td>工作地点</td>
-				<td>
-					<div id="e_place_disp_div">
-						<span th:text="${user.place}" th:value="${user.place}"></span>&nbsp;
-						<a  th:if="${not form.view}" id="e_place" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			
-			
-			<tr>
-				<td>所属公司</td>
-				<td>
-					<div id="e_companyName_disp_div">
-						<span th:text="${user.company != null ? user.company.name : _}" th:value="${user.company != null ? user.company.id : _}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_companyName" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<!--
-			<tr>
-				<td>QM</td>
-				<td>000</td>
-			</tr> -->
-			<!-- 联系信息 -->
-			<tr>
-				<td rowspan=3>联系信息</td>
-				<td>手机</td>
-				<td>
-					<div id="e_phoneNumber_disp_div">
-						<span th:text="${user.phoneNumber}" th:value="${user.phoneNumber}"></span>&nbsp;
-						<a  th:if="${not form.view}" id="e_phoneNumber" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>邮件</td>
-				<td>
-					<div id="e_mail_disp_div">
-						<span th:text="${user.mail}" th:value="${user.mail}"></span>&nbsp;
-						<a  th:if="${not form.view}" id="e_mail" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>地址</td>
-				<td>
-					<div id="e_address_disp_div">
-						<span th:text="${user.address}" th:value="${user.address}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_address" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<!-- 其他信息 -->
-			<tr>
-				<td rowspan=7>其他信息</td>
-				<td>身份证号</td>
-				<td>
-					<div id="e_idNumber_disp_div">
-						<span th:text="${user.idNumber}" th:value="${user.idNumber}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_idNumber" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>毕业院校</td>
-				<td>
-					<div id="e_school_disp_div">
-						<span th:text="${user.school !=null ? user.school.name: _}" th:value="${user.school != null ?  user.school.id:_}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_school" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>学历</td>
-				<td>
-					<div id="e_degree_disp_div">
-						<th:block th:switch="${user.degree}">
-	    					<span th:case="0" th:value="${user.degree}">大专</span>
-	    					<span th:case="1" th:value="${user.degree}">本科3</span>
-	    					<span th:case="2" th:value="${user.degree}">本科2</span>
-	    					<span th:case="3" th:value="${user.degree}">本科1</span>
-	    					<span th:case="4" th:value="${user.degree}">硕士</span>
-	    					<span th:case="5" th:value="${user.degree}">博士</span>
-	    					<span th:case="*" th:value="${user.degree}">其他</span>
-			  			</th:block>
-						<a th:if="${not form.view}" id="e_degree" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>主修专业</td>
-				<td>
-					<div id="e_major_disp_div">
-						<span th:text="${user.major}" th:value="${user.major}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_major" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>毕业年份</td>
-				<td>
-					<div id="e_graduateDate_disp_div">
-						<span th:text="${#dates.format(user.graduateDate, 'yyyy-MM-dd')}" th:value="${#dates.format(user.graduateDate, 'yyyy-MM-dd')}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_graduateDate" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>入职日期</td>
-				<td>
-					<div id="e_enterDate_disp_div">
-						<span th:text="${#dates.format(user.enterDate, 'yyyy-MM-dd')}" th:value="${#dates.format(user.enterDate, 'yyyy-MM-dd')}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_enterDate" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<tr>
-				<td>离职日期</td>
-				<td>
-					<div id="e_exitDate_disp_div">
-						<span th:text="${#dates.format(user.exitDate, 'yyyy-MM-dd')}" th:value="${#dates.format(user.exitDate, 'yyyy-MM-dd')}"></span>&nbsp;
-						<a th:if="${not form.view}" id="e_exitDate" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-			<!-- 履历信息 -->
-			<tr>
-				<td rowspan=1>履历信息</td>
-				<td colspan=2 style="padding:0px;">
-					<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" style="margin-bottom:0px;">
-						<thead>
-							<tr>
-								<th style="width:20px;">#</th>
-								<th style="width:200px;">
-									期间
-									<a class="hsys-a-pointer" href="javascript:void(0);">
-						      			<img width="16px" th:src="@{/icons/add.png}" />
-						      		</a>
-								</th>
-								<th>公司</th>
-								<th style="width:120px;">职位</th>
-								<th>备注</th>
-								<th colspan=2>编辑</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>2019/08/08 ~ 2019/08/08</td>
-								<td>海隆</td>
-								<td>老板</td>
-								<td>没啥好说的</td>
-								<td>
-									<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-								</td>
-								<td>
-									<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/delete.png}' width=12px /></a>
-								</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>2019/08/08 ~ 2019/08/08</td>
-								<td>海隆</td>
-								<td>老板</td>
-								<td>没啥好说的</td>
-								<td style="width:20px;">
-									<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-								</td>
-								<td style="width:20px;">
-									<a th:if="${not form.view}" class="hsys-a-pointer"><img th:src='@{/icons/delete.png}' width=12px /></a>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
-			</tr>
-			<!-- 社内岗位变更 -->
-			<tr>
-				<td rowspan=1>社内岗位变更</td>
-				<td colspan=2 style="padding:0px;">
-					<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" style="margin-bottom:0px;">
-						<thead>
-							<tr>
-								<th style="width:20px;">#</th>
-								<th style="width:200px;">
-									日期
-								</th>
-								<th>原岗位</th>
-								<th style="width:120px;">调入岗位</th>
-								<th>备注</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>2019/08/08</td>
-								<td>D503 PLM组</td>
-								<td>D603</td>
-								<td>没啥好说的</td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>2019/08/08</td>
-								<td>D503 PLM组</td>
-								<td>D603</td>
-								<td>没啥好说的</td>
-							</tr>
-						</tbody>
-					</table>
-				</td>
-			</tr>
-			<!-- 权限信息 -->
-			<tr>
-				<td rowspan=1>权限信息</td>
-				<td colspan=2>
-					<div id="e_role_disp_div">
-						<th:block th:each="role : ${T(com.hsys.models.enums.ROLE).ALL}">
-							<input type="checkbox" name="e_role_value" th:id="${role}" th:checked="${T(com.hsys.business.UserBusiness).hasRole(user.roles, role)}" onclick="return false;" >
-							<th:block th:switch="${role}">
-								<span class="label label-danger" th:case="${T(com.hsys.models.enums.ROLE).ADMIN}">管理员<br></span>
-								<span class="label label-warning" th:case="${T(com.hsys.models.enums.ROLE).USER_EDIT}">用户编辑<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).USER_FULL_INFO }">查看用户所有信息<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE}">加班批准<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_LIST}">加班记录一览(组内)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL}">加班记录一览(所有)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_APPROVE}">请假批准<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_LIST}">请假记录一览(组内)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).REST_LIST_ALL}">请假记录一览(所有)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_UPLOAD}">出勤记录导入<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST}">出勤记录一览(组内)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL}">出勤记录一览(所有)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST}">报销单一览(组内)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST_ALL}">报销单一览(所有)<br></span>
-								<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).DEVICE_EDIT}">设备编辑</span>
-							</th:block>
-						</th:block>
-						<a id="e_role" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>
-					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-	<div th:replace="common/footer::copyright"></div>
+	</div>
 </body>
 </html>

@@ -5,6 +5,7 @@ encoding//src/main/resources=UTF-8
 encoding//src/main/resources/templates/attendance/list.html=UTF-8
 encoding//src/main/resources/templates/changenotes.html=UTF-8
 encoding//src/main/resources/templates/common/footer.html=UTF-8
+encoding//src/main/resources/templates/common/page.html=UTF-8
 encoding//src/main/resources/templates/definition/list.html=UTF-8
 encoding//src/main/resources/templates/device/list.html=UTF-8
 encoding//src/main/resources/templates/expense/items.html=UTF-8

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head th:replace="common/header::header">
+</head>
+<body>
+<!-- 共通部：标题栏 -->
+<div th:fragment="head" class="page-header" id='headerdiv' style="color:#fff;background-color:#436781;margin:0px;padding-bottom:0px;'">
+	<script th:src="@{/js/common/head.js}"></script> 
+	<div>
+		<h2 style="position:absolute;padding-left:300px;padding-top:10px;">
+			编程是一份思想延伸和语言翻译工作。
+		</h2>
+		<h1 style="display:inline-block;padding-left:10px;padding-bottom:1px;margin-top:0px;margin-bottom:0px;">
+			<img alt="LOGO" style="height:100px;" th:src="@{/icons/logo.png}">
+		</h1>
+		<div style="display:inline-block;vertical-align:bottom;padding-bottom:1px;">
+			<b>
+				<a style="color:#fff;vertical-align:bottom;padding-bottom:1px;" th:href="@{/changenotes}" target="_blank">1.5</a>
+			</b>
+		</div>
+		<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
+			[<a href="javascript:void(0);" id="changePwd" style="color:#fff;">
+				<b sec:authentication="name"></b>
+				</a>] 登录中
+			<input type="hidden" id="userno" name="userno" th:value="${user != null ? user.no :_}">
+			<a th:href="@{/logout}" style="text-decoration:underline;color:#fff;">退出</a>
+  		</div>
+	</div>
+</div>
+
+<!-- 共通部：菜单栏 -->
+<div th:fragment="menu" class="hsys-menu">
+	<ul class="nav nav-stacked">  
+		<li>
+			<a href="#cmnmgr" class="nav-header" style="margin-right:0px;padding:5px 10px;" data-toggle="collapse">  
+			     <i class="glyphicon glyphicon-th"></i>
+			     <span style="margin-left:5px;" class="text-info"><b>常用功能</b></span>
+			     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+			</a>  
+			<ul id="cmnmgr" class="nav nav-list collapse in"><!-- 默认展开第一级 -->  
+			    <li>
+			    	<a th:href="@{/user/html/basic}">
+			    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
+			    		<span style="margin-left:5px;"><b>基本信息</b></span>
+			    	</a>
+			    </li>
+			    <li>
+			    	<a th:href="@{/extratime/html/list?user=true}">
+			    		<i style="padding-left:20px;" class="glyphicon glyphicon-copy"></i>
+			    		<span style="margin-left:5px;"><b>加班记录</b></span>
+			    	</a>
+			    </li>
+			    <li>
+			    	<a th:href="@{/rest/html/list?user=true}">
+			    		<i style="padding-left:20px;" class="glyphicon glyphicon-tent"></i>
+			    		<span style="margin-left:5px;"><b>请假记录</b></span>
+			    	</a>
+			    </li>
+			    <li>
+			    	<a th:href="@{/expense/html/main?user=true}">
+			    		<i style="padding-left:20px;" class="glyphicon glyphicon-transfer"></i>
+			    		<span style="margin-left:5px;"><b>报销记录</b></span>
+			    	</a>
+			    </li>
+			    <li>
+			    	<a th:href="@{/user/html/list?view=true}">
+			    		<i style="padding-left:20px;" class="glyphicon glyphicon-user"></i>
+			    		<span style="margin-left:5px;"><b>员工信息查询</b></span>
+			    	</a>
+			    </li>
+			    <li>
+                	<a th:href="@{/device/html/list}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-tower"></i>
+                		<span style="margin-left:5px;"><b>设备一览</b></span>
+                	</a>
+                </li>
+			</ul> 
+		</li>  
+		<li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+         									  T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE,
+         									  T(com.hsys.models.enums.ROLE).REST_APPROVE)}">  
+                <a href="#approvalmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+                	 <i class="glyphicon glyphicon-retweet"></i>
+			     <span style="margin-left:5px;"><b>确认审核</b></span> 
+                    <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+                </a>  
+                <ul id="approvalmgr" class="nav nav-list collapse in">  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+                									T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE)}">
+                	<a th:href="@{/extratime/html/list?approve=true}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-log-in"></i>
+                		<span style="margin-left:5px;"><b>加班审核</b></span>
+                	</a>
+                </li>  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+                									T(com.hsys.models.enums.ROLE).REST_APPROVE)}">
+                	<a th:href="@{/rest/html/list?approve=true}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-shopping-cart"></i>
+                		<span style="margin-left:5px;"><b>请假审核</b></span>
+                	</a>
+                </li>
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+                									T(com.hsys.models.enums.ROLE).EXPENSE_LIST,
+                									T(com.hsys.models.enums.ROLE).EXPENSE_LIST_ALL)}">
+			    	<a th:href="@{/expense/html/main?type=receipts&approval=true}">
+			    		<i style="padding-left:20px;" class="glyphicon glyphicon-transfer"></i>
+			    		<span style="margin-left:5px;"><b>报销审核</b></span>
+			    	</a>
+			    </li>
+           	</ul>  
+      	</li>
+        <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).REST_LIST,
+         									  T(com.hsys.models.enums.ROLE).REST_LIST_ALL,
+         									  T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST,
+         									  T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL,
+         									  T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
+         									  T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL)}">  
+                <a href="#mgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+                	 <i class="glyphicon glyphicon-home"></i>
+			     <span style="margin-left:5px;"><b>出勤管理</b></span> 
+                    <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+                </a>  
+                <ul id="mgr" class="nav nav-list collapse in">  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST,
+                									 T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL)}">
+                	<a th:href="@{/attendance/html/list}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-th-list"></i>
+                		<span style="margin-left:5px;"><b>出勤记录一览</b></span>
+                	</a>
+                </li>  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
+                									 T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL)}">
+                	<a th:href="@{/extratime/html/list?view=true}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-log-in"></i>
+                		<span style="margin-left:5px;"><b>加班记录一览</b></span>
+                	</a>
+                </li>  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).REST_LIST,
+                									 T(com.hsys.models.enums.ROLE).REST_LIST_ALL)}">
+                	<a th:href="@{/rest/html/list?view=true}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-shopping-cart"></i>
+                		<span style="margin-left:5px;"><b>请假记录一览</b></span>
+                	</a>
+                </li>  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
+                									 T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL,
+                									 T(com.hsys.models.enums.ROLE).REST_LIST,
+                									 T(com.hsys.models.enums.ROLE).REST_LIST_ALL)}">
+                	<a th:href="@{/statistic/html/list}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-retweet"></i>
+                		<span style="margin-left:5px;"><b>出勤统计汇总</b></span>
+                	</a>
+                </li>  
+           	</ul>  
+      		</li>
+      	<li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+              									T(com.hsys.models.enums.ROLE).USER_EDIT)}">
+                <a href="#sysmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+                	 <i class="glyphicon glyphicon-cog"></i>
+			     <span style="margin-left:5px;">
+			     	<b>系统维护</b>
+			     </span> 
+                    <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
+                </a>  
+                <ul id="sysmgr" class="nav nav-list collapse in">  
+                <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
+                									T(com.hsys.models.enums.ROLE).USER_EDIT)}">
+                	<a th:href="@{/user/html/list}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-user"></i>
+                		<span style="margin-left:5px;"><b>员工维护</b></span>
+                	</a>
+                </li>  
+                <li>
+                	<a th:href="@{/definition/html/list}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-leaf"></i>
+                		<span style="margin-left:5px;"><b>定义维护</b></span>
+                	</a>
+                </li>
+           	</ul>  
+      		</li> 
+    </ul>  
+</div>
+</body>
+</html>

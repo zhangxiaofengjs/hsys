@@ -9,9 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.hsys.HsysSecurityContextHolder;
 import com.hsys.config.HsysConfig;
-import com.hsys.models.UserModel;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -24,10 +22,7 @@ public class IndexController extends BaseController {
 	
 	@RequestMapping(value= {"/", "/index"})
     public String index(Model model) {
-		UserModel loginUser = HsysSecurityContextHolder.getLoginUser();
-		model.addAttribute("version", config.getVersion());
-		model.addAttribute("user", loginUser);
-        return "index";
+        return "redirect:user/html/basic";
     }
 	
 	@RequestMapping("/changenotes")

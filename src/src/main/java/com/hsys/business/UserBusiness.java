@@ -74,11 +74,7 @@ public class UserBusiness {
 		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
 			form.setView(true);
 		}
-		
-		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_FULL_INFO)) {
-			form.setView(true);
-		}
-		
+
 		UserModel user = new UserModel();
 		if(!HsysString.isNullOrEmpty(form.getNo())) {
 			user.setNo(form.getNo());
@@ -347,7 +343,12 @@ public class UserBusiness {
 	}
 	
 	public void changePwd(UserJsonChangePwdForm form) {
-		UserModel user = userService.queryByNoWithPassword(form.getNo());
+		UserModel user = HsysSecurityContextHolder.getLoginUser();
+		if(user == null) {
+			throw new HsysException("未登录。"); 
+		}
+		
+		user = userService.queryByNoWithPassword(user.getNo());
 		if(user == null) {
 			throw new HsysException("该工号不存在。"); 
 		}
