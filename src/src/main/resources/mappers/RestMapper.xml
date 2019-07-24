@@ -7,7 +7,10 @@
         <result column="u_name" property="name"/>
         <result column="u_no" property="no"/>    
     </resultMap>
-
+	<resultMap id="groupResultMap" type="groupModel" >  
+        <id column="g_id" property="id"/>  
+        <result column="g_name" property="name"/>  
+    </resultMap>
 	<resultMap id="restResultMap" type="RestModel" >  
         <id column="r_id" property="id"/>  
         <result column="r_start" property="dateStart"/>  
@@ -17,6 +20,7 @@
         <result column="r_summary" property="summary"/>
         <result column="r_status" property="status"/>
         <result column="r_approvalTime" property="approvalTime"/>
+		<association property="group" resultMap="groupResultMap"/>
         <association property="user" resultMap="userResultMap"/>
         <association property="approvalUser" resultMap="userResultMap" columnPrefix="app"/>  
     </resultMap>
@@ -35,11 +39,14 @@
 				appu.c_no as appu_no,
 				u.c_id as u_id,
 				u.c_name as u_name,
-				u.c_no as u_no
+				u.c_no as u_no,
+				g.c_id as g_id,
+				g.c_name as g_name
 		from rest_tbl as r
 		left join user_tbl as u on u.c_id=r.c_user_id
 		left join user_tbl as appu on appu.c_id=r.c_approval_user_id
 		left join user_group_tbl as ug on ug.c_user_id=r.c_user_id
+		left join group_tbl as g on g.c_id=ug.c_group_id
 		<where>
 			<if test="cond.userNo != null">
 				<choose>
@@ -75,6 +82,12 @@
 			<if test="cond.groupId != null">
 				and ug.c_group_id = #{cond.groupId}
 			</if>
+			<if test="cond.groupIds != null">
+				and g.c_id in
+				<foreach item="groupId" collection="cond.groupIds" separator="," open="(" close=")" index="i">
+				 	#{groupId}
+				</foreach>
+			</if>	
 		</where>
 		order by r.c_date_start
 	</select>

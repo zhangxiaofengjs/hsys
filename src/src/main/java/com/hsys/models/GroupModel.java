@@ -22,8 +22,7 @@ public class GroupModel extends BaseModel {
 	private String name;
 	private int level;
 	private GroupModel parent;
-	private int parentId;
-
+	
 	public String getName() {
 		return name;
 	}
@@ -46,14 +45,6 @@ public class GroupModel extends BaseModel {
 
 	public void setLevel(int level) {
 		this.level = level;
-	}
-	
-	public int getParentId() {
-		return parentId;
-	}
-	
-	public void setParentId(int parentId) {
-		this.parentId = parentId;
 	}
 	
 }

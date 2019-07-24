@@ -16,6 +16,12 @@
 			   h.c_comment as h_comment
 		from holiday_tbl as h
 		<where>
+			<if test="cond.id != null">
+				and h.c_id = #{id}
+			</if>
+			<if test="cond.date != null">
+				and h.c_date = #{cond.date}
+			</if>
 			<if test="cond.dateStart != null">
 				and h.c_date <![CDATA[ >= ]]> #{cond.dateStart}
 			</if>
@@ -25,4 +31,41 @@
 		</where>
 		order by h.c_date
 	</select>
+	
+	<insert id="add" parameterType="holidayModel">
+		insert into holiday_tbl(
+			   c_date,
+			   c_type,
+			   c_comment)
+		values (
+    		#{date},
+    		#{type},
+    		#{comment}
+    	)
+	</insert>
+	
+	<update id="update">
+    	update holiday_tbl
+		<set>
+    		<if test="update.date != null">
+				c_date = #{date},
+			</if>
+    		<if test="update.type != null">
+				c_type = #{type},
+			</if>
+    		<if test="update.comment != null">
+				c_comment = #{comment},
+			</if>
+		</set>
+    	<where>
+			c_id = #{id}
+		</where>
+    </update>
+	
+	<delete id="delete">
+    	delete from holiday_tbl
+    	<where>
+				and c_id = #{id}
+		</where>
+    </delete>
 </mapper>

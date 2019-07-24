@@ -9,6 +9,12 @@ String.prototype.format = function() {
     return str;
 };
 
+String.prototype.startWith = function(strHead) {
+    var str = String(this);
+    
+    return str.left(strHead.length) == strHead;
+};
+
 //"abc".left(2)=>"ab"
 String.prototype.left = function(n) {
     var str = String(this);

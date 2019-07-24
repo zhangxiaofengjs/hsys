@@ -77,6 +77,8 @@ $(document).ready(function(){
 		});
 	});	
 
+	htbl.rowDoubleClicked("deviceTable","updateDevice");
+	
 	$("#updateDevice").click(function(){
 		var self = $(this);
 		

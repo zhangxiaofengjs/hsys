@@ -210,7 +210,7 @@ $(document).ready(function(){
 					"id":"comment",
 					"label":"备注",
 					"type":"text",
-					"value": $("#r_comment").val(),
+					"value": $("#r_comment").text(),
 				},
 			],
 			"url":"/expense/json/receipt/setcomment",

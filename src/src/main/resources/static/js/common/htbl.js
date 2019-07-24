@@ -84,6 +84,25 @@ htbl.checkboxClicked = function(tableId, clickFunc) {
 		(clickFunc)();
 	});
 }
+
+htbl.rowDoubleClicked = function(tableId,funcId){
+	$("#{0} tbody".format(tableId)).on('dblclick','tr', function(){
+		var selectStyle = "hsys-select-row";
+		var rows = $("#{0} tr".format(tableId));
+		for (var i = 1; i < rows.length; i++) {
+			$(rows[i]).removeClass(selectStyle);
+		}
+		$(this).addClass(selectStyle);
+		var chkBoxes = $("#{0} :checkbox[name='select']".format(tableId));
+		$("#{0} :checkbox[name='selectAll']".format(tableId))[0].checked = false;
+		for (var i = 0; i < chkBoxes.length; i++) {
+			chkBoxes[i].checked = false;
+		}
+		var checkbox = $('input', this).eq(0);
+		checkbox[0].checked = true;
+		$("#{0}".format(funcId)).trigger("click");
+	});
+}
 //data={
 //	"headers":[
 //		{

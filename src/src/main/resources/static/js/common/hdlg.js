@@ -477,9 +477,9 @@ hdlg.prototype.setPos = function() {
 	$("#" + this.id()).on('show.bs.modal', function(e) {
 		var self = $(this);
 		var modal_dialog = self.find('.modal-dialog');
-		var top = 10;
+		var top = 100;
 		if(parent != null) {
-			top += $(parent.window.document).scrollTop();
+			//top += $(parent.window.document).scrollTop();//放在Frame里好像需要这个直接的话不需要
 		}
 		
 		modal_dialog.css({'margin': top + 'px auto'});
@@ -808,6 +808,7 @@ hdlg.prototype.refreshSelectPickField = function(fieldOrId) {
 	}
 	
 	this.elem(field.id).selectpicker('refresh');
+	this.elem(field.id).selectpicker('render');
 };
 
 hdlg.prototype.initTreeViewField = function(fieldOrId) {

@@ -26,6 +26,11 @@ public class StatisticModel  extends BaseModel{
 	public static final String COND_EXIT_DATE_NULL = "exitDateNull";
 	public static final String COND_EXIT_DATE_NOT_NULL = "exitDateNotNull";
 	public static final String COND_HIDDEN_FALG = "hiddenFlag";
+	public static final String COND_GROUP_IDS = "groupIds";
+	public static final String COND_GROUP_ID = "groupId";
+	public static final String COND_FUZZY_USER_NO = "fuzzyUserNo";
+	public static final String ORDER_USER_NO = "userNo";
+	public static final String ORDER_DATE = "date";
 	
 	private UserModel user;
 	private float etNormal;
@@ -43,6 +48,15 @@ public class StatisticModel  extends BaseModel{
 	private String userNo;
 	private String userName;
 	private Date exitDate;
+	private GroupModel group;
+	
+	public void setGroup(GroupModel group) {
+		this.group = group;
+	}
+	
+	public GroupModel getGroup() {
+		return group;
+	}
 	
 	public void setExitDate(Date exitDate) {
 		this.exitDate = exitDate;

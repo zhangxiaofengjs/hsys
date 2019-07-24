@@ -22,7 +22,8 @@ public class RestHtmlListForm {
 	@JsonSerialize(using=HsysDateSerializer.class)
     @JsonDeserialize(using=HsysDateDeserializer.class)
 	private Date dateEnd;
-
+	private int groupId;
+	private String groupName;
 	private boolean approve;
 	private boolean user;
 	private boolean view;
@@ -30,6 +31,8 @@ public class RestHtmlListForm {
 	public RestHtmlListForm() {
 		this.dateStart = HsysDate.startOfWorkMonth();
 		this.dateEnd = HsysDate.endOfWorkMonth();
+		this.groupId = 0;
+		this.groupName = "--开发组--";
 	}
 	
 	public Date getDateStart() {
@@ -80,4 +83,19 @@ public class RestHtmlListForm {
 		this.view = view;
 	}
 	
+	public int getGroupId() {
+		return groupId;
+	}
+	
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
 }

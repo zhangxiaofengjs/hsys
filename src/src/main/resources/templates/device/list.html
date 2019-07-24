@@ -15,7 +15,7 @@
 				  		<div class="navbar-header">
 				  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 				  		</div>
-				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/device/html/list}" method="post">
+				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/device/html/list}" method="get">
 				 			<div class="form-group">
 							   <input type="text" class="form-control" id="no" name="no" th:value="${deviceHtmlListForm!=null?deviceHtmlListForm.no:_}" placeholder="输入工号/设备号">
 				 			</div>

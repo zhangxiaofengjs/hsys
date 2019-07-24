@@ -24,6 +24,10 @@ htreeview.initPullDown = function(opt) {
 		<div id="seltreetgt_{0}"></div></div>'.format(opt.id);
 
 	var elem = $("#" + opt.id.safeJqueryId());
+	if(elem.length ==0) {
+		//id 元素不存在，不进行初始化
+		return;
+	}
 	var val = elem.val();
 	var dispText = elem.attr("dispText");
 

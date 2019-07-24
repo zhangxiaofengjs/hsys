@@ -1,10 +1,15 @@
-package com.hsys.config.beans;
+package com.hsys.config;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * @author: zhangxiaofengjs@163.com
- * @version: 2019/01/29
+ * @version: 2019/07/17
  */
-public class Upload {
+@Component
+@ConfigurationProperties(prefix="hsys.upload")
+public class UploadFolderConfig {
 	private String tempFolder;
 	private String attendanceFolder;
 	private String receiptAttachmentFolder;

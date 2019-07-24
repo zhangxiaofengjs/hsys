@@ -1,4 +1,16 @@
 $(document).ready(function(){
+	
+	htreeview.initPullDown({
+		"id":"groupId",
+		"css": {
+			"display": "inline-block",
+			"width": "200px",
+		},
+		"ajax":{
+			"url":'/group/json/children'
+		}
+	});
+	
 	$("#addRest").click(function(){
 		var self = $(this);
 		
@@ -103,6 +115,8 @@ $(document).ready(function(){
 			}
 		});
 	});
+	
+	htbl.rowDoubleClicked("restTable","updateRest");
 	
 	$("#updateRest").click(function(){
 		var self = $(this);

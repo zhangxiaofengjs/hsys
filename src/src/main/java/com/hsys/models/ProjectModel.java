@@ -21,7 +21,7 @@ public class ProjectModel extends BaseModel {
 	private String name;
 	private String funds;
 	private List<UserModel> users;
-
+	
 	public String getNo() {
 		return no;
 	}

@@ -61,7 +61,7 @@ public class UserModel extends BaseModel {
 	private GroupModel group;
 	private CompanyModel company;
 	private List<UserRoleModel> roles;
-	private int companyId;
+	private List<UserPositionHistoryModel> positionHistories;
 	
 	public String getIdNumber() {
 		return idNumber;
@@ -198,6 +198,14 @@ public class UserModel extends BaseModel {
 	public void setRoles(List<UserRoleModel> roles) {
 		this.roles = roles;
 	}
+	
+	public List<UserPositionHistoryModel> getPositionHistories() {
+		return positionHistories;
+	}
+
+	public void setPositionHistories(List<UserPositionHistoryModel> positionHistories) {
+		this.positionHistories = positionHistories;
+	}
 
 	public CompanyModel getCompany() {
 		return company;
@@ -214,13 +222,4 @@ public class UserModel extends BaseModel {
 	public void setSpelling(String spelling) {
 		this.spelling = spelling;
 	}
-	
-	public int getCompanyId() {
-		return companyId;
-	}
-	
-	public void setCompanyId(int companyId) {
-		this.companyId = companyId;
-	}
-	
 }

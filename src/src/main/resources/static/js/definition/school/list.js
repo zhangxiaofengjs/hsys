@@ -51,6 +51,8 @@ $(document).ready(function(){
 		);
 	});
 	
+	htbl.rowDoubleClicked("schoolTable","schoolEdit");
+	
 	$("#schoolEdit").click(function(){
 		var self = $(this);
 		

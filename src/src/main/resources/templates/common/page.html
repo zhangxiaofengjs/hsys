@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
 	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
-<head th:replace="common/header::header">
+<head>
 </head>
 <body>
 <!-- 共通部：标题栏 -->
@@ -16,7 +16,7 @@
 		</h1>
 		<div style="display:inline-block;vertical-align:bottom;padding-bottom:1px;">
 			<b>
-				<a style="color:#fff;vertical-align:bottom;padding-bottom:1px;" th:href="@{/changenotes}" target="_blank">1.5</a>
+				<a style="color:#fff;vertical-align:bottom;padding-bottom:1px;" th:href="@{/changenotes}" target="_blank">1.6</a>
 			</b>
 		</div>
 		<div class="pull-right" style="height:100px;color:#fff;font-size:9pt;padding-top:10px;padding-right:10px;">
@@ -33,12 +33,12 @@
 <div th:fragment="menu" class="hsys-menu">
 	<ul class="nav nav-stacked">  
 		<li>
-			<a href="#cmnmgr" class="nav-header" style="margin-right:0px;padding:5px 10px;" data-toggle="collapse">  
+			<a href="#cmn_menu_cmnmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse" aria-expanded="false">  
 			     <i class="glyphicon glyphicon-th"></i>
 			     <span style="margin-left:5px;" class="text-info"><b>常用功能</b></span>
 			     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
 			</a>  
-			<ul id="cmnmgr" class="nav nav-list collapse in"><!-- 默认展开第一级 -->  
+			<ul id="cmn_menu_cmnmgr" class="nav nav-list  collapse" aria-expanded="false" style="height:0px;"> 
 			    <li>
 			    	<a th:href="@{/user/html/basic}">
 			    		<i style="padding-left:20px;" class="glyphicon glyphicon-list-alt"></i>
@@ -80,12 +80,12 @@
 		<li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
          									  T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE,
          									  T(com.hsys.models.enums.ROLE).REST_APPROVE)}">  
-                <a href="#approvalmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+                <a href="#cmn_menu_approvalmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse" aria-expanded="false">
                 	 <i class="glyphicon glyphicon-retweet"></i>
 			     <span style="margin-left:5px;"><b>确认审核</b></span> 
                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
                 </a>  
-                <ul id="approvalmgr" class="nav nav-list collapse in">  
+                <ul id="cmn_menu_approvalmgr" class="nav nav-list collapse" aria-expanded="false" style="height:0px;">  
                 <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
                 									T(com.hsys.models.enums.ROLE).EXTRATIME_APPROVE)}">
                 	<a th:href="@{/extratime/html/list?approve=true}">
@@ -116,12 +116,12 @@
          									  T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL,
          									  T(com.hsys.models.enums.ROLE).EXTRATIME_LIST,
          									  T(com.hsys.models.enums.ROLE).EXTRATIME_LIST_ALL)}">  
-                <a href="#mgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+                <a href="#cmn_menu_attmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse" aria-expanded="false">
                 	 <i class="glyphicon glyphicon-home"></i>
 			     <span style="margin-left:5px;"><b>出勤管理</b></span> 
                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
                 </a>  
-                <ul id="mgr" class="nav nav-list collapse in">  
+                <ul id="cmn_menu_attmgr" class="nav nav-list collapse " aria-expanded="false" style="height:0px;">  
                 <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST,
                 									 T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL)}">
                 	<a th:href="@{/attendance/html/list}">
@@ -156,14 +156,14 @@
       		</li>
       	<li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
               									T(com.hsys.models.enums.ROLE).USER_EDIT)}">
-                <a href="#sysmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse">
+                <a href="#cmn_menu_sysmgr" class="nav-header collapsed" style="margin-right:0px;" data-toggle="collapse" aria-expanded="false">
                 	 <i class="glyphicon glyphicon-cog"></i>
 			     <span style="margin-left:5px;">
 			     	<b>系统维护</b>
 			     </span> 
                     <span class="pull-right glyphicon glyphicon-chevron-down"></span>  
                 </a>  
-                <ul id="sysmgr" class="nav nav-list collapse in">  
+                <ul id="cmn_menu_sysmgr" class="nav nav-list collapse " aria-expanded="false" style="height:0px;">  
                 <li sec:authorize="${hasAnyAuthority(T(com.hsys.models.enums.ROLE).ADMIN,
                 									T(com.hsys.models.enums.ROLE).USER_EDIT)}">
                 	<a th:href="@{/user/html/list}">
@@ -172,13 +172,19 @@
                 	</a>
                 </li>  
                 <li>
+                	<a th:href="@{/holiday/html/list}">
+                		<i style="padding-left:20px;" class="glyphicon glyphicon-calendar"></i>
+                		<span style="margin-left:5px;"><b>假日一览</b></span>
+                	</a>
+                </li>
+                <li>
                 	<a th:href="@{/definition/html/list}">
                 		<i style="padding-left:20px;" class="glyphicon glyphicon-leaf"></i>
                 		<span style="margin-left:5px;"><b>定义维护</b></span>
                 	</a>
                 </li>
            	</ul>  
-      		</li> 
+      	</li> 
     </ul>  
 </div>
 </body>

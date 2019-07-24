@@ -1,9 +1,11 @@
 package com.hsys.business.forms;
 
+import com.hsys.models.GroupModel;
+
 public class GroupJsonUpdateForm {
 	private int id;
 	private String name;
-	private int parentId;
+	private GroupModel parent;
 	private int level;
 	
 	public int getId() {
@@ -22,14 +24,14 @@ public class GroupJsonUpdateForm {
 		this.name = name;
 	}
 	
-	public int getParentId() {
-		return parentId;
+	public GroupModel getParent() {
+		return parent;
 	}
 	
-	public void setParentId(int parentId) {
-		this.parentId = parentId;
+	public void setParent(GroupModel parent) {
+		this.parent = parent;
 	}
-	
+		
 	public int getLevel() {
 		return level;
 	}

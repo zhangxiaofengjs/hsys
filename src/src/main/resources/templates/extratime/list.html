@@ -15,7 +15,7 @@
 				  		<div class="navbar-header">
 				  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 				  		</div>
-				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/extratime/html/list}" method="post">
+				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/extratime/html/list}" method="get">
 				 			<input type="hidden" id="user" name="user" th:value="${form.user}">
 				 			<input type="hidden" id="view" name="view" th:value="${form.view}">
 				 			<input type="hidden" id="approve" name="approve" th:value="${form.approve}">

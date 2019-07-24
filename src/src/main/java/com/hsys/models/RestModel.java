@@ -28,7 +28,7 @@ public class RestModel extends BaseModel {
 	public static final String FIELD_LEN = "len";
 	public static final String FIELD_STATUS = "status";
 	public static final String FIELD_APPROVAL_USER_ID = "approvalUserId";
-	
+	public static final String COND_GROUP_IDS = "groupIds";
 	@JsonSerialize(using=HsysDateTimeSerializer.class)
     @JsonDeserialize(using=HsysDateTimeDeserializer.class)
 	private Date dateStart;
@@ -42,7 +42,15 @@ public class RestModel extends BaseModel {
 	private UserModel approvalUser;
 	private Date approvalTime;
 	private float len;
+	private GroupModel group;
 	
+	public void setGroup(GroupModel group) {
+		this.group = group;
+	}
+	
+	public GroupModel getGroup() {
+		return group;
+	}
 	public Date getDateStart() {
 		return dateStart;
 	}

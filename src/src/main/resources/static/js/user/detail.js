@@ -42,10 +42,10 @@ $(document).ready(function(){
 			pDispDiv.after('<div id="{0}_edit_div" class="form-inline;">\
 							{3}\
 							<a id="{0}_update" class="hsys-a-pointer" href="javascript:void(0)" onclick="doUpdate(this)">\
-								<img src="{1}" />\
+								<img style="width:16px;" src="{1}" />\
 							</a>\
 							<a id="{0}_cancel" class="hsys-a-pointer" href="javascript:void(0)" onclick="cancelUpdate(this)">\
-								<img src="{2}" />\
+								<img style="width:16px;" src="{2}" />\
 							</a>\
 						</div>'.
 						format(id,
@@ -156,7 +156,111 @@ $(document).ready(function(){
 			});
 		}
 	});
+	
+	$("a[id^=addPositionHistory]").click(function(){
+		var hasAdd = $("#confirmAdd")[0];
+		if(hasAdd==undefined){
+			var currentRows = $("#positionHistoryTable").find("tr").length; 
+			var trHTML = $("<tr></tr>");
+			//编号
+			trHTML.append("<td>"+currentRows+"</td>");
+			//日期
+			trHTML.append("<td><input type='date' name='e_position_date' class='form-control'></td>");
+			//原岗位
+			trHTML.append("<td><input type='text' name='e_position_fromPosition' class='form-control'></td>");
+			//调入岗位
+			trHTML.append("<td><input type='text' name='e_position_toPosition' class='form-control'></td>");
+			//备注
+			trHTML.append("<td><input type='text' name='e_position_comment' class='form-control'></td>");
+			//确认添加按钮
+			trHTML.append("<td><a id='confirmAdd' class='hsys-a-pointer' href='javascript:void(0)' onclick='doConfirm()'>\
+					<img src='{0}' width=12px/></a></td>".format(hsys.url('/icons/update.png')));
+			//取消添加按钮
+			trHTML.append("<td><a class='hsys-a-pointer' href='javascript:void(0)' onclick='cancelAdd(this)'>\
+					<img src='{0}' width=12px/></a></td>".format(hsys.url("/icons/delete.png")));
+			//添加行
+			$("#positionHistoryTable").append(trHTML);
+		}
+	});
 });
+
+
+function editPositionHistory(pA){
+	var self = $(pA);
+	var rowId = self.attr("rowId");
+	var postId = self.attr("postId");
+	var tds = self.parents('tr').children('td').children('span[id*="_disp"]');
+	var ids = [];
+	tds.each(function(){
+		ids.push($(this).attr('id')) 
+	})
+	if($("#e_position_date_edit{0}".format(rowId)).length == 0){
+		for(var i =0; i<ids.length; i++){
+			var id = ids[i];
+			$("#{0}".format(id)).hide();
+			var text = $("#{0}".format(id)).text();
+			var editId = id.replace(/_disp/,"_edit");
+			var inputId = id.replace(/_disp/,"_input");
+			if(id == "e_position_date_disp{0}".format(rowId)){
+				$("#{0}".format(id)).after('<span id="{0}"><input id="{1}" type="date" class="form-control"></span>'.format(editId,inputId));
+				$("#{0}".format(inputId)).val(text);
+			}else if(id == "e_position_fromPosition_disp{0}".format(rowId)||
+					id == "e_position_toPosition_disp{0}".format(rowId)||
+					id == "e_position_comment_disp{0}".format(rowId)){
+				$("#{0}".format(id)).after('<span id="{0}"><input id="{1}" type="text" class="form-control"></span>'.format(editId,inputId));
+				$("#{0}".format(inputId)).val(text);
+			}
+		}
+		$("#editPositionHistory{0}".format(rowId)).hide();
+		$("#editPositionHistory{0}".format(rowId)).after('<span id="positionHistoryUpdate{0}">\
+				<a postId="{1}" editRowId="{0}" class="hsys-a-pointer" href="javascript:void(0)" onclick="doPositionHistoryUpdate(this)">\
+				<img src="{2}" width=12px/></a></span>'.format(rowId,postId,hsys.url('/icons/update.png')));
+		
+		$("#deletePositionHistory{0}".format(rowId)).hide();
+		$("#deletePositionHistory{0}".format(rowId)).after('<span id="cancelPositionHistoryUpdate{0}">\
+				<a editRowId="{0}" class="hsys-a-pointer" href="javascript:void(0)" onclick="cancelPositionHistoryUpdate(this)">\
+				<img src="{1}" width=12px/></a></span>'.format(rowId,hsys.url('/icons/cancel.png')));
+	}else{
+		for(var i =0; i<ids.length; i++){
+			var id = ids[i];
+			$("#{0}".format(id)).hide();
+			var editId = id.replace(/_disp/,"_edit");
+			$("#{0}".format(editId)).show();
+		}
+		$("#editPositionHistory{0}".format(rowId)).hide();
+		$("#positionHistoryUpdate{0}".format(rowId)).show();
+		
+		$("#deletePositionHistory{0}".format(rowId)).hide();
+		$("#cancelPositionHistoryUpdate{0}".format(rowId)).show();
+	}
+}
+
+function cancelPositionHistoryUpdate(pA) {
+	var self = $(pA);
+	var rowId = self.attr("editRowId");
+	var tds = self.parents('tr').children('td').children('span[id*="_edit"]');
+	var ids = [];
+	tds.each(function(){
+		ids.push($(this).attr('id')) 
+	})
+	for(var i =0; i<ids.length; i++){
+		var id = ids[i];
+		if(id == "e_position_date_edit{0}".format(rowId)||
+			id == "e_position_fromPosition_edit{0}".format(rowId)||
+			id == "e_position_toPosition_edit{0}".format(rowId)||
+			id == "e_position_comment_edit{0}".format(rowId)){
+			$("#{0}".format(id)).hide();
+			$("#{0}".format(id).replace(/_edit/,"_disp")).show();
+		}
+	}
+	
+	$("#editPositionHistory{0}".format(rowId)).show();
+	$("#positionHistoryUpdate{0}".format(rowId)).hide();
+	
+	$("#deletePositionHistory{0}".format(rowId)).show();
+	$("#cancelPositionHistoryUpdate{0}".format(rowId)).hide();
+}
+
 
 function cancelUpdate(pA) {
 	var self = $(pA);
@@ -172,6 +276,86 @@ function cancelUpdate(pA) {
 	
 	$("#{0}_disp_div".format(id)).show();
 	$("#{0}_edit_div".format(id)).hide();
+}
+
+function doConfirm() {
+	var date = $(":input[name='e_position_date']").val();
+	var fromPosition = $(":input[name='e_position_fromPosition']").val();
+	var toPosition = $(":input[name='e_position_toPosition']").val();
+	var comment = $(":input[name='e_position_comment']").val();
+	if(date=="")date=null;
+	
+	hsys.ajax({
+		"url":"/user/json/addPositionHistory",
+		"data": {
+			"userId": $("input[name='e_user_id']").val(),
+			"date": date,
+			"fromPosition": fromPosition,
+			"toPosition": toPosition,
+			"comment": comment
+		},
+		"success": function(data) {
+			hsys.refresh();
+		},
+		"error": function(data) {
+			hsys.error(data.msg);
+		}
+	});
+}
+
+function doPositionHistoryUpdate(pA) {
+	var self = $(pA);
+	var rowId = self.attr("editRowId");
+	var postId = self.attr("postId");
+	var date = $(":input[id='e_position_date_input{0}']".format(rowId)).val();
+	var fromPosition = $(":input[id='e_position_fromPosition_input{0}']".format(rowId)).val();
+	var toPosition = $(":input[id='e_position_toPosition_input{0}']".format(rowId)).val();
+	var comment = $(":input[id='e_position_comment_input{0}']".format(rowId)).val();
+
+	var val;
+	hsys.ajax({
+		"url":"/user/json/updatePositionHistory",
+		"data": {
+			"id": postId,
+			"date": date,
+			"fromPosition": fromPosition,
+			"toPosition": toPosition,
+			"comment": comment
+		},
+		"success": function(data) {
+			hsys.refresh();
+		},
+		"error": function(data) {
+			hsys.error(data.msg);
+		}
+	});
+}
+
+function cancelAdd(pA) {
+	var currentRows = $("#positionHistoryTable").find("tr").length; 
+	$("#positionHistoryTable tr:eq({0})".format(currentRows-1)).remove();
+}
+
+function deletePositionHistory(pA) {
+	var self = $(pA);
+	var postId = self.attr("postId");
+	hdlg.showYesNo(
+		"确定删除此岗位变更信息吗?",
+		function() {
+			hsys.ajax({
+				"url":"/user/json/deletePositionHistory",
+				"data": {
+					"id": postId
+				},
+				"success": function(data) {
+					hsys.refresh();
+				},
+				"error": function(data) {
+					hsys.error(data.msg);
+				}
+			});
+		}
+	);
 }
 
 function doUpdate(pA) {

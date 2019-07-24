@@ -13,6 +13,9 @@ public class StatisticHtmlForm {
 	private int id;
 	private int sumType;
 	private int approveType;
+	private int groupId;
+	private String groupName;
+	
 	/*
 	 * 用户的参考画面Flag
 	 */
@@ -29,6 +32,24 @@ public class StatisticHtmlForm {
 	public StatisticHtmlForm() {
 		this.sumType = 0;
 		this.approveType = 0;
+		this.groupId = 0;
+		this.groupName = "--开发组--";
+	}
+	
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+	
+	public int getGroupId() {
+		return groupId;
+	}
+	
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+	
+	public String getGroupName() {
+		return groupName;
 	}
 	
 	public void setApproveType(int approveType) {

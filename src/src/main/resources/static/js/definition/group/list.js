@@ -13,14 +13,14 @@ $(document).ready(function(){
 					"maxlength":50,
 				},
 				{
-					"id":"parentId",
+					"id":"parent.id",
 					"label":"上层组织",
 					"type":"select",
 					"options":[],
 					"ajax":{
 						"url":"/group/json/list",
 						"success": function(response, dlg) {
-							var field = dlg.field("parentId");
+							var field = dlg.field("parent.id");
 							field.options.push(
 								{ 
 									"text": "[无]",
@@ -35,7 +35,7 @@ $(document).ready(function(){
 									}
 								);
 							});
-							dlg.buildField("parentId");
+							dlg.buildField("parent.id");
 						},
 					},
 				},
@@ -78,6 +78,8 @@ $(document).ready(function(){
 		);
 	});
 	
+	htbl.rowDoubleClicked("groupTable","editGroup");
+	
 	$("#editGroup").click(function(){
 		var self = $(this);
 		
@@ -105,15 +107,18 @@ $(document).ready(function(){
 					"maxlength":50,
 				},
 				{
-					"id":"parentId",
+					"id":"parent.id",
 					"label":"上级组织",
 					"type":"select",
 					"options":[],
 					"depend": true,
 					"ajax":{
-						"url":"/group/json/list",
+						"url":"/group/json/exceptchild",
+						"data": {						
+							"id": selId
+						},
 						"success": function(response, dlg) {
-							var field = dlg.field("parentId");
+							var field = dlg.field("parent.id");
 							
 							field.options.push(
 								{ 
@@ -121,17 +126,17 @@ $(document).ready(function(){
 									"value": 0,
 								}
 							);
-							response.groups.forEach(function(group,index){
-								if(group.id != selId){
+							response.groups.forEach(function(groups,index){
+								if(groups.id != selId){
 									field.options.push(
 											{ 
-												"text":group.name,
-												"value":group.id,
+												"text":groups.name,
+												"value":groups.id,
 											}
 										);
 								}
 							});
-							dlg.buildField("parentId");
+							dlg.buildField("parent.id");
 						},
 					},
 				},
@@ -146,7 +151,7 @@ $(document).ready(function(){
 					var group = response.group;
 					
 					dlg.buildField("name", group.name);
-					dlg.buildField("parentId", group.parent != null ? group.parent.id : 0, false, false);
+					dlg.buildField("parent.id", group.parent != null ? group.parent.id : parent.id, 0, false);
 				},
 			},
 			"url":"/group/json/update",

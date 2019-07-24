@@ -35,11 +35,9 @@ public class RestController extends BaseController {
 
 	@RequestMapping("/html/list")
 	public String htmlList(RestHtmlListForm form, Model model) {
-		List<RestModel> list = restBusiness.getRests(form);
 		RestListBean bean = restBusiness.getRestListBean(form);
 		model.addAttribute("bean", bean);
 		model.addAttribute("form", form);
-		model.addAttribute("list", list);
 		return "rest/list";
 	}
 	

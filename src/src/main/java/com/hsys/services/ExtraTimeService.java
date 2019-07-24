@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hsys.annotations.HsysMail;
+import com.hsys.mail.encoders.ExtraTimeEncoder;
 import com.hsys.mappers.ExtraTimeMapper;
-import com.hsys.models.DeviceModel;
 import com.hsys.models.ExtraTimeModel;
 
 /**
@@ -35,19 +35,20 @@ public class ExtraTimeService {
 		return null;
 	}
 	
-
-	@HsysMail(name="加班记录添加")
+	@HsysMail(name="add", encoder=ExtraTimeEncoder.class)
 	public void add(ExtraTimeModel extra) {
 		extraTimeMapper.add(extra);		
 	}
 
+	@HsysMail(name="delete", encoder=ExtraTimeEncoder.class)
 	public void deleteById(int id) {
 		ExtraTimeModel extraTime = new ExtraTimeModel();
 		extraTime.setId(id);
-		extraTime.setCond(DeviceModel.COND_ID, true);
+		extraTime.setCond(ExtraTimeModel.COND_ID, true);
 		extraTimeMapper.delete(extraTime);
 	}
 
+	@HsysMail(name="update", encoder=ExtraTimeEncoder.class)
 	public void update(ExtraTimeModel extraTime) {
 		extraTimeMapper.update(extraTime);
 	}

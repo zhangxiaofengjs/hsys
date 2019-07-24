@@ -4,7 +4,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.hsys.config.beans.Upload;
 import com.hsys.config.beans.Version;
 
 /**
@@ -17,11 +16,5 @@ public class HsysConfig {
     @ConfigurationProperties(prefix="hsys.version")  
     public Version getVersion(){  
 		return new Version();
-    }
-	
-	@Bean  
-    @ConfigurationProperties(prefix="hsys.upload")  
-    public Upload getUploadFolder(){  
-		return new Upload();
     }
 }

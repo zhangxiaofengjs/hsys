@@ -51,7 +51,7 @@
     		c_level)
     	values (
     		#{name},
-    		#{parentId},
+    		#{parent.id},
     		#{level}
     	)
     </insert>
@@ -122,11 +122,8 @@
     		<if test ="update.name != null">
 				c_name = #{name},
 			</if>
-			<if test ="update.parentId !=null">
-				c_parent_id = #{parentId},
-				c_level = #{level}
-			</if>
-				
+			c_parent_id = #{UpdateParentGroup.id},
+			c_level = #{level}				
 		</set>
 		<where>
 			c_id = #{id}

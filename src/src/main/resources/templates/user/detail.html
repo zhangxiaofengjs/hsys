@@ -13,9 +13,9 @@
 				<nav style="border-radius:0px;margin-bottom:-1px;" class="navbar navbar-default">
 					<div class="container-fluid">
 				  		<div class="navbar-header">
-				  			<a th:href="@{/user/html/list}"><span class="navbar-brand glyphicon glyphicon-list" aria-hidden="true"></span></a>
+				  			<a th:href="@{'/user/html/list?view=' +${form.view}}"><span class="navbar-brand glyphicon glyphicon-list" aria-hidden="true"></span></a>
 				  		</div>
-				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/detail}" method="post">
+				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/user/html/detail}" method="get">
 				 			<div class="form-group">
 							   <input type="text" class="form-control hsys-fc-userno-width" id="no" name="no" th:value="${user.no}" placeholder="输入工号">
 				 			</div>
@@ -254,39 +254,50 @@
 						<tr>
 							<td rowspan=1>社内岗位变更</td>
 							<td colspan=2 style="padding:0px;">
-								<table class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" style="margin-bottom:0px;">
+								<table id="positionHistoryTable" class="table table-bordered table-hover table-condensed table-striped" contenteditable="false" style="margin-bottom:0px;">
 									<thead>
 										<tr>
 											<th style="width:20px;">#</th>
 											<th style="width:200px;">
 												日期
+												<a id="addPositionHistory" class="hsys-a-pointer" href="javascript:void(0);">
+									      			<img width="16px" th:src="@{/icons/add.png}" />
+									      		</a>
 											</th>
-											<th>原岗位</th>
-											<th style="width:120px;">调入岗位</th>
+											<th style="width:200px;">原岗位</th>
+											<th style="width:200px;">调入岗位</th>
 											<th>备注</th>
+											<th width="46px" colspan=2>编辑</th>
 										</tr>
 									</thead>
 									<tbody>
-										<tr>
-											<td>1</td>
-											<td>2019/08/08</td>
-											<td>D503 PLM组</td>
-											<td>D603</td>
-											<td>没啥好说的</td>
-										</tr>
-										<tr>
-											<td>2</td>
-											<td>2019/08/08</td>
-											<td>D503 PLM组</td>
-											<td>D603</td>
-											<td>没啥好说的</td>
+										<tr th:each="positionHistory,itr : ${user.positionHistories}"
+											th:rowid="${positionHistory.id}" height="20px">
+											<td th:text="${itr.index+1}"></td>
+											<td><span th:id="'e_position_date_disp'+${itr.index+1}" th:text="${#dates.format(positionHistory.date, 'yyyy-MM-dd')}" th:value="${#dates.format(positionHistory.date, 'yyyy-MM-dd')}"></span></td>
+											
+											<td><span th:id="'e_position_fromPosition_disp'+${itr.index+1}" th:text="${positionHistory.fromPosition}"></span></td>
+											<td><span th:id="'e_position_toPosition_disp'+${itr.index+1}" th:text="${positionHistory.toPosition}"></span></td>
+											<td><span th:id="'e_position_comment_disp'+${itr.index+1}" th:text="${positionHistory.comment}"></span></td>
+											<td style="width:20px;">
+												<span th:id="'editPositionHistory'+${itr.index+1}">
+													<a id="editPositionHistory" th:rowId="${itr.index+1}" th:postId="${positionHistory.id}" th:if="${not form.view}" class="hsys-a-pointer" onclick="editPositionHistory(this)">
+													<img th:src='@{/icons/pencil.png}' width=12px /></a>
+												</span>
+											</td>
+											<td style="width:20px;">
+												<span th:id="'deletePositionHistory'+${itr.index+1}">
+													<a id="deletePositionHistory"  th:postId="${positionHistory.id}" th:if="${not form.view}" class="hsys-a-pointer" onclick="deletePositionHistory(this)">
+													<img th:src='@{/icons/delete.png}' width=12px /></a>
+												</span>
+											</td>
 										</tr>
 									</tbody>
 								</table>
 							</td>
 						</tr>
 						<!-- 权限信息 -->
-						<tr>
+						<tr th:if="${not form.view}">
 							<td rowspan=1>权限信息</td>
 							<td colspan=2>
 								<div id="e_role_disp_div">
@@ -307,7 +318,8 @@
 											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).ATTENDANCE_LIST_ALL}">出勤记录一览(所有)<br></span>
 											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST}">报销单一览(组内)<br></span>
 											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).EXPENSE_LIST_ALL}">报销单一览(所有)<br></span>
-											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).DEVICE_EDIT}">设备编辑</span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).DEVICE_EDIT}">设备编辑<br></span>
+											<span class="label label-primary" th:case="${T(com.hsys.models.enums.ROLE).HOLIDAY_EDIT}">假日编辑</span>
 										</th:block>
 									</th:block>
 									<a th:if="${not form.view}" id="e_role" class="hsys-a-pointer pull-right"><img th:src='@{/icons/pencil.png}' width=12px /></a>

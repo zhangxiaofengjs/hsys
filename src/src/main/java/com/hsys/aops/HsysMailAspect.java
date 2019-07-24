@@ -1,21 +1,24 @@
 package com.hsys.aops;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hsys.HsysApplicationContext;
 import com.hsys.annotations.HsysMail;
-import com.hsys.common.HsysDate;
-import com.hsys.models.ExtraTimeModel;
+import com.hsys.mail.encoders.IMailEncoder;
 import com.hsys.services.MailService;
 import com.hsys.services.beans.MineMail;
 
-@Component
+
+@Service
+//@Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE) 加了这个也不能单例，可能是Aspect的特性？？
 @Aspect
 public class HsysMailAspect {
 	@Autowired
@@ -23,71 +26,47 @@ public class HsysMailAspect {
 	
 	@Pointcut("@annotation(com.hsys.annotations.HsysMail)")
 	private void hsysMail() { 
-		
 	} 
 	
-//	@Before("hsysMail()")
-//	public void before(JoinPoint joinPoint) {
-//		System.out.println("before执行方法");
-//	}
+	@Before("hsysMail() && @annotation(hsysMail)")
+	public void before(JoinPoint joinPoint, HsysMail hsysMail) {
+		
+	}
 	
 	@After("hsysMail() && @annotation(hsysMail)")
-	public void after(JoinPoint joinPoint, HsysMail hsysMail) {
-		Object[] args = joinPoint.getArgs();
+	public void after(JoinPoint joinPoint, HsysMail hsysMail) throws Exception {
 		
-		MineMail mm = new MineMail();
-		mm.setFrom("admin@hinfo.com");
-		mm.addTo("admin@hinfo.com");
-		mm.setSubject(hsysMail.name());
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("<b>%s</b>", hsysMail.name()));
-		sb.append("<br>");
-		
-		if(args != null) {
-			for(Object arg : args) {
-				sb.append(encode(arg));
-			}
+	}
+	
+	@Around("hsysMail() && @annotation(hsysMail)")
+	public Object advice(ProceedingJoinPoint joinPoint, HsysMail hsysMail) {
+	    //System.out.println("环绕通知之开始" + hsysMail.name());
+		IMailEncoder encoder = null;
+		try {
+			encoder = (IMailEncoder)hsysMail.encoder().newInstance();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
 		}
+		
+		//因为直接new instance，所以还得autowire一下，不然里面的注解不起作用
+		HsysApplicationContext.getContext().getAutowireCapableBeanFactory().autowireBean(encoder);
 
-	    mm.setMessage(sb.toString());
-	        
-		mailService.send(mm);
+		Object[] args = joinPoint.getArgs();
+		encoder.pre(hsysMail.name(), args);
+
+	    Object ret = null;
+	    try {
+	    	ret = joinPoint.proceed();
+	    } catch (Throwable e) {
+	        e.printStackTrace();
+	    }
+
+	    encoder.post();
+
+	    MineMail mm = encoder.encode();
+		mailService.sendAnsy(mm);	
+	    return ret;
 	}
-	
-	private String encode(Object arg) {
-		if(arg instanceof ExtraTimeModel) {
-			ExtraTimeModel et = (ExtraTimeModel)arg;
-			return String.format("%d, %s, %s, %s, %f, %d, %d",
-				et.getUser().getId(),
-				HsysDate.format(et.getDate()),
-				HsysDate.format(et.getStartTime(), "HH:mm"),
-				HsysDate.format(et.getEndTime(), "HH:mm"),
-				et.getLength(),
-				et.getMealLunch(),
-				et.getMealSupper());
-		} else {
-			ObjectMapper mapper = new ObjectMapper(); 
-			try {
-				return mapper.writeValueAsString(arg);
-			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-		}
-	}
-	
-//	@Around("hsysMail() && @annotation(hsysMail)")
-//	public Object advice(ProceedingJoinPoint joinPoint, HsysMail hsysMail){
-//	    System.out.println("环绕通知之开始" + hsysMail.name());
-//	    Object ret = null;
-//	    try {
-//	    	ret = joinPoint.proceed();
-//	    } catch (Throwable e) {
-//	        e.printStackTrace();
-//	    }
-//	    System.out.println("环绕通知之结束" + ret);
-//	    return ret;
-//	}
 }

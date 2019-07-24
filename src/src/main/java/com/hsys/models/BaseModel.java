@@ -33,6 +33,7 @@ public class BaseModel {
 	private int id;
 	private UserModel registUser;
 	private UserModel updateUser;
+	private GroupModel UpdateParentGroup;
 	private Date createTime;
 	private Date updateTime;
 	private HashMap<String, Object> cond = new HashMap<String, Object>();
@@ -69,6 +70,14 @@ public class BaseModel {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	
+	public void setUpdateParentGroup(GroupModel updateParentGroup) {
+		UpdateParentGroup = updateParentGroup;
+	}
+	
+	public GroupModel getUpdateParentGroup() {
+		return UpdateParentGroup;
 	}
 
 	public HashMap<String, Object> getCond() {

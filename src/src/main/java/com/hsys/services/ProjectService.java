@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.hsys.business.forms.ProjectLeaderAddForm;
-import com.hsys.business.forms.ProjectLeaderDeleteForm;
 import com.hsys.common.HsysList;
 import com.hsys.mappers.ProjectMapper;
 import com.hsys.models.ProjectLeaderModel;
@@ -51,17 +49,17 @@ public class ProjectService {
 		return !HsysList.isEmpty(leaders);
 	}
 
-	public void addLeader(ProjectLeaderAddForm form) {
+	public void addLeader(int projectId, int userId) {
 		ProjectLeaderModel leader = new ProjectLeaderModel();
-		leader.setLeaderId(form.getUserId());
-		leader.setProjectId(form.getProjectId());
+		leader.setLeaderId(userId);
+		leader.setProjectId(projectId);
 		projectMapper.addLeader(leader);
 	}
 
-	public void deleteLeader(ProjectLeaderDeleteForm form) {
+	public void deleteLeader(int projectId, int userId) {
 		ProjectLeaderModel leader = new ProjectLeaderModel();
-		leader.setLeaderId(form.getUserId());
-		leader.setProjectId(form.getProjectId());
+		leader.setLeaderId(userId);
+		leader.setProjectId(projectId);
 		projectMapper.deleteLeader(leader);
 	}
 
@@ -84,7 +82,7 @@ public class ProjectService {
 	public void deleteById(int id) {
 		ProjectModel project = new ProjectModel();
 		project.setId(id);
-		projectMapper.deleteProjects(project);
+		projectMapper.deleteProject(project);
 		
 	}
 

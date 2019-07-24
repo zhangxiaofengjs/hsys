@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hsys.mappers.UserPositionHistoryMapper">
+	<resultMap id="userPositionHistoryResultMap" type="userPositionHistoryModel" >  
+        <id column="c_id" property="id"/>  
+        <result column="c_date" property="date"/>
+        <result column="c_from_position" property="fromPosition"/>
+        <result column="c_to_position" property="toPosition"/>
+        <result column="c_comment" property="comment"/>
+        <result column="c_user_id" property="userId"/>
+    </resultMap>
+	
+	<select id="queryList" resultMap="userPositionHistoryResultMap">
+		select uph.c_id as c_id,
+			   uph.c_date as c_date,
+			   uph.c_from_position as c_from_position,
+			   uph.c_to_position as c_to_position,
+			   uph.c_comment as c_comment,
+			   uph.c_user_id as c_user_id
+		from user_position_history as uph
+		<where>
+			<if test="cond.id != null">
+				uph.c_id = #{id}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="addPositionHistory" parameterType="userPositionHistoryModel">
+    	insert into user_position_history (
+    		c_date,
+    		c_from_position,
+    		c_to_position,
+    		c_comment,
+    		c_user_id
+    		)
+    	values (
+    		#{date},
+    		#{fromPosition},
+    		#{toPosition},
+    		#{comment},
+    		#{userId}
+    	)
+    </insert>
+    
+    <update id="updatePositionHistory">
+    	update user_position_history
+		<set>
+    		<if test="update.date != null">
+				c_date = #{date},
+			</if>
+    		<if test="update.fromPosition != null">
+				c_from_position = #{fromPosition},
+			</if>
+    		<if test="update.toPosition != null">
+				c_to_position = #{toPosition},
+			</if>
+			<if test="update.comment != null">
+				c_comment = #{comment}
+			</if>
+		</set>
+    	<where>
+			c_id = #{id}
+		</where>
+    </update>
+    
+    <delete id="deletePositionHistory">
+    	delete from user_position_history
+    	<where>
+			c_id = #{id}
+		</where>
+    </delete>
+</mapper>

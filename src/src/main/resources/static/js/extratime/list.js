@@ -10,7 +10,6 @@ $(document).ready(function(){
 		}
 	});
 	
-	
 	function calcLen(dlg) {
 		var start = "2019-04-15 " + dlg.elem("startTime").val() + ":00";
 		var end = "2019-04-15 " + dlg.elem("endTime").val() + ":00";
@@ -132,6 +131,8 @@ $(document).ready(function(){
 			}
 		});
 	});
+	
+	htbl.rowDoubleClicked("extraTimeTable","updateExtra");
 	
 	$("#updateExtra").click(function(){
 		var self = $(this);

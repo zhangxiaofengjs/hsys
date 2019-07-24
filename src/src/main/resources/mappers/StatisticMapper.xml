@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.hsys.mappers.StatisticMapper">
+	<resultMap id="groupResultMap" type="groupModel" >  
+        <id column="g_id" property="id"/>  
+        <result column="g_name" property="name"/>  
+    </resultMap>
     <resultMap id="statisticResultMap" type="StatisticModel">
     	<result column="g_name" property="groupName"/>
     	<result column="u_no" property="userNo"/>
@@ -16,6 +20,7 @@
     	<result column="r_funeral" property="rtFuneral"/>
     	<result column="r_public" property="rtPublics"/>
     	<result column="r_sum" property="rtSum"/>
+    	<association property="group" resultMap="groupResultMap"/>
     </resultMap>
     
     <sql id="sum_extra_time">
@@ -62,7 +67,8 @@
 				rm.len as  r_marriage,
 				rf.len as r_funeral,
 				rp.len as r_public,
-				ifnull(rv.len,0.0)+ifnull(rs.len,0.0)+ifnull(rl.len,0.0)+ifnull(rm.len,0.0)+ifnull(rf.len,0.0)+ifnull(rp.len,0.0)  as r_sum
+				ifnull(rv.len,0.0)+ifnull(rs.len,0.0)+ifnull(rl.len,0.0)+ifnull(rm.len,0.0)+ifnull(rf.len,0.0)+ifnull(rp.len,0.0)  as r_sum,
+				g.c_id as g_id
 		from user_tbl u
 		left join 
 			(<include refid="sum_extra_time">
@@ -111,12 +117,36 @@
     </sql>
 	
      <select id ="queryList" resultMap="statisticResultMap" >
-		<include refid="queryListCommon">
-		</include>
+		select 	cin.g_name as g_name,
+				cin.u_no as u_no,
+				cin.u_name as u_name,
+				cin.e_normol as e_normol,
+				cin.e_weekend as e_weekend,
+				cin.e_holiday as e_holiday,
+				cin.e_sum as e_sum,
+				cin.r_vacation as r_vacation,
+				cin.r_sick as r_sick,
+				cin.r_leave as  r_leave,
+				cin.r_marriage as  r_marriage,
+				cin.r_funeral as r_funeral,
+				cin.r_public as r_public,
+				cin.r_sum as r_sum,
+				cin.g_id as g_id
+		from(<include refid="queryListCommon">
+		</include>)as cin
+		<where>
+			<if test="cond.groupIds != null">
+				and cin.g_id in
+				<foreach item="groupId" collection="cond.groupIds" separator="," open="(" close=")" index="i">
+				 	#{groupId}
+				</foreach>
+			</if>
+		</where>
     </select>
     
 	<select id="SumTotalList" resultMap="statisticResultMap" >
 	select 
+		'***合计***' as g_name,
 		ifnull(sum(cin.e_normol), 0.0) e_normol,
 		ifnull(sum(cin.e_weekend),0.0) e_weekend,
 		ifnull(sum(cin.e_holiday),0.0) e_holiday,
@@ -130,10 +160,19 @@
 		ifnull(sum(cin.r_sum),0.0) r_sum
 	from (<include refid="queryListCommon">		 	
 		</include>) as cin
+		<where>
+			<if test="cond.groupIds != null">
+				and cin.g_id in
+				<foreach item="groupId" collection="cond.groupIds" separator="," open="(" close=")" index="i">
+				 	#{groupId}
+				</foreach>
+			</if>
+		</where>
 	</select>
 	
     <select id="GetGroupStatisticsList"  resultMap="statisticResultMap"  >
-	select cin.g_name g_name ,
+	select 
+		cin.g_name g_name ,
 		ifnull(sum(cin.e_normol), 0.0) e_normol,
 		ifnull(sum(cin.e_weekend),0.0) e_weekend,
 		ifnull(sum(cin.e_holiday),0.0) e_holiday,
@@ -144,10 +183,19 @@
 		ifnull(sum(cin.r_marriage),0.0) r_marriage,
 		ifnull(sum(cin.r_funeral),0.0) r_funeral,
 		ifnull(sum(cin.r_public),0.0) r_public,
-		ifnull(sum(cin.r_sum),0.0) r_sum
+		ifnull(sum(cin.r_sum),0.0) r_sum,
+		cin.g_id g_id
 	from (<include refid="queryListCommon">
 		</include>) as cin 
-	group by cin.g_name
+	<where>
+		<if test="cond.groupIds != null">
+				and cin.g_id in
+				<foreach item="groupId" collection="cond.groupIds" separator="," open="(" close=")" index="i">
+				 	#{groupId}
+				</foreach>
+		</if>
+	</where>
+	group by cin.g_name, cin.g_id
     </select>
     
 	

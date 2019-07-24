@@ -18,6 +18,13 @@
         <id column="g_id" property="id"/>  
         <result column="g_name" property="name"/>  
     </resultMap>
+    <resultMap id="userPositionHistoryResultMap" type="userPositionHistoryModel" >  
+        <id column="uph_id" property="id"/>  
+        <result column="uph_date" property="date"/>  
+        <result column="uph_comment" property="comment"/>
+        <result column="uph_from_position" property="fromPosition"/>
+        <result column="uph_to_position" property="toPosition"/>
+    </resultMap>
 	<resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>  
         <result column="u_no" property="no"/>  
@@ -39,6 +46,7 @@
         <association property="company" resultMap="companyResultMap"/>
         <association property="school"  resultMap="schoolResultMap"/>
         <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" /> 
+        <collection property="positionHistories" ofType="userPositionHistoryModel" resultMap="userPositionHistoryResultMap" /> 
     </resultMap>
 
 	<select id="queryList" resultMap="userResultMap">
@@ -72,12 +80,18 @@
 			   s.c_id as s_id,
 			   s.c_name as s_name,
 			   ur.c_id as ur_id,
-			   ur.c_role as ur_role
+			   ur.c_role as ur_role,
+			   uph.c_id as uph_id,
+			   uph.c_date as uph_date,
+			   uph.c_comment as uph_comment,
+			   uph.c_from_position as uph_from_position,
+			   uph.c_to_position as uph_to_position
 		from user_tbl as u
 		left join school_tbl as s on s.c_id=u.c_school_id
 		left join company_tbl as c on c.c_id=u.c_company_id
 		left join user_group_tbl as ug on ug.c_user_id=u.c_id
 		left join group_tbl as g on g.c_id=ug.c_group_id
+		left join user_position_history as uph on uph.c_user_id=u.c_id
 		<choose>
 			<when test="cond.containsDisableRole != null">
 				left join user_role_tbl as ur on ur.c_user_id=u.c_id

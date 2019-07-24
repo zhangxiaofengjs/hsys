@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.GroupBusiness;
 import com.hsys.business.beans.TreeNodeBean;
-import com.hsys.business.forms.DeviceJsonUpdateForm;
 import com.hsys.business.forms.GroupJsonDeleteForm;
+import com.hsys.business.forms.GroupJsonGetExceptChild;
 import com.hsys.business.forms.GroupJsonGetForm;
 import com.hsys.business.forms.GroupJsonUpdateForm;
 import com.hsys.controllers.beans.JsonResponse;
-import com.hsys.models.DeviceModel;
 import com.hsys.models.GroupModel;
 
 /**
@@ -33,6 +32,17 @@ public class GroupController extends BaseController {
 	public JsonResponse jsonList() {
 		try {
 			List<GroupModel> groups = groupBusiness.getGroups();
+			return JsonResponse.success().put("groups", groups);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/exceptchild")
+	@ResponseBody
+	public JsonResponse jsonListExceptChild(@RequestBody GroupJsonGetExceptChild form) {
+		try {
+			List<GroupModel> groups = groupBusiness.getGroupsExceptChild(form);
 			return JsonResponse.success().put("groups", groups);
 		} catch(Exception e) {
 			return JsonResponse.error(e.getMessage());
@@ -61,7 +71,7 @@ public class GroupController extends BaseController {
 		return JsonResponse.success();
 	}
 	
-	@RequestMapping("/json/get")
+	@RequestMapping("/json/get")	
 	@ResponseBody
 	public JsonResponse get(@RequestBody GroupJsonGetForm form) {
 		try {
@@ -93,4 +103,5 @@ public class GroupController extends BaseController {
 		}
 		return JsonResponse.success();
 	}
+	
 }

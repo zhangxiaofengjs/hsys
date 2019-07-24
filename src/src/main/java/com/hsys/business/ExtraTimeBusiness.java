@@ -24,7 +24,7 @@ import com.hsys.business.forms.UserBasicExtraTimeForm;
 import com.hsys.common.HsysDate;
 import com.hsys.common.HsysIO;
 import com.hsys.common.HsysString;
-import com.hsys.config.HsysConfig;
+import com.hsys.config.UploadFolderConfig;
 import com.hsys.exception.HsysException;
 import com.hsys.io.ExtraTimeWriter;
 import com.hsys.models.ExtraTimeModel;
@@ -45,7 +45,7 @@ public class ExtraTimeBusiness {
 	@Autowired
 	private ExtraTimeWriter writer;
 	@Autowired
-	HsysConfig config;
+	UploadFolderConfig config;
 	@Autowired
 	private GroupService groupService;
 	private void check(ExtraTimeModel extraTime) {
@@ -334,7 +334,7 @@ public class ExtraTimeBusiness {
 		Resource resource = HsysApplicationContext.getResource("classpath:/attachments/extra-time-template.xlsx"); 
 		InputStream is = resource.getInputStream();
 
-		String tempFile = config.getUploadFolder().getTempFolder() + "\\" + 
+		String tempFile = config.getTempFolder() + "\\" + 
 				HsysDate.format(form.getStartDate(), "yyyyMMdd") + "_" +
 				HsysDate.format(form.getEndDate(), "yyyyMMdd") + ".xlsx";
 		

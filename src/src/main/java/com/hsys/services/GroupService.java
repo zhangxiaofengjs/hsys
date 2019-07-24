@@ -19,10 +19,9 @@ public class GroupService {
     private GroupMapper groupMapper;
 	
 	public List<GroupModel> queryList(GroupModel group) {
-
 		return groupMapper.queryList(group);
 	}
-	
+		
 	public void add(GroupModel group) {
 		groupMapper.add(group);
 	}
@@ -147,7 +146,6 @@ public class GroupService {
 	//查询组织id
 	public List<GroupModel> queryByParentId(int id){
 		GroupModel groupModel = new GroupModel();
-		groupModel.setParentId(id);
 		groupModel.setCond(GroupModel.COND_PARENT_ID, id);
 		
 		return queryList(groupModel);

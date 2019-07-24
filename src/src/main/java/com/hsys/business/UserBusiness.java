@@ -2,11 +2,13 @@ package com.hsys.business;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -24,11 +26,14 @@ import com.hsys.business.forms.UserJsonChangePwdForm;
 import com.hsys.business.forms.UserJsonGetForm;
 import com.hsys.business.forms.UserJsonInitPwdForm;
 import com.hsys.business.forms.UserJsonUpdateForm;
+import com.hsys.business.forms.UserPositionHistoryAddForm;
+import com.hsys.business.forms.UserPositionHistoryDeleteForm;
+import com.hsys.business.forms.UserPositionHistoryUpdateForm;
 import com.hsys.common.HsysDate;
 import com.hsys.common.HsysIO;
 import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
-import com.hsys.config.HsysConfig;
+import com.hsys.config.UploadFolderConfig;
 import com.hsys.exception.HsysException;
 import com.hsys.io.UserWriter;
 import com.hsys.models.CompanyModel;
@@ -38,6 +43,7 @@ import com.hsys.models.HolidayModel;
 import com.hsys.models.RestModel;
 import com.hsys.models.SchoolModel;
 import com.hsys.models.UserModel;
+import com.hsys.models.UserPositionHistoryModel;
 import com.hsys.models.UserRoleModel;
 import com.hsys.models.enums.BoolFlag;
 import com.hsys.models.enums.ROLE;
@@ -45,6 +51,7 @@ import com.hsys.security.HsysPasswordEncoder;
 import com.hsys.services.ExtraTimeService;
 import com.hsys.services.GroupService;
 import com.hsys.services.HolidayService;
+import com.hsys.services.PositionHistoryService;
 import com.hsys.services.RestService;
 import com.hsys.services.UserService;
 
@@ -67,7 +74,9 @@ public class UserBusiness {
 	@Autowired
 	private HolidayService holidayService;
 	@Autowired
-	HsysConfig config;
+	private PositionHistoryService positionHistoryService;
+	@Autowired
+	UploadFolderConfig config;
 	@Autowired
 	UserWriter writer;
 	public List<UserDetailBean> getUsers(UserHtmlListForm form) {
@@ -297,8 +306,12 @@ public class UserBusiness {
 			Date exitdate = HsysDate.tryParse(userUpdateForm.getValue(), "yyyy-MM-dd");		
 			Date enterDate = user.getEnterDate();
 			
+			if (enterDate == null) {
+				throw new HsysException("请先设定入职日期");
+			}
+			
 			//离职日期在入职日期之后
-			if(dateCheck(enterDate, exitdate)) {
+			if (enterDate.compareTo(exitdate)<0) {
 				user.setExitDate(exitdate);	
 				user.setUpdate(UserModel.FIELD_EXIT_DATE);
 			}else {
@@ -330,16 +343,6 @@ public class UserBusiness {
 			throw new HsysException("想定以外的更新。");
 		}
 		userService.update(user);
-	}
-	
-	
-	//比较入职日期和离职日期
-	public  boolean dateCheck(Date enterdate,Date exitdate) {
-		if (enterdate.compareTo(exitdate)<0) {
-			return true;
-		}else {
-			return false;
-		}	
 	}
 	
 	public void changePwd(UserJsonChangePwdForm form) {
@@ -421,9 +424,6 @@ public class UserBusiness {
 	public List<HolidayModel> getHoliday() {
 		HolidayModel h = new HolidayModel();
 		List<HolidayModel> list = holidayService.queryList(h);
-		for(HolidayModel holiday : list){
-			holiday.setMonth(holiday.getDate().getMonth()+1);
-		}
 		return list;
 	}
 
@@ -433,7 +433,7 @@ public class UserBusiness {
 		}
 		Resource resource = HsysApplicationContext.getResource("classpath:/attachments/user-template.xlsx"); 
 		InputStream is = resource.getInputStream();
-		String tempFile = config.getUploadFolder().getTempFolder() + "\\" + "用户信息表.xlsx";	//生成文件名
+		String tempFile = config.getTempFolder() + "\\" + "用户信息表.xlsx";	//生成文件名
 		writer.setUserNo(form.getNo());
 		writer.setTemplateFileStream(is);
 		writer.setView(form.isView());
@@ -442,5 +442,117 @@ public class UserBusiness {
 		ResponseEntity<byte[]> response = HsysIO.downloadHttpFile(tempFile);
 		HsysIO.delete(tempFile);
 		return response;
+	}
+
+	public void addPositionHistory(UserPositionHistoryAddForm form) {
+		//权限判定
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
+			throw new HsysException("权限不足"); 
+		}
+		
+		List<String> errMessages = new ArrayList<>();
+		//检测信息长度
+		if(form.getDate()==null || form.getDate().toString()=="") {
+			errMessages.add("未输入时间"); 
+		}
+		if(form.getFromPosition().length()>50) {
+			errMessages.add("原岗位过长"); 
+		}
+		if(form.getToPosition().length()>50) {
+			errMessages.add("调入岗位过长");
+		}
+		if(form.getComment().length()>50) {
+			errMessages.add("备注过长");
+		}
+		
+		if(!errMessages.isEmpty())
+		{
+			StringBuilder bld = new StringBuilder("请检查输入的信息: ");
+			String str = StringUtils.join(errMessages, ';');
+			throw new HsysException(bld.toString()+str);
+		}
+		
+		UserPositionHistoryModel positionHistory = new UserPositionHistoryModel();
+		positionHistory.setDate(form.getDate());
+		positionHistory.setFromPosition(form.getFromPosition());
+		positionHistory.setToPosition(form.getToPosition());
+		positionHistory.setComment(form.getComment());
+		positionHistory.setUserId(form.getUserId());
+		positionHistoryService.addPositionHistory(positionHistory);
+	}
+
+	public void updatePositionHistory(UserPositionHistoryUpdateForm form) {
+		//权限判定
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
+			throw new HsysException("权限不足"); 
+		}
+		
+		List<String> errMessages = new ArrayList<>();
+		
+		UserPositionHistoryModel positionHistory = positionHistoryService.queryById(form.getId());
+		if(positionHistory == null) {
+			throw new HsysException("该信息不存在。");
+		}
+		
+		if (form.getDate() != null) {
+			if(form.getDate()!=positionHistory.getDate()) {
+				positionHistory.setDate(form.getDate());
+				positionHistory.setUpdate(UserPositionHistoryModel.FIELD_DATE);
+			}
+		}else {
+			errMessages.add("未输入时间");
+		}
+		
+		if(!(positionHistory.getFromPosition()==null?form.getFromPosition()==null:positionHistory.getFromPosition().equals(form.getFromPosition()))) {
+			if(form.getFromPosition().length()<=50){
+				positionHistory.setFromPosition(form.getFromPosition());
+				positionHistory.setUpdate(UserPositionHistoryModel.FIELD_FROM_POSITION);
+			}else {
+				errMessages.add("原岗位过长");
+			}
+		}
+		
+		if(!(positionHistory.getToPosition()==null?form.getToPosition()==null:positionHistory.getToPosition().equals(form.getToPosition()))) {
+			if(form.getToPosition().length()<=50){
+				positionHistory.setToPosition(form.getToPosition());
+				positionHistory.setUpdate(UserPositionHistoryModel.FIELD_TO_POSITION);
+			}else {
+				errMessages.add("调入岗位过长");
+			}
+		}
+		
+		if(!(positionHistory.getComment()==null?form.getComment()==null:positionHistory.getComment().equals(form.getComment()))) {
+			if(form.getComment().length()<=50){
+				positionHistory.setComment(form.getComment());
+				positionHistory.setUpdate(UserPositionHistoryModel.FIELD_COMMENT);
+			}else {
+				errMessages.add("备注过长");
+			}
+		}
+		
+		if(!errMessages.isEmpty())
+		{
+			StringBuilder bld = new StringBuilder("请检查输入的信息: ");
+			String str = StringUtils.join(errMessages, ';');
+			throw new HsysException(bld.toString()+str);
+		}
+		
+		if(positionHistory.hasUpdate())
+		{
+			positionHistoryService.updatePositionHistory(positionHistory);
+		}
+	}
+
+	public void deletePositionHistory(UserPositionHistoryDeleteForm form) {
+		//权限判定
+		if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_EDIT)) {
+			throw new HsysException("权限不足"); 
+		}
+		int id = form.getId();
+		UserPositionHistoryModel positionHistory = positionHistoryService.queryById(id);
+		if(positionHistory == null){
+			throw new HsysException("该数据不存在");
+		}
+		positionHistoryService.deletePositionHistory(id);
 	}
 }

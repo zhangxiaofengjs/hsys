@@ -95,7 +95,7 @@ hsys.refresh = function(url, args) {
 			strQuery += "&" + key + "=" + args[key];
 			
 			if(!$.isEmptyObject(queryArgs) && queryArgs.hasOwnProperty(key)) {
-				queryArgs.removeProperty(key);
+				delete queryArgs[key];
 			}
 		}
 	}

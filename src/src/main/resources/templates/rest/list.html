@@ -15,12 +15,13 @@
 				  		<div class="navbar-header">
 				  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 				  		</div>
-				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/rest/html/list}" method="post">
+				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/rest/html/list}" method="get">
 							<input type="hidden" name="user" th:value="${form.user}">
 							<input type="hidden" name="approve" th:value="${form.approve}">
 							<input type="hidden" name="view" th:value="${form.view}">
 				 			<div class="form-group">
 							   <input type="text" class="form-control hsys-fc-userno-width" id="userNo" name="userNo" th:if="${not form.user}" th:value="${form.userNo}" placeholder="输入工号">
+				 				<input type="text" class="form-control" id="groupId" name="groupId" th:if="${form.view}"  th:value="${form.groupId}" th:dispText="${form.groupName}"/>
 				 			</div>
 				 			<div class="form-group">
 							   <input type="date" class="form-control hsys-fc-date-width" id="dateStart" name="dateStart" th:value="${#dates.format(form.dateStart,'yyyy-MM-dd')}">
@@ -47,13 +48,13 @@
 						<tr class="alert alert-warning">
 					    	<th colspan=2>合计</th>
 					    	<td colspan=9>
-					    		休假:<span th:text="${bean.sumVacation}"></span>h&nbsp;
-					    		病假:<span th:text="${bean.sumSick}"></span>h&nbsp;
-					    		事假:<span th:text="${bean.sumLeave}"></span>h&nbsp;
-					    		婚假:<span th:text="${bean.sumMarriage}"></span>h&nbsp;
-					    		丧假:<span th:text="${bean.sumFuneral}"></span>h&nbsp;
-					    		公假:<span th:text="${bean.sumPublic}"></span>h&nbsp;
-					    		<b>总计:<span th:text="${bean.sumVacation + bean.sumSick + bean.sumLeave+ bean.sumMarriage+ bean.sumFuneral+ bean.sumPublic}"></span>h</b>
+					    		<span th:text="${bean.sumVacation != 0.0 ? '休假:'+bean.sumVacation+'h' : '' }"></span>&nbsp;
+					    		<span th:text="${bean.sumSick != 0.0 ? '病假:'+bean.sumSick+'h' : ''}"></span>&nbsp;
+					    		<span th:text="${bean.sumLeave != 0.0 ? '事假:'+bean.sumLeave+'h' : ''}"></span>&nbsp;
+					    		<span th:text="${bean.sumMarriage != 0.0 ? '婚假:'+sumMarriage+'h' : ''}"></span>&nbsp;
+					    		<span th:text="${bean.sumFuneral != 0.0 ? '丧假:'+bean.sumFuneral+'h' : ''}"></span>&nbsp;
+					    		<span th:text="${bean.sumPublic != 0.0 ? '公假:'+bean.sumPublic+'h' : ''}"></span>&nbsp;
+					    		<b><span th:text="${bean.sumVacation + bean.sumSick + bean.sumLeave+ bean.sumMarriage+ bean.sumFuneral+ bean.sumPublic !=0.0 ? '总计:'+(bean.sumVacation + bean.sumSick + bean.sumLeave+ bean.sumMarriage+ bean.sumFuneral+ bean.sumPublic)+'h':''}"></span></b>
 					    	</td>
 					    </tr>	
 					    <tr>
@@ -69,7 +70,7 @@
 					    </tr>
 					</thead>
 					<tbody>
-						<tr th:each="rest, itr : ${list}"
+						<tr th:each="rest, itr : ${bean.list}"
 							th:with="approvalUser=${rest.approvalUser}"
 							th:rowid="${rest.id}">
 							<td>

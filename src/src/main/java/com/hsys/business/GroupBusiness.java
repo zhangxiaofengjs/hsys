@@ -1,7 +1,6 @@
 package com.hsys.business;
 
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hsys.HsysSecurityContextHolder;
 import com.hsys.business.beans.TreeNodeBean;
 import com.hsys.business.forms.GroupJsonDeleteForm;
+import com.hsys.business.forms.GroupJsonGetExceptChild;
 import com.hsys.business.forms.GroupJsonGetForm;
 import com.hsys.business.forms.GroupJsonUpdateForm;
 import com.hsys.common.HsysList;
@@ -32,8 +32,35 @@ public class GroupBusiness {
 	
 	public List<GroupModel> getGroups() {
 		return groupService.queryList(new GroupModel());
-	}
-
+	}	
+	
+	public List<GroupModel> getGroupsExceptChild(GroupJsonGetExceptChild form) {
+		List<GroupModel> groupAll = groupService.queryList(new GroupModel());
+		//查询正在被编集的group所有的子group
+		List<GroupModel> groupChild = groupService.queryChildrenById(form.getId());	
+		
+		//如果该group没有子group，那么任何group都可以是它的上级组织，返回groupAll
+		if(groupChild.size()==0) {
+			return groupAll;
+		}
+		
+		//如果该group有子group,那么它的子group不返回
+		List<GroupModel> groupRest = HsysList.New();
+		for (GroupModel allItem : groupAll) {
+			int count = 0;
+			
+			for (GroupModel childItem : groupChild) {
+				if(allItem.getId() == childItem.getId())
+					break;
+				else
+					count++;
+			}
+			if (count == groupChild.size())
+				groupRest.add(allItem);
+		}
+		return groupRest;	
+	}	
+	
 	public List<TreeNodeBean> getChildrenGroups(TreeNodeBean bean) {
 		GroupModel group = new GroupModel();
 		group.setCond(GroupModel.COND_PARENT_ID, bean.getValue());
@@ -61,7 +88,8 @@ public class GroupBusiness {
 		if(groupExist != null) {
 			throw new HsysException("该组织存在:%s", groupExist.getName()); 
 		}
-		GroupModel parent = groupService.queryById(group.getParentId());
+		
+		GroupModel parent = groupService.queryById(group.getParent().getId());
 		if(parent != null) {
 			group.setLevel(parent.getLevel()+1);
 		}else {
@@ -112,12 +140,14 @@ public class GroupBusiness {
 			throw new HsysException("权限不足"); 
 		}
 		
+		//根据id，查出当前编集的组织信息
 		GroupModel groupModel = groupService.queryById(form.getId());
 		
 		if(groupModel == null) {
 			throw new HsysException("该组织不存在。");
 		}
 		
+		//修改组织名
 		if(!groupModel.getName().equals(form.getName())) {
 			if(form.getName().length() <20 && form.getName().length()>0) {
 				groupModel.setName(form.getName());
@@ -127,24 +157,29 @@ public class GroupBusiness {
 			}
 		}
 		
-		if(groupModel.getParent().getId() != form.getParentId()) {
+		//修改组织
+		if(groupModel.getParent().getId() != form.getParent().getId()) {
 			List<GroupModel> groups = groupService.queryChildrenById(form.getId());
 			for (GroupModel group : groups) {
-				if(group.getId() == form.getParentId()) {
+				if(group.getId() == form.getParent().getId()) {
 					throw new HsysException(group.getName() +"是该部门的子部门。更新失败。");
 				}
 			}
-			GroupModel parent = groupService.queryById(form.getParentId());
+			GroupModel parent = groupService.queryById(form.getParent().getId());
 			if(parent != null) {
 				groupModel.setLevel(parent.getLevel()+1);
 			}else {
 				groupModel.setLevel(0);
 			}
 			groupModel.setUpdate(GroupModel.FIELD_LEVEL);
-			groupModel.setParentId(form.getParentId());
-			groupModel.setUpdate(GroupModel.FIELD_PARENT_ID);
+			groupModel.setUpdateParentGroup(form.getParent());
 		}
 		
+		//如果没有做修改
+		if(groupModel.getName().equals(form.getName()) && groupModel.getParent().getId()== form.getParent().getId()) {
+			throw new HsysException("没有做任何修改。");
+		}
 		groupService.update(groupModel);
 	}
+	
 }

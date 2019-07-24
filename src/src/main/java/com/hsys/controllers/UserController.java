@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.hsys.business.UserBusiness;
 import com.hsys.business.beans.UserBasicBean;
 import com.hsys.business.beans.UserDetailBean;
+import com.hsys.business.forms.UserPositionHistoryAddForm;
+import com.hsys.business.forms.UserPositionHistoryDeleteForm;
+import com.hsys.business.forms.UserPositionHistoryUpdateForm;
 import com.hsys.business.forms.UserDownloadForm;
 import com.hsys.business.forms.UserHtmlDetailForm;
 import com.hsys.business.forms.UserHtmlListForm;
@@ -90,12 +93,21 @@ public class UserController extends BaseController {
 	}
 	
 	@RequestMapping("/html/basic")
-	public String htmlList(HolidayModel holiday,Model model) {
+	public String htmlList(Model model) {
 		UserBasicBean bean = userBusiness.getBasicInfo();
-		List<HolidayModel> list = userBusiness.getHoliday();
-		model.addAttribute("lists", list);
 		model.addAttribute("bean", bean);
 		return "user/basic";
+	}
+	
+	@RequestMapping("/json/get")
+	@ResponseBody
+	public JsonResponse get(HolidayModel holiday,Model model) {
+		try {
+			List<HolidayModel> list = userBusiness.getHoliday();
+			return JsonResponse.success().put("extratime", list);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
 	}
 	
 	@RequestMapping("/html/detail")
@@ -134,4 +146,36 @@ public class UserController extends BaseController {
 		return null;
 	}
 	
+	@RequestMapping("/json/addPositionHistory")
+	@ResponseBody
+	public JsonResponse addPositionHistory(@RequestBody UserPositionHistoryAddForm form) {
+		try {
+			userBusiness.addPositionHistory(form);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/updatePositionHistory")
+	@ResponseBody
+	public JsonResponse updatePositionHistory(@RequestBody UserPositionHistoryUpdateForm form) {
+		try {
+			userBusiness.updatePositionHistory(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
+	
+	@RequestMapping("/json/deletePositionHistory")
+	@ResponseBody
+	public JsonResponse deletePositionHistory(@RequestBody UserPositionHistoryDeleteForm form) {
+		try {
+			userBusiness.deletePositionHistory(form);
+			return JsonResponse.success();
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
 }

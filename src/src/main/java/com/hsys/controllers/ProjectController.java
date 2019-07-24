@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.hsys.business.ProjectBusiness;
+import com.hsys.business.UserBusiness;
 import com.hsys.business.forms.ProjectJsonDeleteForm;
 import com.hsys.business.forms.ProjectJsonGetForm;
 import com.hsys.business.forms.ProjectJsonUpdateForm;
@@ -16,6 +17,7 @@ import com.hsys.business.forms.ProjectLeaderAddForm;
 import com.hsys.business.forms.ProjectLeaderDeleteForm;
 import com.hsys.controllers.beans.JsonResponse;
 import com.hsys.models.ProjectModel;
+import com.hsys.models.UserModel;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -102,5 +104,16 @@ public class ProjectController extends BaseController {
 			return JsonResponse.error(e.getMessage());
 		}
 		return JsonResponse.success();
+	}
+	
+	@RequestMapping("/json/unleaderList")
+	@ResponseBody
+	public JsonResponse getUnleaderList(@RequestBody ProjectJsonGetForm form) {
+		try {
+			List<UserModel> list = projectBusiness.getUnleaderList(form);
+			return JsonResponse.success().put("unleaderList", list);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
 	}
 }

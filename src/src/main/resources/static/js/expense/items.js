@@ -139,6 +139,9 @@ $(document).ready(function(){
 			}
 		});
 	});
+	
+	htbl.rowDoubleClicked("itemTable","updateItem");
+	
 	$("#updateItem").click(function(){
 		var self = $(this);
 		

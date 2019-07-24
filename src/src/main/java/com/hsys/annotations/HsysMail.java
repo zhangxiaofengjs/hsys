@@ -12,4 +12,5 @@ import java.lang.annotation.Target;
 @Target(METHOD)
 public @interface HsysMail {
 	String name() default "hsys mail";
+	Class<?> encoder();
 }

@@ -20,8 +20,7 @@ import com.hsys.common.HsysDate;
 import com.hsys.common.HsysIO;
 import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
-import com.hsys.config.HsysConfig;
-import com.hsys.config.beans.Upload;
+import com.hsys.config.UploadFolderConfig;
 import com.hsys.exception.HsysException;
 import com.hsys.io.AttendanceRawDataReader;
 import com.hsys.io.AttendanceWriter;
@@ -42,7 +41,7 @@ public class AttendanceBusiness {
 	@Autowired
 	private AttendanceService attendanceService;
 	@Autowired
-	HsysConfig config;
+	UploadFolderConfig config;
 	@Autowired
 	AttendanceWriter writer;
 	
@@ -63,8 +62,7 @@ public class AttendanceBusiness {
         }
 
         //保存文件到临时文件夹
-        Upload uploadFolder = config.getUploadFolder();
-        String tempPath = uploadFolder.getTempFolder() + "\\" + mpFile.getOriginalFilename();
+        String tempPath = config.getTempFolder() + "\\" + mpFile.getOriginalFilename();
         HsysIO.save(mpFile, tempPath);
  
 		List<AttendanceModel> list = rawReader.read(tempPath);
@@ -104,7 +102,7 @@ public class AttendanceBusiness {
 			attendanceService.update(attsupdate);
 		}
 
-		String attendacePath = uploadFolder.getAttendanceFolder() + "\\" + mpFile.getOriginalFilename();
+		String attendacePath = config.getAttendanceFolder() + "\\" + mpFile.getOriginalFilename();
 		HsysIO.move(tempPath, attendacePath);
 	}
 	
@@ -117,7 +115,7 @@ public class AttendanceBusiness {
 		Resource resource = HsysApplicationContext.getResource("classpath:/attachments/attendance-download-template.xlsx"); 
 		InputStream is = resource.getInputStream();
 
-		String tempFile = config.getUploadFolder().getTempFolder() + "\\" + 
+		String tempFile = config.getTempFolder() + "\\" + 
 				HsysDate.format(form.getStart(), "yyyyMMdd") + "_" +
 				HsysDate.format(form.getEnd(), "yyyyMMdd") + ".xlsx";
 		

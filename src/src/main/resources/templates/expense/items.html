@@ -9,7 +9,7 @@
 	  		<div class="navbar-header">
 	  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 	  		</div>
-	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/expense/html/main}" method="post">
+	 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/expense/html/main}" method="get">
 				<input type="hidden" name="type" th:value="${form.type}">
 				<input type="hidden" name="user" th:value="${form.user}">
 				<input type="hidden" name="approval" th:value="${form.approval}">
@@ -51,9 +51,9 @@
 				<th width=100px>日期</th>
 				<th>事由</th>
 				<th width=100px>数额</th>
-				<th width=200px>报销人</th>
-				<th width=200px>领款人</th>
-				<th width=130px>报销单号</th>
+				<th width=150px>报销人</th>
+				<th width=150px>领款人</th>
+				<th width=200px>报销单号</th>
 				<th width=70px>标记</th>
 		    </tr>
 		</thead>
@@ -80,7 +80,13 @@
 				<td th:text="${item.num}"></td>
 				<td th:text="${user !=null ? '['+ user.no +'] ' + user.name : ''}"></td>
 				<td th:text="${payee !=null ? '['+ payee.no +'] ' + payee.name : ''}"></td>
-				<td th:text="${receipt != null ? receipt.no :_}"></td>
+				<td th:switch="${receipt !=null ? receipt.status : ''}">
+					<span th:text="${receipt !=null ? receipt.no : _}"></span>
+					<span th:case="0" class="label label-info">填单中</span>
+					<span th:case="1" class="label label-primary">待审核</span>
+					<span th:case="2" class="label label-success">会计处理中</span>
+					<span th:case="3" class="label label-default">已领款</span>
+				</td>
 				<td th:switch="${item.status}">
 					<span class="label label-success" th:case="0">未领款</span>
 					<span class="label label-default" th:case="*">已领款</span>

@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	$("a[id^=add]").click(function(){
+	$("a[id^=addLeader]").click(function(){
 		var self = $(this);
 		var selId = self.attr("rowid");
 		if(selId == null) {
@@ -22,7 +22,10 @@ $(document).ready(function(){
 					"type":"select",
 					"options":[],
 					"ajax":{
-						"url":"/user/json/list",
+						"url":"/project/json/unleaderList",
+						"data": {
+							"id": selId
+						},
 						"success": function(response, dlg) {
 							var field = dlg.field("userId");
 							field.options.push(
@@ -31,7 +34,7 @@ $(document).ready(function(){
 									"value": 0,
 								}
 							);
-							response.users.forEach(function(user,index){
+							response.unleaderList.forEach(function(user,index){
 								field.options.push(
 									{ 
 										"text":"["+ user.no +"]" + user.name,
@@ -54,7 +57,7 @@ $(document).ready(function(){
 		});
 	});	
 	
-	$("a[id^=delete]").click(function(){
+	$("a[id^=deleteLeader]").click(function(){
 		var self = $(this);
 		var selId0 = self.attr("itemid");
 		var selId1 = self.attr("rowid");
@@ -148,6 +151,8 @@ $(document).ready(function(){
 			}
 		);
 	});
+	
+	htbl.rowDoubleClicked("projectTable","updateProject");
 	
 	$("#updateProject").click(function(){
 		var self = $(this);

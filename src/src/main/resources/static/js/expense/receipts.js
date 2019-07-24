@@ -70,6 +70,9 @@ $(document).ready(function(){
 			}
 		});
 	});	
+	
+	htbl.rowDoubleClicked("receiptTable","updateReceipt");
+	
 	$("#updateReceipt").click(function(){
 		var self = $(this);
 		var selId = htbl.getSelectedRowId("receiptTable");

@@ -16,11 +16,11 @@ import com.hsys.business.forms.ExpenseReceiptJsonForm;
 import com.hsys.business.forms.ExpenseReceiptSetCommentForm;
 import com.hsys.business.forms.ExpenseReceiptSetProjectForm;
 import com.hsys.business.forms.ExpenseReceiptUpdateForm;
-import com.hsys.common.HsysString;
 import com.hsys.common.HsysDate;
 import com.hsys.common.HsysIO;
 import com.hsys.common.HsysList;
-import com.hsys.config.HsysConfig;
+import com.hsys.common.HsysString;
+import com.hsys.config.UploadFolderConfig;
 import com.hsys.exception.HsysException;
 import com.hsys.models.ExpenseItemModel;
 import com.hsys.models.ExpenseReceiptModel;
@@ -46,7 +46,7 @@ public class ExpenseReceiptBusiness {
 	@Autowired
 	private ProjectService projectService;
 	@Autowired
-	private HsysConfig config;
+	private UploadFolderConfig config;
 	
 	public List<ExpenseReceiptModel> getReceipts(ExpenseHtmlForm form) {
 		ExpenseReceiptModel receipt = new ExpenseReceiptModel();
@@ -306,7 +306,7 @@ public class ExpenseReceiptBusiness {
 			return null;
 		}
 
-		String filePath = config.getUploadFolder().getReceiptAttachmentFolder() + "\\" + receipt.getAttachmentPath();
+		String filePath = config.getReceiptAttachmentFolder() + "\\" + receipt.getAttachmentPath();
 		return HsysIO.downloadHttpFile(filePath);
 	}
 
@@ -332,11 +332,6 @@ public class ExpenseReceiptBusiness {
 		ExpenseReceiptModel receipt = expenseReceiptService.queryById(form.getId());
 		if(receipt == null) {
 			throw new HsysException("不存在的报销单"); 
-		}
-
-		if(receipt.getStatus() == ReceiptStatus.Approval ||
-			receipt.getStatus() == ReceiptStatus.Finish) {
-			throw new HsysException("会计处理中不能修改备注"); 
 		}
 		
 		receipt.setComment(form.getComment());

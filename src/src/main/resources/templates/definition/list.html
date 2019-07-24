@@ -78,10 +78,10 @@
 									<span th:each="user : ${project.users}">
 										<span class="label label-primary" >
 											<span th:text="${user.name}"></span>
-											<a id="delete" class="hsys-a-pointer" th:rowid="${project.id}" th:itemid="${user.id}"><img width="14px" th:src="@{/icons/delete.png}" /></a>
+											<a id="deleteLeader" class="hsys-a-pointer" th:rowid="${project.id}" th:itemid="${user.id}"><img width="14px" th:src="@{/icons/delete.png}" /></a>
 										</span>&nbsp;
 									</span>
-									<a id="add" class="hsys-a-pointer" th:rowid="${project.id}"><img width="16px" th:src="@{/icons/add.png}" /></a>
+									<a id="addLeader" class="hsys-a-pointer" th:rowid="${project.id}"><img width="16px" th:src="@{/icons/add.png}" /></a>
 								</td>
 						    </tr>
 						</tbody>

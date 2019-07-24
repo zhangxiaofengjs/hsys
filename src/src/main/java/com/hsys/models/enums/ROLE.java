@@ -16,6 +16,7 @@ public interface ROLE {
 	public final static String EXPENSE_LIST = "expense_list";
 	public final static String EXPENSE_LIST_ALL = "expense_list_all";
 	public final static String DEVICE_EDIT = "device_edit";
+	public final static String HOLIDAY_EDIT = "holiday_edit";
 	
 	public final static String[] ALL = new String[] {
 		ADMIN,
@@ -33,5 +34,6 @@ public interface ROLE {
 		EXPENSE_LIST,
 		EXPENSE_LIST_ALL,
 		DEVICE_EDIT,
+		HOLIDAY_EDIT,
 	};
 }

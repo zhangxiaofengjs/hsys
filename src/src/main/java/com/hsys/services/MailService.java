@@ -20,8 +20,55 @@ import com.hsys.services.beans.SimpleMail;
  */
 @Service
 public class MailService {
+	class SendMailThread extends Thread {
+		private final MineMail mail;
+		private final JavaMailSender sender;
+		
+		public SendMailThread(JavaMailSender sender, MineMail mail) {
+			this.mail = mail;
+			this.sender = sender;
+		}
+		
+		@Override
+		public void run() {
+			MimeMessage mimeMailMessage = sender.createMimeMessage();
+	    	
+	        MimeMessageHelper mimeMessageHelper;
+			try {
+				mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
+		        mimeMessageHelper.setFrom(mail.getFrom());
+		        mimeMessageHelper.setTo(mail.getTo().toArray(new String[0]));
+		        mimeMessageHelper.setSubject(mail.getSubject());
+		        mimeMessageHelper.setText(mail.getMessage(), true);
+		        
+		        //文件
+		        for(int i = 0; i < mail.attachmentSize(); i++) {
+		        	File file = mail.getAttachment(i);
+		        	mimeMessageHelper.addAttachment(file.getName(), file);
+		        }
+		        
+		        //静态资源如图片
+		        //body: <img src="cid:testpic" />
+//				        FileSystemResource file = new FileSystemResource(new File("src/main/resources/static/image/mail.png"));
+//			            mimeMessageHelper.addInline("testpic", file);
+		        
+		        //thymleaf模板
+//				        Context context = new Context();
+//				        context.setVariable("id", "006");
+//				        String emailContent = templateEngine.process("emailTemplate", context);
+
+		        javaMailSender.send(mimeMailMessage);
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	@Autowired
     private JavaMailSender javaMailSender;
+	
+	public MailService() {
+	}
 	
 	public void send(SimpleMail sm) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -31,36 +78,10 @@ public class MailService {
         simpleMailMessage.setText(sm.getMessage());
         javaMailSender.send(simpleMailMessage);
 	}
-	public void send(MineMail mm) {
-    	MimeMessage mimeMailMessage = javaMailSender.createMimeMessage();
-    	
-        MimeMessageHelper mimeMessageHelper;
-		try {
-			mimeMessageHelper = new MimeMessageHelper(mimeMailMessage, true);
-	        mimeMessageHelper.setFrom(mm.getFrom());
-	        mimeMessageHelper.setTo(mm.getTo().toArray(new String[0]));
-	        mimeMessageHelper.setSubject(mm.getSubject());
-	        mimeMessageHelper.setText(mm.getMessage(), true);
-	        
-	        //文件
-	        for(int i = 0; i < mm.attachmentSize(); i++) {
-	        	File file = mm.getAttachment(i);
-	        	mimeMessageHelper.addAttachment(file.getName(), file);
-	        }
-	        
-	        //静态资源如图片
-	        //body: <img src="cid:testpic" />
-//	        FileSystemResource file = new FileSystemResource(new File("src/main/resources/static/image/mail.png"));
-//            mimeMessageHelper.addInline("testpic", file);
-	        
-	        //thymleaf模板
-//	        Context context = new Context();
-//	        context.setVariable("id", "006");
-//	        String emailContent = templateEngine.process("emailTemplate", context);
-
-	        javaMailSender.send(mimeMailMessage);
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		}
+	
+	public void sendAnsy(MineMail mm) {
+		//这里必须启动一个线程去发送，避免阻塞主界面那边的流程
+		SendMailThread sendMailThread = new SendMailThread(this.javaMailSender, mm);
+		sendMailThread.start();
 	}
 }

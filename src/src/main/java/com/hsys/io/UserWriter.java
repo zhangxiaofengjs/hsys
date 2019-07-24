@@ -110,7 +110,7 @@ public class UserWriter {
 				createRow.setRowStyle(row.getRowStyle());
 				createRow.setHeight(row.getHeight());	
 				
-				if(view) {
+				if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.USER_FULL_INFO)) {
 					
 					createRow.createCell(0).setCellValue(userNo);//工号
 					createRow.createCell(1).setCellValue(user.getName());//姓名

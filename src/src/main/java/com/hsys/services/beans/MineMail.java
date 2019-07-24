@@ -1,6 +1,7 @@
 package com.hsys.services.beans;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import com.hsys.common.HsysList;
@@ -23,6 +24,14 @@ public class MineMail {
 	}
 	public void setTo(List<String> to) {
 		this.to = to;
+	}
+	public void setTo(String string) {
+		String[] strs = string.split(";");
+		
+		List<String> to = HsysList.New();
+		Collections.addAll(to, strs);
+		
+		setTo(to);
 	}
 	public String getMessage() {
 		return message;

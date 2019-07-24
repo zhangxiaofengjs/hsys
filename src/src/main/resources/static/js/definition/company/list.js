@@ -34,10 +34,8 @@ $(document).ready(function(){
 			}
 		});
 	});
-
+	
 	$("#updateCompany").click(function(){
-		var self = $(this);
-		
 		var selId = htbl.getSelectedRowId("companyTable");
 		if(selId == null) {
 			return;
@@ -92,8 +90,10 @@ $(document).ready(function(){
 				hsys.error(data.msg);
 			}
 		});
-	});	
+	});
 	
+	htbl.rowDoubleClicked("companyTable","updateCompany");
+
 	$("#deleteCompany").click(function(){
 		var self = $(this);
 		var selIds = htbl.getSelectedRowId("companyTable", true);

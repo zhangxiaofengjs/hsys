@@ -22,6 +22,7 @@ import com.hsys.models.UserModel;
 import com.hsys.models.enums.ROLE;
 import com.hsys.services.ExpenseReceiptService;
 import com.hsys.services.ProjectService;
+import com.hsys.services.UserService;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -35,17 +36,12 @@ public class ProjectBusiness {
 	@Autowired
 	private ExpenseReceiptService expenseReceiptService;
 	
+	@Autowired
+	private UserService userService;
+	
 	public List<ProjectModel> getProjects() {
 		List<ProjectModel> projects = projectService.queryList(new ProjectModel());
-		for(ProjectModel project : projects) {
-			project.setCond(ProjectModel.COND_PROJECT_ID, project.getId());
-			project.setUsers(getProjectLeaders(project));
-		}
 		return projects;
-	}
-	
-	public List<UserModel> getProjectLeaders(ProjectModel project) {
-		return projectService.queryProjectLeaders(project);
 	}
 
 	public void addLeader(ProjectLeaderAddForm form) {
@@ -59,15 +55,17 @@ public class ProjectBusiness {
 			throw new HsysException("请选择负责者"); 
 		}
 		
+		int projectId = form.getProjectId();
+		int userId = form.getUserId();
 		ProjectModel project = new ProjectModel();
-		project.setCond(ProjectModel.COND_PROJECT_ID, form.getProjectId());
-		project.setCond(ProjectModel.COND_LEADER_ID, form.getUserId());
+		project.setCond(ProjectModel.COND_PROJECT_ID, projectId);
+		project.setCond(ProjectModel.COND_LEADER_ID, userId);
 		List<UserModel> leaderExist = projectService.queryProjectLeaders(project);
 		//检测负责者是否已经存在
 		if(!HsysList.isEmpty(leaderExist)) {
 			throw new HsysException("该负责者已存在"); 
 		}
-		projectService.addLeader(form);
+		projectService.addLeader(projectId, userId);
 	}
 
 	public void deleteLeader(ProjectLeaderDeleteForm form) {
@@ -76,15 +74,17 @@ public class ProjectBusiness {
 			throw new HsysException("权限不足"); 
 		}
 		
+		int projectId = form.getProjectId();
+		int userId = form.getUserId();
 		ProjectModel project = new ProjectModel();
-		project.setCond(ProjectModel.COND_PROJECT_ID, form.getProjectId());
-		project.setCond(ProjectModel.COND_LEADER_ID, form.getUserId());
+		project.setCond(ProjectModel.COND_PROJECT_ID, projectId);
+		project.setCond(ProjectModel.COND_LEADER_ID, userId);
 		List<UserModel> leaderExist = projectService.queryProjectLeaders(project);
 		//检测负责者是否存在
-		if(!HsysList.isEmpty(leaderExist)) {
+		if(HsysList.isEmpty(leaderExist)) {
 			throw new HsysException("该数据不存在"); 
 		}
-		projectService.deleteLeader(form);		
+		projectService.deleteLeader(projectId, userId);		
 	}
 
 	public void addProject(ProjectModel project) {
@@ -96,7 +96,7 @@ public class ProjectBusiness {
 		ProjectModel projectExist = projectService.queryByNo(project.getNo());
 		//检测项目编号是否已经存在
 		if(projectExist != null) {
-			throw new HsysException("该项目信息存在,编号:%s", projectExist.getName()); 
+			throw new HsysException("该项目信息存在,编号:%s", projectExist.getNo()); 
 		}
 		//检测信息长度
 		if(project.getNo().length()>50) {
@@ -218,5 +218,26 @@ public class ProjectBusiness {
 		{
 			projectService.update(project);
 		}
+	}
+
+	public List<UserModel> getUnleaderList(ProjectJsonGetForm form) {
+		List<UserModel> users = userService.queryList(new UserModel());
+		ProjectModel project = projectService.queryById(form.getId());
+		int userSize = users.size();
+		if(project.getUsers()!=null) {
+			for(int i = userSize-1; i>=0; i--){
+				int leaderSize = project.getUsers().size();
+				while(leaderSize>0) {
+					UserModel leader = project.getUsers().get(leaderSize-1);
+					if(leader.getId()==users.get(i).getId()) {
+						project.getUsers().remove(leaderSize-1);
+						users.remove(i);
+						break;
+					}
+					leaderSize--;
+				}
+			}
+		}
+		return users;
 	}
 }

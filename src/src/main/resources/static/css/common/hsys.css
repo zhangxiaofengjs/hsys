@@ -11,9 +11,9 @@
 .hsys-content {
 	min-width:400px;
 	position:relative;
-	min-height:800px;
 	background:#fff;
-	margin-left:250px;
+	margin-left:247px;
+	border-left:3px solid #989494;
 }
 
 .hsys-table-checkbox-column {
@@ -73,7 +73,7 @@
 
 .hsys-select-row {
 	color:#FFFFFF;
-	background-color:#337ab7 !important;
+	background-color:#5899d1 !important;
 }
 
 .hsys-fc-userno-width {
@@ -81,7 +81,7 @@
 }
 
 .hsys-fc-date-width {
-	width:150px !important;
+	width:160px !important;
 }
 
 .hsys-small-btn {

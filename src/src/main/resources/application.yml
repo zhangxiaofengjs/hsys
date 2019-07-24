@@ -81,16 +81,19 @@ pagehelper:
 #hsys其余设定
 hsys:
     version:
-        number: hsys 1.5
+        number: hsys 1.6
     upload: 
         temp-folder: c:/hsys/upload/temp #临时文件夹
         attendance-folder: c:/hsys/upload/attendance #考勤信息文件夹
         receipt-attachment-folder: c:/hsys/upload/receipt-attachment-folder #报销单附件文件夹
+    mail: #各种通知的邮箱设定
+        from: admin@hinfo.com
+        to: admin@hinfo.com
     backup: #备份设定
         database:
             enable: true
-            location: D:\dev\hsys\env\mysql-5.7.21-winx64\bin\ #mysql安装bin路径
-            backupDir: c:/hsys/dbbackup
+            mysqlbin: D:/dev/hsys/env/mysql-5.7.21-winx64/bin #mysql安装bin路径
+            location: c:/hsys/backup/db
             host: localhost
             name: hsys
             username: root

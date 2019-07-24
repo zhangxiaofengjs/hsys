@@ -18,15 +18,15 @@ import com.hsys.business.forms.RestJsonGetForm;
 import com.hsys.business.forms.RestJsonRejectForm;
 import com.hsys.business.forms.RestJsonUpdateForm;
 import com.hsys.common.HsysDate;
-import com.hsys.common.HsysList;
 import com.hsys.common.HsysString;
 import com.hsys.exception.HsysException;
-import com.hsys.models.ExtraTimeModel;
+import com.hsys.models.GroupModel;
 import com.hsys.models.RestModel;
 import com.hsys.models.UserModel;
 import com.hsys.models.enums.ROLE;
 import com.hsys.models.enums.RestStatus;
 import com.hsys.models.enums.RestType;
+import com.hsys.services.GroupService;
 import com.hsys.services.RestService;
 
 /**
@@ -37,62 +37,8 @@ import com.hsys.services.RestService;
 public class RestBusiness {
 	@Autowired
 	private RestService restService;
-
-	public List<RestModel> getRests(RestHtmlListForm form) {
-		if(form.isApprove()) {
-			//审核页面，检查审核权限
-			if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_APPROVE)) {
-				form.setApprove(false);
-				return HsysList.New();
-			}
-		}
-		else if(form.isView()) {
-			//检查一览权限
-			if(!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.REST_LIST, ROLE.REST_LIST_ALL)) {
-				form.setView(false);
-				return HsysList.New();
-			}
-		} else if(form.isUser()) {
-			form.setUserNo(HsysSecurityContextHolder.getLoginUser().getNo());
-		} else {
-			return HsysList.New();
-		}
-
-		RestModel rest = new RestModel();
-		if (!HsysString.isNullOrEmpty(form.getUserNo())) {
-			UserModel user = new UserModel();
-			user.setNo(form.getUserNo());
-			rest.setUser(user);
-			rest.setCond(RestModel.COND_USER_NO, true);
-			rest.setCond(RestModel.COND_FUZZY_USER_NO, true);
-		}
-		
-		Date d1 = form.getDateStart();
-		d1 = HsysDate.startOfDay(d1);
-		rest.setDateStart(d1);
-		rest.setCond(RestModel.COND_DATE_START, true);
-		
-		Date d2 = form.getDateEnd();
-		d2 = HsysDate.endOfDay(d2);
-		rest.setDateEnd(d2);
-		rest.setCond(RestModel.COND_DATE_END, true);
-		
-		if(form.isApprove()) {
-			List<Integer> statuss = HsysList.New();
-			statuss.add(RestStatus.Regist);
-			statuss.add(RestStatus.CancelRequest);
-			rest.setCond(RestModel.COND_STATUS_MULTI, statuss);
-		}
-
-		if((form.isApprove() || form.isView()) &&
-			!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_LIST_ALL)) {
-			rest.setCond(ExtraTimeModel.COND_GROUP_ID,
-			HsysSecurityContextHolder.getLoginUser().getGroup().getId());
-		}
-
-		return restService.queryList(rest);
-	}
-
+	@Autowired
+	private GroupService groupService;
 	public void add(RestJsonAddForm form) {
 		RestModel rest = new RestModel();
 		rest.setDateEnd(form.getDateEnd());
@@ -286,6 +232,25 @@ public class RestBusiness {
 	
 	public RestListBean getRestListBean(RestHtmlListForm form) {
 		RestListBean bean = new RestListBean();
+		if(form.isApprove()) {
+			//审核页面，检查审核权限
+			if(!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_APPROVE)) {
+				form.setApprove(false);
+				return bean;
+			}
+		}
+		else if(form.isView()) {
+			//检查一览权限
+			if(!HsysSecurityContextHolder.isLoginUserHasAnyRole(ROLE.REST_LIST, ROLE.REST_LIST_ALL)) {
+				form.setView(false);
+				return bean;
+			}
+		} else if(form.isUser()) {
+			form.setUserNo(HsysSecurityContextHolder.getLoginUser().getNo());
+		} else {
+			return bean;
+		}
+		
 		RestModel rest = new RestModel();
 		if (!HsysString.isNullOrEmpty(form.getUserNo())) {
 			UserModel user = new UserModel();
@@ -304,6 +269,18 @@ public class RestBusiness {
 			!HsysSecurityContextHolder.isLoginUserHasRole(ROLE.REST_LIST_ALL)) {
 			rest.setCond(RestModel.COND_GROUP_ID,
 				HsysSecurityContextHolder.getLoginUser().getGroup().getId());
+		}
+		
+		if(form.getGroupId() != 0) {
+			List<Integer> groupIds = groupService.queryChildrenIdsById(form.getGroupId());
+			groupIds.add(form.getGroupId());
+			rest.setCond(RestModel.COND_GROUP_IDS, groupIds);
+
+			//页面需要显示名字，form再设定
+			GroupModel group = groupService.queryById(form.getGroupId());
+			if(group != null) {
+				form.setGroupName(group.getName());
+			}
 		}
 		
 		Date d1 = form.getDateStart();

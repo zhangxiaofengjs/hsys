@@ -3,8 +3,8 @@ package com.hsys.models;
 import org.apache.ibatis.type.Alias;
 
 /**
- * @author: zhangxiaofengjs@163.com
- * @version: 2019/03/07
+ * @author: lingxiaming
+ * @version: 2019/06/04
  */
 @Alias("projectLeaderModel")
 public class ProjectLeaderModel extends BaseModel {

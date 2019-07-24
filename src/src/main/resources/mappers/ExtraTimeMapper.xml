@@ -5,7 +5,8 @@
 	<resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>
         <result column="u_name" property="name"/>       
-        <result column="u_no" property="no"/>       
+        <result column="u_no" property="no"/>  
+		<association property="group" resultMap="groupResultMap"/>		
     </resultMap>
 	<resultMap id="groupResultMap" type="groupModel" >  
         <id column="g_id" property="id"/>  
@@ -23,7 +24,6 @@
         <result column="e_meal_lunch" property="mealLunch"/>
         <result column="e_meal_supper" property="mealSupper"/>
         <result column="e_approval_time" property="approvalTime"/>
-		<association property="group" resultMap="groupResultMap"/>
         <association property="user" resultMap="userResultMap"/>
 		<association property="appUser" resultMap="userResultMap" columnPrefix="a"/>
         <!-- <collection property="roles" ofType="userRoleModel" resultMap="userRoleResultMap" />-->  

@@ -7,6 +7,7 @@
         <result column="p_no" property="no"/>
         <result column="p_name" property="name"/>
         <result column="p_funds" property="funds"/>
+        <collection property="users" ofType="userModel" resultMap="userResultMap" /> 
     </resultMap>
 	<resultMap id="userResultMap" type="userModel" >  
         <id column="u_id" property="id"/>  
@@ -23,11 +24,13 @@
 		select p.c_id as p_id,
 			   p.c_no as p_no,
 			   p.c_name as p_name,
-			   p.c_funds as p_funds
+			   p.c_funds as p_funds,
+			   u.c_id as u_id,
+			   u.c_no as u_no,
+			   u.c_name as u_name
 		from project_tbl as p
-		<if test="cond.leaderId != null">
-			left join project_leader_tbl as pl on pl.c_project_id=p.c_id
-		</if>
+		left join project_leader_tbl as pl on pl.c_project_id=p.c_id
+		left join user_tbl as u on u.c_id=pl.c_leader_id
 		<where>
 			<if test="cond.id != null">
 				and p.c_id = #{id}
@@ -97,7 +100,7 @@
 		</where>
     </delete>
     
-    <delete id="deleteProjects">
+    <delete id="deleteProject">
     	delete from project_tbl
     	<where>
 			c_id = #{id}

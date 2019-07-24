@@ -25,7 +25,7 @@ public interface ProjectMapper {
 
 	void addProject(ProjectModel project);
 
-	void deleteProjects(ProjectModel project);
+	void deleteProject(ProjectModel project);
 
 	void update(ProjectModel project);
 }

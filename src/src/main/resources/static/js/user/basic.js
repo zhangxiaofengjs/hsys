@@ -1,4 +1,9 @@
 $(document).ready(function(){
+	var ca = new hcalendar();
+	ca.init({
+		"target":"user_calendar"
+	});
+	
 	$(":input[name='et_comment']").val($.cookie("_hinfo_userbasic_comment"))
 	
 	var s = $.cookie("_hinfo_userbasic_start");

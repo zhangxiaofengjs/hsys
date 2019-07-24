@@ -15,11 +15,12 @@
 				  		<div class="navbar-header">
 				  			<span class="navbar-brand glyphicon glyphicon-filter" aria-hidden="true"></span>
 				  		</div>
-				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/statistic/html/list}" method="post">
+				 		<form class="navbar-form navbar-left" style="padding-left:0px;" role="form" th:action="@{/statistic/html/list}" method="get">
 				 			<div class="form-group">
 							    <input type="date" class="form-control hsys-fc-date-width" name="start" id="start" th:value="${#dates.format(form.start, 'yyyy-MM-dd')}" >
 				 			  	 到
 							    <input type="date" class="form-control hsys-fc-date-width" name="end" id="end" th:value="${#dates.format(form.end, 'yyyy-MM-dd')}">
+							 	<input type="text" class="form-control" id="groupId" name="groupId" th:if="${not form.view}"  th:value="${form.groupId}" th:dispText="${form.groupName}"/>
 							    <select th:if="${not form.view}" class="form-control" id="sumType" name="sumType" th:value="${form.sumType}">   
 									<option value=0  th:selected="${form.sumType==0?'selected':_}">按组合计</option>
 							        <option value=1 th:selected="${form.sumType==1?'selected':_}">按人员合计</option>
@@ -29,6 +30,7 @@
 				 			</div>
 				 			<div class="form-group">
 				 			    <button type="submit" class="btn btn-sm btn-primary">查询</button>
+				 			    <button type="button" class="btn btn-sm btn-primary" id='download'>下载</button>
 					 		</div>
 						</form>
 					</div>
@@ -65,7 +67,7 @@
 							th:style="${isTotalRow ? 'font-weight:bold;' : ''}"
 							>
 							<td><input type="checkbox" name="select" th:rowid="${statistic.id}"></td>
-					    	<td th:text="${isTotalRow ? '***合计***' : statistic.groupName}" ></td>
+					    	<td th:text="${isTotalRow != 0 ? statistic.groupName:''}" ></td>
 					    	<td th:text="${statistic.userNo}" th:if="${form.sumType==1}" ></td>
 					    	<td th:text="${statistic.userName}" th:if="${form.sumType==1}" ></td>
 					    	<td th:text="${statistic.etNormal != 0 ? statistic.etNormal : ''}"></td>
