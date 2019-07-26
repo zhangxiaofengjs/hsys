@@ -98,6 +98,18 @@ public class ExtraTimeBusiness {
 		extraTime.setDate(form.getDate());
 		extraTime.setStartTime(form.getStartTime());
 		extraTime.setEndTime(form.getEndTime());
+		if(HsysDate.isHoliday(form.getDate())) {
+			//节假日自动设置type
+			extraTime.setType(ExtraTimeType.Holiday);
+		}
+		if(HsysDate.isNormal(form.getDate())) {
+			//调休自动设置type
+			extraTime.setType(ExtraTimeType.Normal);
+		}
+		if(HsysDate.isWeekend(form.getDate())) {
+			//周末自动设置type
+			extraTime.setType(ExtraTimeType.Weekend);
+		}
 		
 		UserModel user;
 		if(form.getUserId() == 0) {

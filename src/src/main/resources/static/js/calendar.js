@@ -105,28 +105,28 @@
       }
     }
     
+    var holiday=getHolidayData();
     for(var i = 0; i < _tds.length; i++) {
         var _thisDay = new Date(_year, _month - 1, i + 1 - _firstDay.getDay());
         var _thisDayStr = getDateStr(_thisDay);
-    var holiday=getHolidayData();
     var add = "";
     //alert(holiday.holiday[0].date);
-    for(var j = 0; j < holiday.holiday[0].date.length; j++) {
-    	if(_thisDayStr == holiday.holiday[0].date[j]) {    // holiday 
-    		switch(holiday.holiday[0].type[j])
+    for(var j = 0; j < holiday.date.length; j++) {
+    	if(_thisDayStr == holiday.date[j]) {    // holiday 
+    		switch(holiday.type[j])
     		{
     		case 0:
-    			add += "<img alt='rest' src='{0}'>".format(hsys.url('/icons/holiday.png'))+"<li title='"+holiday.holiday[0].comment[j]+"'>"+' &nbsp' + holiday.holiday[0].comment[j] + "</li>";
+    			add += "<img alt='rest' src='{0}'>".format(hsys.url('/icons/holiday.png'))+"<li title='"+holiday.comment[j]+"'>"+' &nbsp' + holiday.comment[j] + "</li>";
     			break;
     		case 1:
-    			add += "<img alt='change' src='{0}'>".format(hsys.url('/icons/change.png'))+"<li title='"+holiday.holiday[0].comment[j]+"'>"+' &nbsp' + holiday.holiday[0].comment[j] + "</li>";
+    			add += "<img alt='change' src='{0}'>".format(hsys.url('/icons/change.png'))+"<li title='"+holiday.comment[j]+"'>"+' &nbsp' + holiday.comment[j] + "</li>";
     			break;
     		case 2:
-    			add += "<img alt='work' src='{0}'>".format(hsys.url('/icons/work.png'))+"<li title='"+holiday.holiday[0].comment[j]+"'>"+' &nbsp' + holiday.holiday[0].comment[j] + "</li>";
+    			add += "<img alt='work' src='{0}'>".format(hsys.url('/icons/work.png'))+"<li title='"+holiday.comment[j]+"'>"+' &nbsp' + holiday.comment[j] + "</li>";
     			break;
     		}
     		_tds[i].innerHTML = _thisDay.getDate()+btn+"<br/>"+add;
-    		if(getDateStr(new Date()) == holiday.holiday[0].date[j]) {
+    		if(getDateStr(new Date()) == holiday.date[j]) {
     			_tds[i].className = 'currentDay'; 
     		}
     		else{_tds[i].className = 'holiday';}

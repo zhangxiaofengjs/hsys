@@ -127,64 +127,69 @@ public class StatisticWriter {
 			for(StatisticModel statistic :statistics) {		
 				Row row = sheet.getRow(rowIndex);
 				Row createRow = sheet.createRow(rowIndex+1);//创建行
-				createRow.createCell(0).setCellValue(statistic.getGroupName());
+				if(statistic.getGroupName()!=null) {
+					createRow.createCell(0).setCellValue(statistic.getGroupName());
+				}else {
+					createRow.createCell(0).setCellValue("合计");
+				}
+				
 				createRow.createCell(1).setCellValue(statistic.getUserNo());
 				createRow.createCell(2).setCellValue(statistic.getUserName());
 				if(statistic.getEtNormal()!=0.0) {
-					createRow.createCell(3).setCellValue(statistic.getEtNormal());
+					createRow.createCell(3).setCellValue(statistic.getEtNormal()+"h");
 				}else {
-					createRow.createCell(3).setCellValue("");
+					createRow.createCell(3).setCellValue(" ");
 				}
 				if(statistic.getEtWeekend()!=0.0) {
-					createRow.createCell(4).setCellValue(statistic.getEtWeekend());
+					createRow.createCell(4).setCellValue(statistic.getEtWeekend()+"h");
 				}else {
-					createRow.createCell(4).setCellValue("");
+					createRow.createCell(4).setCellValue(" ");
 				}
 				if(statistic.getEtHoliday()!=0.0) {
-					createRow.createCell(5).setCellValue(statistic.getEtHoliday());
+					createRow.createCell(5).setCellValue(statistic.getEtHoliday()+"h");
 				}else {
-					createRow.createCell(5).setCellValue("");
+					createRow.createCell(5).setCellValue(" ");
 				}
 				if(statistic.getEtSum()!=0.0) {
-					createRow.createCell(6).setCellValue(statistic.getEtSum());
+					createRow.createCell(6).setCellValue(statistic.getEtSum()+"h");
 				}else {
-					createRow.createCell(6).setCellValue("");
+					createRow.createCell(6).setCellValue(" ");
 				}
 				if(statistic.getRtVacation()!=0.0) {
-					createRow.createCell(7).setCellValue(statistic.getRtVacation());
+					createRow.createCell(7).setCellValue(statistic.getRtVacation()+"h");
 				}else {
-					createRow.createCell(7).setCellValue("");
+					createRow.createCell(7).setCellValue(" ");
 				}
 				
 				if(statistic.getRtLeave()!=0.0) {
-					createRow.createCell(8).setCellValue(statistic.getRtLeave());
+					createRow.createCell(8).setCellValue(statistic.getRtLeave()+"h");
 				}else {
-					createRow.createCell(8).setCellValue("");
+					createRow.createCell(8).setCellValue(" ");
 				}
 				if(statistic.getRtSick()!=0.0) {
-					createRow.createCell(9).setCellValue(statistic.getRtSick());
+					createRow.createCell(9).setCellValue(statistic.getRtSick()+"h");
 				}else {
-					createRow.createCell(9).setCellValue("");
+					createRow.createCell(9).setCellValue(" ");
 				}
 				if(statistic.getRtMarriage()!=0.0) {
-					createRow.createCell(10).setCellValue(statistic.getRtMarriage());
+					createRow.createCell(10).setCellValue(statistic.getRtMarriage()+"h");
 				}else {
-					createRow.createCell(10).setCellValue("");
+					createRow.createCell(10).setCellValue(" ");
 				}
 				if(statistic.getRtFuneral()!=0.0) {
-					createRow.createCell(11).setCellValue(statistic.getRtFuneral());
+					createRow.createCell(11).setCellValue(statistic.getRtFuneral()+"h");
 				}else {
-					createRow.createCell(11).setCellValue("");
+					createRow.createCell(11).setCellValue(" ");
 				}
 				if(statistic.getRtPublics()!=0.0) {
-					createRow.createCell(12).setCellValue(statistic.getRtPublics());
+					createRow.createCell(12).setCellValue(statistic.getRtPublics()+"h");
 				}else {
-					createRow.createCell(12).setCellValue("");
+					createRow.createCell(12).setCellValue(" ");
 				}
 				if(statistic.getRtSum()!=0.0) {
-					createRow.createCell(13).setCellValue(statistic.getRtSum());
+					createRow.createCell(13).setCellValue(statistic.getRtSum()+"h");
 				}else {
-					createRow.createCell(13).setCellValue("");
+					createRow.createCell(13).setCellValue(" ");
 				}
 				rowIndex++;
 				}

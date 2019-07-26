@@ -91,6 +91,16 @@ public class HolidayController extends BaseController {
 		}
 	}
 	
+	@RequestMapping("/json/getHoliday")
+	@ResponseBody
+	public JsonResponse get(HolidayModel holiday,Model model) {
+		try {
+			List<HolidayModel> list = holidayBusiness.getHoliday();
+			return JsonResponse.success().put("holidays", list);
+		} catch(Exception e) {
+			return JsonResponse.error(e.getMessage());
+		}
+	}
 
 }
 

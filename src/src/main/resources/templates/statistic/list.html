@@ -67,7 +67,7 @@
 							th:style="${isTotalRow ? 'font-weight:bold;' : ''}"
 							>
 							<td><input type="checkbox" name="select" th:rowid="${statistic.id}"></td>
-					    	<td th:text="${isTotalRow != 0 ? statistic.groupName:''}" ></td>
+					    	<td th:text="${isTotalRow ? '***合计***' : statistic.groupName}" ></td>
 					    	<td th:text="${statistic.userNo}" th:if="${form.sumType==1}" ></td>
 					    	<td th:text="${statistic.userName}" th:if="${form.sumType==1}" ></td>
 					    	<td th:text="${statistic.etNormal != 0 ? statistic.etNormal : ''}"></td>

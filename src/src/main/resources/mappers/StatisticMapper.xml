@@ -146,7 +146,6 @@
     
 	<select id="SumTotalList" resultMap="statisticResultMap" >
 	select 
-		'***合计***' as g_name,
 		ifnull(sum(cin.e_normol), 0.0) e_normol,
 		ifnull(sum(cin.e_weekend),0.0) e_weekend,
 		ifnull(sum(cin.e_holiday),0.0) e_holiday,
@@ -171,8 +170,7 @@
 	</select>
 	
     <select id="GetGroupStatisticsList"  resultMap="statisticResultMap"  >
-	select 
-		cin.g_name g_name ,
+	select cin.g_name g_name ,
 		ifnull(sum(cin.e_normol), 0.0) e_normol,
 		ifnull(sum(cin.e_weekend),0.0) e_weekend,
 		ifnull(sum(cin.e_holiday),0.0) e_holiday,

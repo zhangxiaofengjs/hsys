@@ -4,6 +4,14 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import com.hsys.business.HolidayBusiness;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.hsys.models.HolidayModel;
+import com.hsys.models.enums.HolidayType;
+import com.hsys.services.HolidayService;
 
 /**
  * @author: zhangxiaofengjs@163.com
@@ -230,6 +238,29 @@ public class HsysDate {
 		default:
 			return false;
 		}
+	}
+	
+    private static HolidayService holidayService;
+	public static boolean isHoliday(Date date) {
+		List<HolidayModel> holidays = holidayService.searchByDate(date);
+		boolean a = false;
+		for(int i=0;i<holidays.size();i++) {
+			if (holidays.get(i).getType()==HolidayType.Rest) {
+				a = true;
+				break;
+			}
+		}
+		return a;
+	}
+	public static boolean isNormal(Date date) {
+		HolidayModel holidayExist = holidayService.queryByDate(date);
+		if (holidayExist.getType()==HolidayType.Work) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
 	}
 
 	public static String getWeekStr(Date date) {

@@ -1,0 +1,55 @@
+/* holiday颜色特殊显示 */
+.holiday {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+/* holiday备注样式 */
+.holiday li{
+	list-style:none; 
+	font-size:14px;
+	text-align: left; 
+	line-height:25px;
+	color: #337ab7;
+	width: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+	
+}
+
+/* holiday备注图片样式 */
+.holiday img{
+	height:18px;
+	font-size: 0;
+	margin:2px;
+	display:block;
+	float:left;
+	border:none;
+	padding:0px;
+	vertical-align:middle;
+}
+
+.button {
+	float:right;
+	height: 40px;
+	width:40px;
+	top:-12px;
+	position:relative;
+}
+
+.button div{
+	height: 40px;
+	display: none;
+}
+
+.button:hover div{
+	display: block;
+}
+
+/* 添加栏图片样式 */
+.button-img{
+	height:18px;
+	padding:1px;
+	
+}

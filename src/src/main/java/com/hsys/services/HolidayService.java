@@ -42,6 +42,16 @@ public class HolidayService {
 		}
 		return null;
 	}
+	public List<HolidayModel> searchByDate(Date date) {
+		HolidayModel holiday = new HolidayModel();
+		holiday.setDate(date);
+		holiday.setCond(HolidayModel.COND_DATE, date);
+		List<HolidayModel> holidays = queryList(holiday);
+		if(holidays.size() != 0) {
+			return  holidays;
+		}
+		return null;
+	}
 	public void deleteById(int id) {
 		HolidayModel holiday = new HolidayModel();
 		holiday.setId(id);

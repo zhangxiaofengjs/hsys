@@ -103,4 +103,10 @@ public class HolidayBusiness {
 		}
 		return holiday;
 	}
+	
+	public List<HolidayModel> getHoliday() {
+		HolidayModel h = new HolidayModel();
+		List<HolidayModel> list = holidayService.queryList(h);
+		return list;
+	}
 }

@@ -1,9 +1,270 @@
 $(document).ready(function(){
 	var ca = new hcalendar();
 	ca.init({
-		"target":"user_calendar"
+		"target":"user_calendar",
+		"dateChanged" : function() {
+			var html="";
+			html = "<div class='{0}'>".format('button')+ "<div>"+"<img name='extra' src='{0}' class='button-img' />".format(hsys.url('/icons/extra.png'))+"<img name='rest' src='{0}' class='button-img' />".format(hsys.url('/icons/rest.png'))+"</div>"+"</div>";
+			ca.addAll(html);
+			add();
+			var holiday = {
+		             date:[],
+		             type:[],
+		             comment:[]
+			 };
+			$.ajax({
+				async: false,
+				type:"post",
+				url:"/hsys/holiday/json/getHoliday",
+				cache:false,
+				dataType: "json",
+				success:function(res){
+					for(var i = 0; i < res.holidays.length ; i++) {
+						var  holidays=res.holidays;
+						holiday.date.push(holidays[i].date);
+						holiday.type.push(holidays[i].type);
+						holiday.comment.push(holidays[i].comment);
+					    var html = "";
+					    		switch(holidays[i].type)
+					    		{
+					    		case 0:
+					    			html ="<div class='{0}'>".format('holiday') + "<img alt='rest' src='{0}'>".format(hsys.url('/icons/holiday.png'))+"<li title='"+holidays[i].comment+"'>" +' &nbsp' + holidays[i].comment + "</li>" + "</div>";
+					    			break;
+					    		case 1:
+					    			html ="<div class='{0}'>".format('holiday') +  "<img alt='change' src='{0}'>".format(hsys.url('/icons/change.png'))+"<li title='"+holidays[i].comment+"'>"+' &nbsp' + holidays[i].comment + "</li>" + "</div>";
+					    			break;
+					    		case 2:
+					    			html ="<div class='{0}'>".format('holiday') +  "<img alt='work' src='{0}'>".format(hsys.url('/icons/work.png'))+"<li title='"+holidays[i].comment+"'>"+' &nbsp' + holidays[i].comment + "</li>" + "</div>";
+					    			break;
+					    		};
+						ca.addItem(holidays[i].date,html);
+					 }
+				},
+					 error: function (errorMsg) {
+			             alert("request data failed!!!");
+			         }
+			});
+			
+		}
 	});
+	 
+	/**
+	 * 添加加班信息
+	 * 
+	 */ 
+	function calcLen(dlg) {
+		var start = "2019-04-15 " + dlg.elem("startTime").val() + ":00";
+		var end = "2019-04-15 " + dlg.elem("endTime").val() + ":00";
+		var s = hdate.span(start, end, "h");
+		dlg.elem("length").val(s);
+	}
 	
+	function addExtra(tableDate){
+		var self = $(this);
+		var user = $(":hidden[name='user']").val();
+		hdlg.showForm({
+			"title":"加班登记 "+tableDate,
+			"fields":[
+				{
+					"id":"date",
+					"label":"加班日期",
+					"type":"hidden",
+					"required":true,
+					"hidden":true,
+					"value": tableDate,
+				},
+				{
+					"id":"startTime",
+					"label":'<span style="color:red;">实际</span><span>开始时间</span>',
+					"type":"time",
+					"required":true,
+					"value": hdate.format(new Date(),"18:00"),
+					"change": calcLen,
+				},
+				{
+					"id":"endTime",
+					"label":'<span style="color:red;">实际</span><span>结束时间</span>',
+					"type":"time",
+					"required":true,
+					"value": hdate.format(new Date(),"21:00"),
+					"change": calcLen,
+				},
+				{
+					"id":"type",
+					"label":"种类",
+					"type":"hidden",
+					"options": [
+						{
+							"text":'平时',
+							"value":0,
+						},
+						{
+							"text":'周末',
+							"value":1,
+						},
+						{
+							"text":'节假日',
+						"value":2,
+						},
+						],
+						"value":0,
+						},
+						{
+							"id":"length",
+						"label":"加班时长",
+						"type":"number",
+						"min":"0.5",
+						"max":"17",
+						"value":"3",
+						"required":true,
+						},
+						{
+							"id":"comment",
+						"label":"事由",
+						"type":"text",
+						"value":"",
+						"required":true,
+						"maxlength":50,
+						},
+						{
+							"id":"userId",
+						"label":"加班人",
+						"type": "hidden",//用户画面无需显示用户
+						"value": 0,
+						"required": true,
+						},
+						{
+							"label":"用餐",
+							"id":"meal",
+							"type":"checkboxgroup",
+							"options":[{
+							"value":1,
+							"text":"午餐&nbsp;",
+							},
+							{
+							"value":2,
+							"text":"晚餐&nbsp;",
+							}],
+							"value":[2]
+						},
+						],
+						"url":"/extratime/json/add",
+						"success": function(data, dlg) {
+							hsys.success(true);
+						},
+						"error": function(data) {
+							hsys.error(data.msg);
+						}
+			});
+		}
+
+	/**
+	 * 添加请假信息
+	 * 	
+	 */ 
+	function addRest(tableDate){
+		var self = $(this);
+		var user = $(":hidden[name='user']").val();
+		hdlg.showForm({
+			
+			"title":"请假登记",
+			"fields":[
+				{
+					"id":"userId",
+					"label":"申请人",
+					"type":"hidden",//用户画面无需显示用户
+					"value": 0,
+					"required": true,
+				},
+				{
+					"id":"dateStart",
+					"label":"开始日期",
+					"type":"datetime-local",
+					"required":true,
+					"value": tableDate + "08:30",
+				},
+				{
+					"id":"dateEnd",
+					"label":"结束日期",
+					"type":"datetime-local",
+					"required":true,
+					"value": tableDate + "17:30",
+				},
+				{
+					"id":"len",
+					"label":"请假时长（小时）",
+					"type":"number",
+					"min":"1",
+					"value":"8",
+					"required":true,
+				},
+				{
+					"id":"type",
+					"label":"种类",
+					"type":"radiogroup",
+					"options": [
+						{
+							"text":'<span class="label label-primary">休假</span>',
+							"value":0,
+						},
+						{
+							"text":'<span class="label label-info">事假</span>',
+							"value":2,
+						},
+						{
+							"text":'<span class="label label-warning">病假</span>',
+							"value":1,
+						},
+						{
+							"text":'<span class="label label-danger">婚假</span>',
+							"value":3,
+						},
+						{
+							"text":'<span class="label label-default">丧假</span>',
+							"value":4,
+						},
+						{
+							"text":'<span class="label label-success">公假</span>',
+							"value":5,
+						},
+						],
+						"value":0,
+						"required":true,
+				},
+				{
+					"id":"summary",
+					"label":"备注",
+					"type":"textarea",
+					"value":"",
+					"required":true,
+					"maxlength":50,
+				},
+				],
+				"url":"/rest/json/add",
+				"success": function(data, dlg) {
+					hsys.success(true);
+				},
+				"error": function(data) {
+					hsys.error(data.msg);
+				}
+			});
+		}
+	
+	/**
+	 * 绑定添加按钮
+	 */
+	function add(){
+		$("img[name='extra']").click(function(){
+			tableDate=hdate.yyyy_MM_dd(new Date($(this).parent().parent().parent().attr("data")));
+			addExtra(tableDate);
+		});
+		$("img[name='rest']").click(function(){
+			tableDate=hdate.yyyy_MM_dd(new Date($(this).parent().parent().parent().attr("data")))+"T";
+			addRest(tableDate);
+		});
+	}
+	
+	////////////////////////
 	$(":input[name='et_comment']").val($.cookie("_hinfo_userbasic_comment"))
 	
 	var s = $.cookie("_hinfo_userbasic_start");
